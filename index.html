@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>最后的统治者</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ============ 顶栏 ============ -->
+    <header id="topbar">
+      <div class="tb-left">
+        <span id="nation"></span>
+        <span id="leader-name" class="muted"></span>
+      </div>
+      <div class="tb-center">
+        <span id="year-label">第 1 年</span>
+        <span id="phase-label" class="muted"></span>
+      </div>
+      <div class="tb-right">
+        <button id="btn-archive" class="ghost" title="档案室">档案室</button>
+        <span id="net-status" class="net" title="叙事联网状态"></span>
+      </div>
+    </header>
+
+    <!-- ============ 状态面板（氛围词，无数字） ============ -->
+    <section id="status-panel" class="panel">
+      <div id="core-indicators" class="core-grid"></div>
+      <div id="decorative-indicators" class="deco-row"></div>
+    </section>
+
+    <!-- ============ 中央舞台（事件卡 / 预算 / 结局） ============ -->
+    <main id="stage">
+      <div id="stage-content"><!-- 由 ui.js 注入 --></div>
+    </main>
+
+    <!-- ============ 关键人物（置于卡片下方，便于随手查阅/接触） ============ -->
+    <section id="people-panel" class="panel">
+      <div class="people-hint muted">点击任一人物可查看近况、私下接触（每年限一人）</div>
+      <div id="people-row" class="people-row"></div>
+    </section>
+
+    <!-- ============ 浮层：顾问私谈 / 匿名信 / 档案室 ============ -->
+    <div id="overlay" class="overlay hidden">
+      <div id="overlay-box" class="overlay-box">
+        <button id="overlay-close" class="overlay-close" aria-label="关闭">×</button>
+        <div id="overlay-content"></div>
+      </div>
+    </div>
+
+    <!-- ============ 加载浮层 ============ -->
+    <div id="loading" class="hidden">
+      <div class="lo-box">
+        <div class="spinner"></div>
+        <div class="lo-line" id="loading-line"></div>
+      </div>
+    </div>
+
+    <!-- ============ 启动屏 ============ -->
+    <div id="boot" class="boot">
+      <div class="boot-inner">
+        <h1>最后的统治者</h1>
+        <p class="subtitle">恩加拉共和国 · 一场关于权力的算术</p>
+        <p class="epigraph">“政治从来不是关于善治，而是关于谁来统治、靠谁统治。”</p>
+        <button id="btn-start" class="primary">就任</button>
+        <div class="boot-foot muted" id="boot-foot"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/game.js"></script>
+</body>
+</html>

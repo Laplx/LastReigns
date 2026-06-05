@@ -1,0 +1,434 @@
+[
+  {
+    "id": "heir",
+    "title": "继承人问题",
+    "trigger": {
+      "minYear": 5,
+      "healthMax": 72
+    },
+    "steps": [
+      {
+        "kicker": "家国",
+        "title": "谁来接班？",
+        "narrative": "您的健康不再如初，子女们也各自结了党。长子掌着电视台与一帮少壮派，幼子则得了几位将领的青眼。宫里的人开始悄悄站队——这个问题，躲不过去了。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "立长子，正式昭告天下",
+            "hint": "名分既定，幼子一系不满",
+            "setHeir": "eldest",
+            "effects": {
+              "legacy": "+big",
+              "elite": "-small"
+            },
+            "result": "您在党代会上宣布了决定。长子志得意满，幼子的脸色，您选择不去看。",
+            "goto": 1
+          },
+          {
+            "text": "立幼子，他更得军心",
+            "hint": "将军们高兴，长子的人不服",
+            "setHeir": "youngest",
+            "effects": {
+              "legacy": "+mid",
+              "army": "+small",
+              "elite": "-small"
+            },
+            "result": "幼子接过了象征权力的权杖。长子那帮人，连夜开了个很长的会。",
+            "goto": 1
+          },
+          {
+            "text": "再等等，时机未到",
+            "defer": true,
+            "effects": {},
+            "result": "您含糊地把话题岔开。两个儿子都以为父亲属意自己——这恐怕不是好事。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "把名分坐实",
+        "narrative": "继承人已定，但纸面上的名分还需坐实。是大张旗鼓修宪确立，还是低调安排、以免刺激另一方？",
+        "options": [
+          {
+            "text": "修宪确立继承制",
+            "effects": {
+              "legacy": "+big",
+              "history": "+small",
+              "intl": "+small"
+            },
+            "result": "宪法白纸黑字写明了继承顺位。王朝的雏形，就此立住。",
+            "goto": -1
+          },
+          {
+            "text": "低调安排，私下托付",
+            "effects": {
+              "legacy": "+small"
+            },
+            "result": "您把信得过的人叫到床前，做了交代。能不能算数，要看您闭眼之后。",
+            "goto": -1
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "兄弟阋墙",
+        "narrative": "您迟迟不表态，两个儿子终于撕破了脸。电视台和军营各执一词，首都的空气里都是火药味。再不出手，您还没咽气，家就要散了。",
+        "options": [
+          {
+            "text": "强压幼子一系，扶长子上位",
+            "setHeir": "eldest",
+            "effects": {
+              "army": "-mid",
+              "elite": "-mid",
+              "legacy": "-small"
+            },
+            "result": "您动用了最后的威权压下纷争。代价是军中的裂痕，和幼子眼里的恨。",
+            "goto": -1
+          },
+          {
+            "text": "放任他们斗，胜者为王",
+            "effects": {
+              "elite": "-big",
+              "flags": {
+                "civilWar": true
+              },
+              "history": "-mid"
+            },
+            "result": "您疲惫地闭上眼，由他们去。您身后的恩加拉，怕是要血流成河。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "north",
+    "title": "北方矿区叛乱",
+    "trigger": {
+      "moraleMax": 38
+    },
+    "steps": [
+      {
+        "kicker": "北方",
+        "title": "矿区罢工",
+        "narrative": "北方铜矿的工人放下了工具，要求涨薪与安全保障。罢工像野火一样蔓延，国际媒体的镜头开始往那边凑。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "派军队进驻，强行复工",
+            "hint": "快，但会出事",
+            "effects": {
+              "army": "+small",
+              "intl": "+mid",
+              "history": "-mid",
+              "morale": "-mid"
+            },
+            "result": "军队开进了矿区。机器重新转动，代价是几条没上报的人命。",
+            "goto": 1
+          },
+          {
+            "text": "坐下来谈，让点利益",
+            "hint": "丢面子，保平安",
+            "effects": {
+              "legacy": "-small",
+              "wealthDomestic": -0.3,
+              "morale": "+big"
+            },
+            "result": "您派人谈判并涨了薪。罢工平息了，权贵们却笑话您“被几个矿工拿捏”。",
+            "goto": -1
+          },
+          {
+            "text": "拖着，看它自己冷下来",
+            "defer": true,
+            "effects": {
+              "morale": "-small"
+            },
+            "result": "您按兵不动。罢工没有冷下来，反而有人开始发枪。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "北方",
+        "title": "枪声响起",
+        "narrative": "罢工演变成了武装对峙，北方几个矿镇升起了不属于政府的旗帜。这已经不是劳资纠纷，而是叛乱。",
+        "options": [
+          {
+            "text": "血腥镇压，杀一儆百",
+            "hint": "立威，举世侧目",
+            "effects": {
+              "intl": "+big",
+              "history": "-big",
+              "army": "+small",
+              "morale": "+big"
+            },
+            "result": "三天后，北方安静了。安静得像一片墓地。海外的制裁清单上，多了您的名字。",
+            "goto": -1
+          },
+          {
+            "text": "割让自治权换和平",
+            "hint": "保命，失地失威",
+            "effects": {
+              "legacy": "-big",
+              "army": "-small",
+              "history": "+small",
+              "morale": "+big"
+            },
+            "result": "您签字给了北方自治。枪声停了，但所有人都看清了：中央，其实没那么硬。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "border",
+    "title": "邻国边境危机",
+    "trigger": {
+      "minYear": 3,
+      "borderMin": 30
+    },
+    "steps": [
+      {
+        "kicker": "边境",
+        "title": "摩擦升级",
+        "narrative": "与南方邻国的边境摩擦越来越频繁。民族主义情绪在国内高涨，将军主战，外交官主和。一场危机，正在地图的边缘酝酿。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "陈兵边境，强硬施压",
+            "hint": "扬威，火上浇油",
+            "effects": {
+              "army": "+mid",
+              "intl": "+mid",
+              "borderTension": "+big",
+              "morale": "+small"
+            },
+            "result": "大军压境。国内一片“扬我国威”的欢呼，邻国也调来了坦克。",
+            "goto": 1
+          },
+          {
+            "text": "通过斡旋和平解决",
+            "hint": "稳，但显得软",
+            "effects": {
+              "borderTension": "-big",
+              "intl": "-small",
+              "morale": "-small"
+            },
+            "result": "在第三国斡旋下，双方各退一步。报纸骂您懦弱，但没人因此送命。",
+            "goto": -1
+          },
+          {
+            "text": "拖着，先观望",
+            "defer": true,
+            "effects": {
+              "borderTension": "+small"
+            },
+            "result": "您选择观望。边境的火星，没等到您下决心就烧了起来。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "边境",
+        "title": "战与和",
+        "narrative": "边境已经擦枪走火，士兵开始流血。将军请战，说一举拿下争议矿带就能名垂青史；外交官则警告，一场战争可能拖垮一切。",
+        "options": [
+          {
+            "text": "开战，赌一把领土",
+            "hint": "赢了扩张，输了崩盘",
+            "effects": {
+              "intl": "+big",
+              "army": "+small",
+              "health": "-small",
+              "annex": true,
+              "borderTension": "+big",
+              "morale": "+mid"
+            },
+            "result": "炮火连天。几个月后，您拿下了那片矿带——代价是国库、人命，和满世界的谴责。",
+            "goto": -1
+          },
+          {
+            "text": "见好就收，签署停火",
+            "hint": "止损",
+            "effects": {
+              "intl": "-small",
+              "borderTension": "-mid",
+              "army": "-small"
+            },
+            "result": "您在伤亡扩大前叫停。将军憋了一肚子气，老百姓却松了口气。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "democracy",
+    "title": "西方民主压力",
+    "trigger": {
+      "intlMin": 58
+    },
+    "steps": [
+      {
+        "kicker": "国际",
+        "title": "NGO 进驻",
+        "narrative": "几家西方 NGO 以“人道”与“观察选举”之名进驻首都，反对派人士开始频繁出现在它们的酒会上。一张以民主为名的网，正在收紧。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "以间谍罪驱逐它们",
+            "hint": "干脆，国际震怒",
+            "effects": {
+              "intl": "+big",
+              "history": "-mid",
+              "morale": "-small"
+            },
+            "result": "NGO 被连夜请上飞机。西方的反应激烈得超出预期，但起码，眼前清静了。",
+            "goto": 1
+          },
+          {
+            "text": "容忍它们，做做姿态",
+            "hint": "缓和，养虎为患",
+            "effects": {
+              "intl": "-mid",
+              "elite": "-small",
+              "morale": "+small"
+            },
+            "result": "您笑脸相迎，还给它们颁了“合作奖”。反对派的声音，却也跟着大了起来。",
+            "goto": -1
+          },
+          {
+            "text": "拖着，让安全局慢慢办",
+            "defer": true,
+            "effects": {},
+            "result": "您把球踢给了安全局。事情没解决，反对党却趁机搭起了台子。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "国际",
+        "title": "选举的诱惑",
+        "narrative": "内外压力下，“举行一次选举”的呼声压不住了。怎么选，决定您是名垂青史还是声名扫地。",
+        "options": [
+          {
+            "text": "操控一场必胜的选举",
+            "hint": "好看，破绽难免",
+            "effects": {
+              "intl": "-mid",
+              "elite": "-small",
+              "flags": {
+                "stagedElection": true
+              },
+              "deco": {
+                "press": "+small"
+              }
+            },
+            "result": "您以压倒性优势“当选”。国际观察员的报告措辞微妙，但您连任了。",
+            "goto": -1
+          },
+          {
+            "text": "宣布取消选举，强力维稳",
+            "hint": "硬",
+            "effects": {
+              "intl": "+big",
+              "army": "+mid",
+              "history": "-mid"
+            },
+            "result": "您宣布“国情特殊，暂缓选举”。坦克上了街，世界关上了援助的门。",
+            "goto": -1
+          },
+          {
+            "text": "真的举行一场自由选举",
+            "hint": "没人料到",
+            "effects": {
+              "intl": "-big",
+              "elite": "-big",
+              "army": "-mid",
+              "history": "+big",
+              "flags": {
+                "realElection": true
+              },
+              "morale": "+mid"
+            },
+            "result": "投票箱是真的，计票也是真的。这一夜，恩加拉变了，您的权力也变了。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "court",
+    "title": "宫廷内斗",
+    "trigger": {
+      "minYear": 4
+    },
+    "steps": [
+      {
+        "kicker": "密报",
+        "title": "匿名举报信",
+        "narrative": "一封匿名信摆上了您的案头，举报您的两位心腹正在暗中较劲、各结私党。信里有名有姓，证据却真假难辨。这是真相，还是有人想借您的手除掉对手？",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "宁可错杀，清洗一方",
+            "hint": "立威，可能误伤忠良",
+            "effects": {
+              "elite": "-mid",
+              "army": "-small",
+              "history": "-small"
+            },
+            "result": "您动了手。被清洗的人或许真有异心，或许只是挡了别人的路——您永远不会知道。",
+            "goto": -1
+          },
+          {
+            "text": "各打五十大板，敲山震虎",
+            "effects": {
+              "elite": "-small"
+            },
+            "result": "您把两人都训了一顿。表面消停了，暗流却没停。",
+            "goto": 1
+          },
+          {
+            "text": "撕了信，假装没看见",
+            "defer": true,
+            "effects": {},
+            "result": "您把信丢进了碎纸机。可有些东西，一旦写下来，就回不去了。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "密报",
+        "title": "暗斗升级",
+        "narrative": "您的隐忍被当成了软弱，两派的争斗摆上了台面，连内阁会议都开成了战场。再不了断，整个朝廷都要被拖下水。",
+        "options": [
+          {
+            "text": "果断站队，借一方除另一方",
+            "hint": "稳住强者",
+            "effects": {
+              "elite": "-mid",
+              "army": "+small"
+            },
+            "result": "您选了边。胜的一方对您感激涕零，败的一方，从此成了隐患。",
+            "goto": -1
+          },
+          {
+            "text": "两派一锅端，重组班子",
+            "hint": "玉石俱焚",
+            "effects": {
+              "elite": "-big",
+              "army": "-small",
+              "history": "-small"
+            },
+            "result": "您把两派的头面人物一起清了。朝堂干净了，也空了——能用的人，没剩几个。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  }
+]

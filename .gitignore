@@ -1,0 +1,18 @@
+# secrets
+.env.local
+.env
+
+# node
+node_modules/
+npm-debug.log*
+
+# claude temp / local
+.tmp_*
+*.local.log
+
+# os
+.DS_Store
+Thumbs.db
+
+# saves exported during play (optional, keep out of repo)
+/saves/

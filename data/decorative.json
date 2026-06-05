@@ -1,0 +1,6 @@
+[
+  { "key": "health_care", "name": "医疗", "type": "lure" },
+  { "key": "education", "name": "教育", "type": "lure" },
+  { "key": "capital", "name": "市政", "type": "vanity" },
+  { "key": "press", "name": "舆论", "type": "vanity" }
+]

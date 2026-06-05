@@ -1,0 +1,112 @@
+[
+  {
+    "id": "general",
+    "title": "武装力量总司令",
+    "namePool": ["卡苏拉将军", "姆本加将军", "迪亚洛将军"],
+    "traits": ["务实", "好大喜功"],
+    "blurb": "枪杆子的主人。他的忠诚是租来的，租约每年重谈。",
+    "hiddenInterest": "军备预算与北方一块属于自己的封地",
+    "persona": "说话简短、爱用军事比喻，对软弱嗤之以鼻，把忠诚当筹码来谈条件。",
+    "initLoyalty": 62, "competence": 70,
+    "rivals": ["spy", "reformer"], "allies": ["uncle"]
+  },
+  {
+    "id": "finance",
+    "title": "财政部长",
+    "namePool": ["恩戈齐博士", "阿德巴约博士", "科菲博士"],
+    "traits": ["贪婪", "谨慎"],
+    "blurb": "管钱的人，也最懂怎么让钱悄悄改道。能力越大，账目越深。",
+    "hiddenInterest": "进口配额的垄断权，以及随时能跑路的海外账户",
+    "persona": "海归口音，谈吐文雅，满口数字和国际惯例，私心藏在专业术语后面。",
+    "initLoyalty": 55, "competence": 75,
+    "rivals": ["reformer"], "allies": ["dupont", "firstlady"]
+  },
+  {
+    "id": "chief",
+    "title": "北方部族长老",
+    "namePool": ["马马杜酋长", "奥乌苏酋长", "桑加雷酋长"],
+    "traits": ["传统", "记仇"],
+    "blurb": "北方的影子国王。中央的政令，到他的地界就要换种语言。",
+    "hiddenInterest": "北方土地确权与习惯法的保留",
+    "persona": "讲话慢、爱引谚语和祖先，表面恭敬，骨子里只认部族利益。",
+    "initLoyalty": 50, "competence": 50,
+    "rivals": ["general"], "allies": ["priest"]
+  },
+  {
+    "id": "firstlady",
+    "title": "第一夫人 / 家族代表",
+    "namePool": ["伊莎贝尔夫人", "阿米娜夫人", "格蕾丝夫人"],
+    "traits": ["野心", "精明"],
+    "blurb": "枕边的政治家。她为这个家做的每件事，恰好也对她自己有利。",
+    "hiddenInterest": "为子女铺好继承的路，掌握慈善基金的现金流",
+    "persona": "温柔体贴的措辞下藏着算计，常以为了这个家之名推动自己的安排。",
+    "initLoyalty": 60, "competence": 60,
+    "rivals": ["uncle"], "allies": ["finance"]
+  },
+  {
+    "id": "priest",
+    "title": "全国教会联合会主席",
+    "namePool": ["奥比神父", "恩科萨主教", "塔迪奥神父"],
+    "traits": ["道德", "固执"],
+    "blurb": "少数敢当面说逆耳话的人。他的讲坛，是您管不到的另一个广播台。",
+    "hiddenInterest": "教育系统的控制权与教会免税地位",
+    "persona": "语气悲悯，爱谈良知与历史评判，是少数敢当面说逆耳话的人。",
+    "initLoyalty": 48, "competence": 45,
+    "rivals": ["spy"], "allies": ["chief", "reformer"]
+  },
+  {
+    "id": "chen",
+    "title": "远东矿业驻恩加拉代表",
+    "namePool": ["陈先生", "黄先生", "林先生"],
+    "traits": ["冷静", "务实"],
+    "blurb": "把一切折算成合同条款的人。他不在乎谁当家，只在乎采矿权续不续。",
+    "hiddenInterest": "采矿权续约与劳工法的豁免",
+    "persona": "礼貌而疏离，从不空谈政治，一切都能折算成合同条款和长期合作。",
+    "initLoyalty": 52, "competence": 80,
+    "rivals": ["dupont"], "allies": ["finance"]
+  },
+  {
+    "id": "dupont",
+    "title": "前宗主国商业掮客",
+    "namePool": ["杜邦先生", "勒克莱尔先生", "莫罗先生"],
+    "traits": ["圆滑", "见风使舵"],
+    "blurb": "巴黎与首都之间的传声筒。恭维不要钱，倒戈也不要本钱。",
+    "hiddenInterest": "军火与基建合同的回扣，以及巴黎的人脉",
+    "persona": "法式做派，恭维不要钱，话里总留着随时倒向他人的活扣。",
+    "initLoyalty": 45, "competence": 65,
+    "rivals": ["chen"], "allies": ["firstlady"]
+  },
+  {
+    "id": "spy",
+    "title": "国家安全局局长",
+    "namePool": ["安巴妮上校", "奥孔约上校", "卡马拉上校"],
+    "traits": ["多疑", "缜密"],
+    "blurb": "知道所有人秘密的人——包括您的。最有用，也最难真正掌控。",
+    "hiddenInterest": "监控预算的扩张与一份谁都动不了她的免责承诺",
+    "persona": "话不多，每句都像在收集情报，对所有人（包括您）都留着一份档案。",
+    "initLoyalty": 58, "competence": 78,
+    "rivals": ["general", "priest"], "allies": []
+  },
+  {
+    "id": "reformer",
+    "title": "财政部改革司司长",
+    "namePool": ["索万吉司长", "阿杜司长", "本巴司长"],
+    "traits": ["理想主义", "天真"],
+    "blurb": "真心想做事的年轻人。能力出众，却总没意识到自己有多碍事。",
+    "hiddenInterest": "真心想搞点改革，留下个干净的名声",
+    "persona": "年轻、急切，爱谈数据和长远，常常没意识到自己的建议有多危险。",
+    "initLoyalty": 56, "competence": 82,
+    "rivals": ["finance", "uncle"], "allies": ["priest"]
+  },
+  {
+    "id": "uncle",
+    "title": "执政党元老 / 您的叔父",
+    "namePool": ["老恩贡贝", "老图雷", "桑戈尔叔公"],
+    "traits": ["守旧", "倚老卖老"],
+    "blurb": "把您扶上位的老人。提携之恩，他会一直挂在嘴边换好处。",
+    "hiddenInterest": "维系旧党网络，确保家族里他这一支不被边缘化",
+    "persona": "倚老卖老，张口就是当年，把对您的提携挂在嘴边换取好处。",
+    "initLoyalty": 64, "competence": 40,
+    "rivals": ["reformer", "firstlady"], "allies": ["general"]
+  }
+]
