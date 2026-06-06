@@ -10,7 +10,9 @@ import { resetAtmosphere } from './atmosphere.js';
 
 let content, state, selectedPersonId = null;
 let chainNarr = {}, _poolBusy = false, _poolPromise = null, _specialBusy = false, _atmoBusy = false;
+let _situationChainBusy = false, _crisisChainBusy = {};
 let advisorPrefetchYear = 0, advisorPrefetch = {};
+const MAX_GENERATED_CHAINS_PER_RUN = 30;
 const THEMES = ['paper', 'slate', 'crimson', 'verdigris'];
 function applyRandomTheme() { document.body.dataset.theme = THEMES[Math.floor(Math.random() * THEMES.length)]; }
 function lvlCfg() {
@@ -70,6 +72,8 @@ function openSettingsFlow() {
 function showBriefing() {
   resetAtmosphere();
   advisorPrefetchYear = 0; advisorPrefetch = {};
+  chainNarr = {};
+  _situationChainBusy = false; _crisisChainBusy = {};
   const seed = (Date.now() ^ Math.floor(performance.now() * 1000)) >>> 0;
   state = createInitialState(seed, content);
   document.getElementById('boot').classList.add('hidden');
@@ -170,6 +174,7 @@ async function startGame() {
 // 后台并行准备（不阻塞）：D1a 题池补充（参考历史/状态）+ D1b 事件链节点叙事改写
 function bgPrep() {
   const cfg = lvlCfg();
+  chains.maintainGeneratedChains(state);
   maybeTopupNormalPool();
   if (!llm.isAvailable()) return;
   if (!_atmoBusy && state.atmosphereOverrideYear !== state.year) {
@@ -249,7 +254,7 @@ async function nextCard() {
   }
   if (state.chainJustActivated) { const info = state.chainJustActivated; state.chainJustActivated = null; await presentCard(chains.makeChainAnnounceCard(info)); return afterCard(); }
   const warnings = crisisWarningsForCard();
-  if (warnings.length) { await presentCard(crisisCard(warnings)); return afterCard(); }
+  if (warnings.length) { prefetchCrisisChains(warnings); await presentCard(crisisCard(warnings)); return afterCard(); }
 
   let card = null;
   card = chains.drawChainCard(state, content, chainNarr);
@@ -291,7 +296,69 @@ function nextYearAfterThisCard() {
 }
 
 function maybePrefetchAdvisorForYear() {
-  if (state.cardsThisYear + 1 >= state.yearLength && annualAdvisorDue()) prefetchAdvisorPacks();
+  if (state.cardsThisYear + 1 >= state.yearLength && annualAdvisorDue()) {
+    prefetchAdvisorPacks();
+    maybePrefetchSituationChain();
+  }
+}
+function ensureGeneratedChainState() {
+  if (!state.chainStats) state.chainStats = { preparedStarted: 0, generatedStarted: 0, generatedCalls: 0 };
+  if (state.chainStats.generatedCalls == null) state.chainStats.generatedCalls = 0;
+  if (!state.generatedChainPrefetch) state.generatedChainPrefetch = { situationYears: [], crisisYears: {} };
+  if (!Array.isArray(state.generatedChainPrefetch.situationYears)) state.generatedChainPrefetch.situationYears = [];
+  if (!state.generatedChainPrefetch.crisisYears) state.generatedChainPrefetch.crisisYears = {};
+}
+function canGenerateChain() {
+  ensureGeneratedChainState();
+  return llm.isAvailable() && !state.over && state.chainStats.generatedCalls < MAX_GENERATED_CHAINS_PER_RUN;
+}
+function reserveGeneratedChainCall() {
+  ensureGeneratedChainState();
+  state.chainStats.generatedCalls += 1;
+}
+function shouldPrefetchSituationChain() {
+  return annualAdvisorDue() && state.year > 1 && state.year + 1 === state.budgetDueYear;
+}
+function maybePrefetchSituationChain() {
+  if (!shouldPrefetchSituationChain() || _situationChainBusy || !canGenerateChain()) return;
+  if (state.generatedChainPrefetch.situationYears.includes(state.year)) return;
+  state.generatedChainPrefetch.situationYears.push(state.year);
+  reserveGeneratedChainCall();
+  _situationChainBusy = true;
+  llm.generateEventChain(state, content, { kind: 'situation' })
+    .then((chain) => { if (chain && !state.over) chains.registerGeneratedChain(state, chain); })
+    .catch(() => {})
+    .finally(() => { _situationChainBusy = false; });
+}
+function crisisTrigger(w) {
+  const t = { minYear: state.year };
+  const set = (key, suffix, value) => { t[`${key}${suffix}`] = value; };
+  if (w.key === 'army') w.side === 'low' ? set('army', 'Max', 20) : set('army', 'Min', 84);
+  else if (w.key === 'elite') w.side === 'low' ? set('elite', 'Max', 22) : set('elite', 'Min', 84);
+  else if (w.key === 'morale') w.side === 'low' ? set('morale', 'Max', 18) : set('morale', 'Min', 85);
+  else if (w.key === 'intl') w.side === 'low' ? set('intl', 'Max', 14) : set('intl', 'Min', 84);
+  else if (w.key === 'finance' && w.side === 'low') set('finance', 'Max', 15);
+  else return null;
+  return t;
+}
+function prefetchCrisisChains(warnings) {
+  if (!canGenerateChain()) return;
+  ensureGeneratedChainState();
+  for (const w of Array.isArray(warnings) ? warnings : [warnings]) {
+    if (!canGenerateChain()) return;
+    const key = `${w.key}:${w.side}`;
+    const last = state.generatedChainPrefetch.crisisYears[key] || 0;
+    if (_crisisChainBusy[key] || (last && state.year - last < 2)) continue;
+    const trigger = crisisTrigger(w);
+    if (!trigger) continue;
+    state.generatedChainPrefetch.crisisYears[key] = state.year;
+    reserveGeneratedChainCall();
+    _crisisChainBusy[key] = true;
+    llm.generateEventChain(state, content, { kind: 'crisis', warning: w, crisisKey: key, trigger })
+      .then((chain) => { if (chain && !state.over) chains.registerGeneratedChain(state, chain); })
+      .catch(() => {})
+      .finally(() => { delete _crisisChainBusy[key]; });
+  }
 }
 
 function crisisWarningsForCard() {
@@ -388,6 +455,7 @@ function presentAnnualAdvisorCard() {
     if (!alive.length) { state.lastDeepContactYear = state.year; resolve(); return; }
     if (!selectedPersonId || !alive.find((p) => p.id === selectedPersonId)) selectedPersonId = alive[0].id;
     prefetchAdvisorPacks();
+    maybePrefetchSituationChain();
 
     const showSummon = () => {
       ui.renderAdvisorSummonCard(state, {

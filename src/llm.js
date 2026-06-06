@@ -80,7 +80,8 @@ function summarize(state, content) {
   const moods = INDICATOR_META.map((m) => `${m.name}：${coreMood(state, content, m.key).text}`).join('；');
   const deco = content.decorative.map((d) => `${d.name}(${decoLabel(content, d.key, state.deco[d.key])})`).join('、');
   const people = state.people.filter((p) => p.alive).map((p) => `${p.name}(${p.title}，${{ loyal: '忠心', ok: '尚可', uneasy: '心思浮动', danger: '离心离德' }[loyaltySignal(p.loyalty)]}，${{ high: '能力强', mid: '能力中', low: '能力弱' }[competenceSignal(p.competence)]})`).join('；');
-  const chains = state.activeChains.map((a) => (content.chains.find((d) => d.id === a.id) || {}).title).filter(Boolean).join('、');
+  const chainDefs = [...(content.chains || []), ...(state.generatedChains || [])];
+  const chains = state.activeChains.map((a) => (chainDefs.find((d) => d.id === a.id) || {}).title).filter(Boolean).join('、');
   const recent = state.archive.slice(-4).map((a) => a.title).join('、');
   return `背景：中非小国${state.nation}，独裁者${state.leader.name}。第${state.year}年，元首${leaderAge(state)}岁，国土约${Math.round(state.area)}平方公里${state.annexedRegions.length ? `（含新并入的${state.annexedRegions.join('、')}）` : ''}。
 当前氛围——${moods}。表面：${deco}。${state.sanctioned ? '因孤立与失认承受制裁。' : ''}
@@ -104,6 +105,104 @@ function toCard(state, o, idx, tag) {
     speaker: o.speaker ? String(o.speaker).slice(0, 12) : undefined,
     narrative: String(o.narrative || '').slice(0, 400),
     options: o.options.slice(0, 3).map((x) => ({ text: String(x.text || '……').slice(0, 60), effects: sanitizeEffects(x.effects), result: String(x.result || '').slice(0, 160) })),
+  };
+}
+function clampNum(v, lo, hi) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return null;
+  return Math.max(lo, Math.min(hi, Math.round(n)));
+}
+function loyaltyGap(state) {
+  const ls = state.people.filter((p) => p.alive).map((p) => p.loyalty);
+  return ls.length < 2 ? 0 : Math.max(...ls) - Math.min(...ls);
+}
+function relaxTriggerToNow(state, trigger) {
+  const t = { ...trigger };
+  const keys = INDICATOR_META.map((m) => m.key);
+  for (const key of keys) {
+    const v = state.ind[key];
+    const maxKey = `${key}Max`, minKey = `${key}Min`;
+    if (t[maxKey] != null && v > t[maxKey]) t[maxKey] = Math.min(100, v + 4);
+    if (t[minKey] != null && v < t[minKey]) t[minKey] = Math.max(0, v - 4);
+  }
+  if (t.borderMax != null && state.hidden.borderTension > t.borderMax) t.borderMax = Math.min(100, state.hidden.borderTension + 4);
+  if (t.borderMin != null && state.hidden.borderTension < t.borderMin) t.borderMin = Math.max(0, state.hidden.borderTension - 4);
+  const gap = loyaltyGap(state);
+  if (t.loyaltyGapMax != null && gap > t.loyaltyGapMax) t.loyaltyGapMax = Math.min(100, gap + 4);
+  if (t.loyaltyGapMin != null && gap < t.loyaltyGapMin) t.loyaltyGapMin = Math.max(0, gap - 4);
+  if (t.minYear == null) t.minYear = state.year;
+  if (t.minYear > state.year + 1) t.minYear = state.year + 1;
+  return t;
+}
+function sanitizeTrigger(raw, state, forced = null) {
+  const src = forced || raw || {};
+  const out = {};
+  if (src.minYear != null) out.minYear = clampNum(src.minYear, 1, state.maxYears || 60);
+  for (const key of INDICATOR_META.map((m) => m.key)) {
+    const maxKey = `${key}Max`, minKey = `${key}Min`;
+    if (src[maxKey] != null) out[maxKey] = clampNum(src[maxKey], 0, 100);
+    if (src[minKey] != null) out[minKey] = clampNum(src[minKey], 0, 100);
+  }
+  if (src.borderMin != null) out.borderMin = clampNum(src.borderMin, 0, 100);
+  if (src.borderMax != null) out.borderMax = clampNum(src.borderMax, 0, 100);
+  if (src.loyaltyGapMin != null) out.loyaltyGapMin = clampNum(src.loyaltyGapMin, 0, 100);
+  if (src.loyaltyGapMax != null) out.loyaltyGapMax = clampNum(src.loyaltyGapMax, 0, 100);
+  if (src.sanctioned != null) out.sanctioned = !!src.sanctioned;
+  if (src.hasHeir != null) out.hasHeir = !!src.hasHeir;
+  return forced ? out : relaxTriggerToNow(state, out);
+}
+function normalizeGoto(v, fallback, count) {
+  if (v == null || v === '') return fallback;
+  if (typeof v === 'string' && /end|finish|完成|结束/i.test(v)) return -1;
+  const n = clampNum(v, -1, count - 1);
+  return n == null ? fallback : n;
+}
+function cleanTheme(s) {
+  const t = String(s || 'llm_chain').trim().slice(0, 48).replace(/[^a-zA-Z0-9_:-]/g, '_');
+  return t || 'llm_chain';
+}
+function toGeneratedChain(state, obj, ctx) {
+  const rawSteps = Array.isArray(obj?.steps) ? obj.steps : Array.isArray(obj?.chain?.steps) ? obj.chain.steps : [];
+  if (!obj || !obj.title || rawSteps.length < 3) return null;
+  const count = Math.min(6, rawSteps.length);
+  const steps = rawSteps.slice(0, count).map((s, i) => {
+    const rawOptions = Array.isArray(s.options) ? s.options : [];
+    if (rawOptions.length < 2) return null;
+    const hasDefer = rawOptions.some((o) => o.defer);
+    const fallbackGoto = i < count - 1 ? i + 1 : -1;
+    const rawEscalate = normalizeGoto(s.escalateTo, null, count);
+    const step = {
+      kicker: String(s.kicker || obj.kicker || '暗流').slice(0, 8),
+      title: String(s.title || `节点${i + 1}`).replace(/[0-9０-９]/g, '').slice(0, 36),
+      narrative: String(s.narrative || '').slice(0, 360),
+      options: rawOptions.slice(0, 3).map((o) => ({
+        text: String(o.text || '暂且按下').replace(/[0-9０-９%％→←+\-]/g, '').slice(0, 64),
+        hint: o.hint ? String(o.hint).slice(0, 80) : undefined,
+        effects: sanitizeEffects(o.effects),
+        result: String(o.result || '').slice(0, 180),
+        goto: normalizeGoto(o.goto, o.defer ? i : fallbackGoto, count),
+        defer: !!o.defer,
+      })),
+    };
+    if (hasDefer || rawEscalate != null) step.escalateTo = rawEscalate == null ? fallbackGoto : rawEscalate;
+    return step.narrative && step.options.length >= 2 ? step : null;
+  }).filter(Boolean);
+  if (steps.length < 3) return null;
+  const trigger = sanitizeTrigger(obj.trigger || obj.chain?.trigger, state, ctx?.trigger || null);
+  return {
+    id: `llm_chain_${ctx?.kind || 'situation'}_${state.year}_${Math.floor(state.rng() * 1e6)}`,
+    generated: true,
+    source: 'llm',
+    llmKind: ctx?.kind === 'crisis' ? 'crisis' : 'situation',
+    crisisKey: ctx?.crisisKey || null,
+    title: String(obj.title).replace(/[0-9０-９]/g, '').slice(0, 36),
+    theme: cleanTheme(obj.theme),
+    stages: Array.isArray(obj.stages) ? obj.stages.filter((s) => ['early', 'mid', 'late'].includes(s)) : ['mid'],
+    trigger,
+    fit: Math.max(0.75, Math.min(1.5, Number(obj.fit) || (ctx?.kind === 'crisis' ? 1.25 : 1))),
+    createdYear: state.year,
+    expiresYear: state.year + 10,
+    steps,
   };
 }
 
@@ -134,6 +233,33 @@ export async function generateSpecialEvent(state, content) {
       { role: 'user', content: `${summarize(state, content)}\n\n${recentThemeHint(state)}\n基于当前局势生成一个特殊事件卡：≤200字叙事 + 2~3 个选项。必须给 theme(英文短标签) 与 stages(early/mid/late 数组，可多选)。\n${EFFECT_SPEC}\n每选项给 result(≤80字)。严格输出 JSON：{"theme":"palace_intrigue","stages":["mid"],"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}` },
     ], { temperature: 1.0, max_tokens: 900, timeoutMs: 16000 });
     const c = toCard(state, obj, 0, 'special'); if (c) c.type = 'special'; return c;
+  } catch { return null; }
+}
+
+export async function generateEventChain(state, content, ctx = {}) {
+  if (!isAvailable()) return null;
+  const recent = state.archive.slice(-8).map((a) => `第${a.year}年「${a.title}」选择了「${a.result}」`).join('；') || '暂无';
+  const chainDefs = [...(content.chains || []), ...(state.generatedChains || [])];
+  const active = state.activeChains.map((a) => (chainDefs.find((d) => d.id === a.id) || a).title || a.id).join('、') || '暂无';
+  const crisis = ctx.kind === 'crisis' && ctx.warning
+    ? `这是一条危机链，源自当前警讯：「${ctx.warning.title}」。危机方向：${ctx.warning.key}/${ctx.warning.side}。只要该压力仍处在警告阈值附近，就应该容易触发。`
+    : '这是一条局势链，必须贴着当前历史、财政周期、身边人物和最近选择来写。触发条件要当前已经满足，或只差很小变化即可满足。';
+  try {
+    const obj = await callJSON([
+      { role: 'system', content: SYS },
+      { role: 'user', content: `${summarize(state, content)}
+
+最近档案：${recent}。活跃事件链：${active}。
+${recentThemeHint(state)}
+${crisis}
+
+请生成一条完整事件链，至少 3 个节点，最多 6 个节点。节点之间要有递进和后果，不要像互不相关的普通事件。
+trigger 只允许：minYear；army/elite/morale/intl/finance/health 的 Min/Max；borderMin/borderMax；loyaltyGapMin/Max；sanctioned；hasHeir。触发条件必须贴近当前状态，不能写遥远条件。
+每个节点 2~3 个选项；每个选项必须给 effects、result、goto。可少量使用 defer；使用 defer 的节点应给 escalateTo。goto 用节点序号，从 0 开始；-1 表示链结束。不得直接写结局、不得直接杀人、不得越权改状态。
+${EFFECT_SPEC}
+严格输出 JSON：{"title":"...","theme":"english_tag","stages":["early","mid"],"fit":1.2,"trigger":{"minYear":${state.year}},"steps":[{"kicker":"二字","title":"...","narrative":"...","escalateTo":1,"options":[{"text":"...","effects":{...},"result":"...","goto":1,"defer":false}]}]}` },
+    ], { temperature: 1.02, max_tokens: 2600, timeoutMs: 38000 });
+    return toGeneratedChain(state, obj, ctx);
   } catch { return null; }
 }
 

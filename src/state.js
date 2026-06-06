@@ -81,6 +81,8 @@ export function createInitialState(seed, content) {
     oneTime: { intlCredibility: 2, familyLegacy: 1, oldGuard: 1, kompromat: 1 },
 
     activeChains: [], completedChains: [], chainJustActivated: null, lastChainActivatedYear: 0,
+    generatedChains: [], chainStats: { preparedStarted: 0, generatedStarted: 0, generatedCalls: 0 },
+    generatedChainPrefetch: { situationYears: [], crisisYears: {} },
     chainCardsThisYear: 0, themeCooldowns: {},
 
     flags: {}, deferred: {}, biographyCommissioned: false,
