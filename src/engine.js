@@ -195,11 +195,20 @@ export function annualHealthDecay(state) {
 }
 
 // ---- 危机判定：两端危险、多样死法、带随机 --------------------------------
-function roll(state, key, lowT, lowP, lowDeath, highT, highP, highDeath) {
+function pickEnding(state, pool) {
+  const entries = (Array.isArray(pool) ? pool : [pool])
+    .map((x) => (typeof x === 'string' ? { type: x, weight: 1 } : x))
+    .filter((x) => x && x.type && (!x.when || x.when(state)));
+  const total = entries.reduce((s, x) => s + (x.weight || 1), 0);
+  let r = state.rng() * total;
+  for (const x of entries) { r -= (x.weight || 1); if (r <= 0) return x.type; }
+  return entries[0]?.type || null;
+}
+function roll(state, key, lowT, lowP, lowDeaths, highT, highP, highDeaths) {
   const v = state.ind[key];
   const warned = state.flags.crisisWarnings || {};
-  if (lowT != null && v < lowT && (warned[`${key}:low:final`] || warned[`${key}:low:warn`])) { const sev = (lowT - v) / Math.max(1, lowT); if (rngChance(state, lowP * (0.55 + sev * 0.9))) return lowDeath; }
-  if (highT != null && v > highT && (warned[`${key}:high:final`] || warned[`${key}:high:warn`])) { const sev = (v - highT) / Math.max(1, 100 - highT); if (rngChance(state, highP * (0.55 + sev * 0.9))) return highDeath; }
+  if (lowT != null && v < lowT && (warned[`${key}:low:final`] || warned[`${key}:low:warn`])) { const sev = (lowT - v) / Math.max(1, lowT); if (rngChance(state, lowP * (0.55 + sev * 0.9))) return pickEnding(state, lowDeaths); }
+  if (highT != null && v > highT && (warned[`${key}:high:final`] || warned[`${key}:high:warn`])) { const sev = (v - highT) / Math.max(1, 100 - highT); if (rngChance(state, highP * (0.55 + sev * 0.9))) return pickEnding(state, highDeaths); }
   return null;
 }
 export function dangerWarnings(state) {
@@ -234,11 +243,11 @@ export function checkCrises(state) {
   if (state.people.filter((p) => p.defected).length >= 2) return makeEnding(state, 'eliteCollapse');
 
   const rolls = [
-    roll(state, 'army', 8, 0.18, 'coup', 92, 0.13, 'junta'),
-    roll(state, 'elite', 8, 0.17, 'assassination', 92, 0.12, 'puppet'),
-    roll(state, 'morale', 8, 0.18, 'uprising', 94, 0.13, 'frenzy'),
-    roll(state, 'intl', 6, 0.16, 'collapse', 94, 0.14, 'tribunal'),
-    roll(state, 'finance', 7, 0.18, 'mutiny', null, 0, null),
+    roll(state, 'army', 8, 0.18, ['coup', 'guardDefection', 'warlordBreakaway', { type: 'militaryBankruptcy', weight: 1.5, when: (s) => s.ind.finance < 15 }], 92, 0.13, ['junta', 'commanderRegency', 'barracksArrest']),
+    roll(state, 'elite', 8, 0.17, ['assassination', 'palaceCoup', 'cabinetUltimatum', { type: 'exile', weight: 0.8, when: (s) => s.wealth.overseas >= 2 || s.ind.intl > 45 }], 92, 0.12, ['puppet', 'oligarchRegency', 'corporateTakeover', 'rubberStamp', { type: 'oligarchDefault', weight: 1.2, when: (s) => s.ind.finance < 20 }]),
+    roll(state, 'morale', 8, 0.18, ['uprising', 'capitalSiege', 'squareTrial', { type: 'provisionalArrest', weight: 1.1, when: (s) => s.ind.intl > 45 }, { type: 'arrested', weight: 0.9, when: (s) => s.sanctioned || s.ind.intl > 70 }, { type: 'foreignBackedCouncil', weight: 1.1, when: (s) => s.ind.intl > 80 }], 94, 0.13, ['frenzy', 'loyaltyPurge', 'idolBacklash']),
+    roll(state, 'intl', 6, 0.16, ['collapse', 'borderClosure', 'sanctionStrangle', { type: 'exile', weight: 1.1, when: (s) => s.wealth.overseas >= 1.5 }, { type: 'arrested', weight: 0.8, when: (s) => s.ind.morale < 20 }], 94, 0.14, ['tribunal', 'foreignProtectorate', 'observerTakeover', { type: 'arrested', weight: 1.1, when: (s) => s.ind.morale < 35 }]),
+    roll(state, 'finance', 7, 0.18, ['mutiny', 'bankruptcy', 'creditorTakeover', 'blackMarketTurn', 'financeMinisterFlight', { type: 'militaryBankruptcy', weight: 1.3, when: (s) => s.ind.army < 20 }, { type: 'oligarchDefault', weight: 1.2, when: (s) => s.ind.elite > 80 }], null, 0, null),
     state.year >= 4 && rngChance(state, 0.006) ? 'accident' : null, // 略荒诞的意外
   ].filter(Boolean);
   if (rolls.length) return makeEnding(state, rolls[Math.floor(state.rng() * rolls.length)]);
@@ -258,7 +267,16 @@ export function triggerDefection(state) {
 }
 
 // 结局仍决定史书语气，但不再把多年统治与私产压到几乎归零。
-const ENDING_COEF = { natural: 1.75, exile: 1.0, puppet: 0.9, accident: 0.9, tribunal: 0.8, arrested: 0.75, junta: 0.75, eliteCollapse: 0.7, coup: 0.65, assassination: 0.65, uprising: 0.65, frenzy: 0.65, collapse: 0.65, mutiny: 0.65 };
+const ENDING_COEF = {
+  natural: 1.75, exile: 1.0, puppet: 0.9, accident: 0.9, tribunal: 0.8, arrested: 0.75, junta: 0.75, eliteCollapse: 0.7,
+  coup: 0.65, assassination: 0.65, uprising: 0.65, frenzy: 0.65, collapse: 0.65, mutiny: 0.65,
+  guardDefection: 0.65, warlordBreakaway: 0.7, commanderRegency: 0.8, barracksArrest: 0.75,
+  palaceCoup: 0.7, cabinetUltimatum: 0.8, oligarchRegency: 0.9, corporateTakeover: 0.85, rubberStamp: 0.85,
+  capitalSiege: 0.65, provisionalArrest: 0.75, squareTrial: 0.65, loyaltyPurge: 0.65, idolBacklash: 0.65,
+  borderClosure: 0.7, sanctionStrangle: 0.65, foreignProtectorate: 0.85, observerTakeover: 0.8,
+  bankruptcy: 0.7, creditorTakeover: 0.8, blackMarketTurn: 0.65, financeMinisterFlight: 0.75,
+  militaryBankruptcy: 0.65, foreignBackedCouncil: 0.8, oligarchDefault: 0.75,
+};
 export function makeEnding(state, type) {
   state.over = true;
   const e = { type, year: state.year, age: leaderAge(state), coef: ENDING_COEF[type] ?? 0, naturalPeaceful: type === 'natural' && state.hidden.heir != null && state.hidden.legacy >= 50 };

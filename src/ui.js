@@ -336,7 +336,17 @@ export function renderBriefing(state, onStart) {
   c.appendChild(btn); s.appendChild(c);
 }
 
-const ENDING_TITLE = { natural: '寿终正寝', coup: '政变之夜', assassination: '一杯毒酒', junta: '军政府上台', puppet: '沦为傀儡', uprising: '揭竿而起', frenzy: '狂热反噬', collapse: '政权崩溃', mutiny: '欠饷哗变', tribunal: '海牙的审判', arrested: '阶下之囚', exile: '仓皇出逃', accident: '离奇的意外', eliteCollapse: '众叛亲离' };
+const ENDING_TITLE = {
+  natural: '寿终正寝', coup: '政变之夜', assassination: '一杯毒酒', junta: '军政府上台', puppet: '沦为傀儡',
+  uprising: '揭竿而起', frenzy: '狂热反噬', collapse: '政权崩溃', mutiny: '欠饷哗变', tribunal: '海牙的审判',
+  arrested: '阶下之囚', exile: '仓皇出逃', accident: '离奇的意外', eliteCollapse: '众叛亲离',
+  guardDefection: '卫队倒戈', warlordBreakaway: '军区割据', commanderRegency: '总司令摄政', barracksArrest: '军营软禁',
+  palaceCoup: '宫廷政变', cabinetUltimatum: '内阁逼宫', oligarchRegency: '寡头摄政', corporateTakeover: '财团接管', rubberStamp: '签字机器',
+  capitalSiege: '首都围城', provisionalArrest: '临时政府逮捕', squareTrial: '广场审判', loyaltyPurge: '忠诚清洗', idolBacklash: '神像反噬',
+  borderClosure: '边境封锁', sanctionStrangle: '制裁窒息', foreignProtectorate: '外部托管', observerTakeover: '观察团接管',
+  bankruptcy: '国库破产', creditorTakeover: '债主接管', blackMarketTurn: '黑市倒戈', financeMinisterFlight: '财长跑路',
+  militaryBankruptcy: '军饷破产', foreignBackedCouncil: '外援委员会', oligarchDefault: '寡头违约',
+};
 export function renderEnding(state, score, obituary) {
   hidePanels();
   const s = stage(); s.innerHTML = '';

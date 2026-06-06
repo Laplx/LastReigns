@@ -328,7 +328,17 @@ export async function reskinChainStep(state, content, def, stepIndex) {
 
 export async function generateObituary(state, content, scoreCtx) {
   if (!isAvailable()) return null;
-  const endingDesc = { natural: '在位多年后于官邸自然死亡', coup: '被军队政变推翻并死于非命', assassination: '在宴会后被毒杀', junta: '被坐大的军方架空、退居二线', puppet: '晚年沦为寡头的傀儡', uprising: '死于民众起义', frenzy: '被自己点燃的狂热吞噬', collapse: '政权在孤立、制裁与失去承认中垮塌', mutiny: '死于欠饷军队的哗变', tribunal: '在外部干预与国际司法压力下被押上海牙法庭', arrested: '沦为阶下囚并在狱中病故', exile: '流亡海外', accident: '死于离奇意外', eliteCollapse: '众叛亲离、被迫交权' }[state.ending.type] || '结束了统治';
+  const endingDesc = {
+    natural: '在位多年后于官邸自然死亡', coup: '被军队政变推翻并死于非命', assassination: '在宴会后被毒杀', junta: '被坐大的军方架空、退居二线', puppet: '晚年沦为寡头的傀儡',
+    uprising: '死于民众起义', frenzy: '被自己点燃的狂热吞噬', collapse: '政权在孤立、制裁与失去承认中垮塌', mutiny: '死于欠饷军队的哗变', tribunal: '在外部干预与国际司法压力下被押上海牙法庭',
+    arrested: '沦为阶下囚并在狱中病故', exile: '流亡海外', accident: '死于离奇意外', eliteCollapse: '众叛亲离、被迫交权',
+    guardDefection: '被倒戈的官邸卫队交出权力', warlordBreakaway: '在军区割据中失去实际统治', commanderRegency: '被总司令架空为名义元首', barracksArrest: '被军方软禁在城外军营',
+    palaceCoup: '被宫廷政变夺走权力', cabinetUltimatum: '在内阁逼宫下被迫退场', oligarchRegency: '被寡头组成的稳定委员会架空', corporateTakeover: '被财团接管国家机器', rubberStamp: '沦为只负责签字的象征',
+    capitalSiege: '在首都围城中丧失官邸', provisionalArrest: '被临时政府逮捕', squareTrial: '被广场上的临时审判推翻', loyaltyPurge: '被自己制造的忠诚清洗反噬', idolBacklash: '被个人崇拜的神像反噬',
+    borderClosure: '在邻国封锁和失认中窒息', sanctionStrangle: '被制裁和金融封锁拖垮', foreignProtectorate: '在外部托管下失去主权', observerTakeover: '被观察团与外部机构接管',
+    bankruptcy: '因国库破产而失去统治能力', creditorTakeover: '被债主接管关税、矿权和广播', blackMarketTurn: '被倒戈的黑市网络抛弃', financeMinisterFlight: '在财政部长携账本出逃后崩盘',
+    militaryBankruptcy: '因军饷破产和军队讨账而垮台', foreignBackedCouncil: '被外援支持的过渡委员会取代', oligarchDefault: '因寡头停止输血和坏账到期而失势',
+  }[state.ending.type] || '结束了统治';
   const histHint = state.hidden.historyNarrative >= 70 ? '后世多将其神化' : state.hidden.historyNarrative <= 25 ? '后世多将其钉上耻辱柱' : '后世评价两极';
   const achNames = (state.achievements || []).map((a) => a.name).join('、');
   try {
