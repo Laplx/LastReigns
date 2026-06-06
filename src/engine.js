@@ -257,18 +257,18 @@ export function triggerDefection(state) {
   return cand;
 }
 
-// 被推翻类给保底系数：多年统治与私产仍折算少量分，不至于归零
-const ENDING_COEF = { natural: 2.0, exile: 0.5, puppet: 0.4, accident: 0.4, tribunal: 0.25, arrested: 0.2, junta: 0.18, coup: 0.15, assassination: 0.15, uprising: 0.15, frenzy: 0.15, collapse: 0.15, mutiny: 0.15, eliteCollapse: 0.15 };
+// 结局仍决定史书语气，但不再把多年统治与私产压到几乎归零。
+const ENDING_COEF = { natural: 1.75, exile: 1.0, puppet: 0.9, accident: 0.9, tribunal: 0.8, arrested: 0.75, junta: 0.75, eliteCollapse: 0.7, coup: 0.65, assassination: 0.65, uprising: 0.65, frenzy: 0.65, collapse: 0.65, mutiny: 0.65 };
 export function makeEnding(state, type) {
   state.over = true;
   const e = { type, year: state.year, age: leaderAge(state), coef: ENDING_COEF[type] ?? 0, naturalPeaceful: type === 'natural' && state.hidden.heir != null && state.hidden.legacy >= 50 };
-  if (type === 'natural') e.coef = e.naturalPeaceful ? 2.5 : 1.8;
+  if (type === 'natural') e.coef = e.naturalPeaceful ? 2.0 : ENDING_COEF.natural;
   state.ending = e; return e;
 }
 
 export function computeScore(state) {
   const e = state.ending;
-  const base = Math.round(state.year * state.territory * 10);
+  const base = Math.round(state.year * state.territory * 25);
   let domestic = state.wealth.domestic; if (state.sanctioned) domestic *= 0.3;
   const wealthScore = Math.round((state.wealth.overseas * 1.5 + domestic) * 80);
   let dynasty = 0; if (state.flags.heirSucceeded) dynasty += 500; if (state.flags.civilWar) dynasty -= 200;

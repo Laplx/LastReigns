@@ -23,16 +23,22 @@ const ICONS = {
 };
 const DECO_ICON = { health_care: 'health_care', education: 'education', capital: 'capital', press: 'press' };
 
-export function renderTopbar(state) {
+export function renderTopbar(state, summary = '') {
   $('nation').textContent = state.nation;
   $('leader-name').textContent = `${state.leader.name} · ${leaderAge(state)}岁`;
   $('year-label').textContent = `在位第 ${state.year} 年`;
   const km = Math.round(state.area).toLocaleString('en-US');
-  $('phase-label').textContent = `国土 ${km} km²${state.annexedRegions.length ? `（+${state.annexedRegions.length}）` : ''}`;
+  const wealth = ((state.wealth?.domestic || 0) + (state.wealth?.overseas || 0)).toFixed(2);
+  $('phase-label').textContent = `国土 ${km} km²${state.annexedRegions.length ? `（+${state.annexedRegions.length}）` : ''} · 私产 ${wealth} 亿`;
+  const top = $('top-summary');
+  if (top) {
+    top.textContent = summary || '';
+    top.classList.toggle('hidden', !summary);
+  }
 }
 export function setNetStatus(status, title) { const n = $('net-status'); n.className = 'net ' + status; n.title = title || ''; }
-export function showPanels() { $('status-panel').classList.remove('hidden'); $('people-panel').classList.remove('hidden'); }
-export function hidePanels() { $('status-panel').classList.add('hidden'); $('people-panel').classList.add('hidden'); }
+export function showPanels() { $('status-panel').classList.remove('hidden'); }
+export function hidePanels() { $('status-panel').classList.add('hidden'); }
 
 // 两端危险型 'both'：中段绿；过偏黄；极端红。单向 'low'：高=绿，低=红。
 function fillClass(meta, v) {
@@ -69,43 +75,31 @@ export function renderStatus(state, content, flashItems) {
 const LOY_TXT = { loyal: '高', ok: '中', uneasy: '动摇', danger: '危' };
 const COMP_TXT = { high: '强', mid: '中', low: '弱' };
 export function renderPeople(state, opts) {
-  const simmer = $('simmering-summary');
-  if (simmer) {
-    const text = opts.simmering || '';
-    simmer.classList.toggle('hidden', !text);
-    simmer.innerHTML = text ? `<span class="simmering-label">正在发酵</span><span>${esc(text)}</span>` : '';
-  }
   const tabs = $('people-tabs'); tabs.innerHTML = '';
   for (const p of state.people) {
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
     const t = el('button', `ptab${p.id === opts.selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
-    t.innerHTML = `<span class="pt-name">${esc(p.name)}</span><span class="pt-title">${esc(p.title)}</span>
-      <span class="pt-meter"><span class="pt-mark">忠</span><span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span></span>`;
-    if (p.alive) t.addEventListener('click', () => opts.onSelect(p.id));
+    t.innerHTML = `<span class="pt-line"><span class="pt-name">${esc(p.name)}</span></span><span class="pt-meter"><span class="pt-mark">忠</span><span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span></span>`;
+    t.addEventListener('click', () => opts.onSelect(p.id));
     tabs.appendChild(t);
   }
-  const detail = $('people-detail'); detail.innerHTML = '';
-  const p = state.people.find((x) => x.id === opts.selectedId) || state.people.find((x) => x.alive);
-  if (!p) return;
+}
+
+export function renderPersonProfile(person, statusLines = []) {
   const box = el('div', 'pd');
-  box.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(p.name)}</span><span class="pd-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span></div>`;
+  box.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(person.name)}</span><span class="pd-title">${esc(person.alive ? person.title : (person.defected ? '已叛离' : person.title))}</span></div>`;
   const tag = el('div', 'pd-tags');
-  (p.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
-  const loy = loyaltySignal(p.loyalty), comp = competenceSignal(p.competence);
+  (person.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
+  const loy = loyaltySignal(person.loyalty), comp = competenceSignal(person.competence);
   tag.appendChild(el('span', `pd-tag pd-loy-${loy}`, `忠诚·${LOY_TXT[loy]}`));
   tag.appendChild(el('span', `pd-tag pd-comp-${comp}`, `能力·${COMP_TXT[comp]}`));
   box.appendChild(tag);
-  if (p.blurb) box.appendChild(el('div', 'pd-blurb', esc(p.blurb)));
-  const st = el('div', 'pd-status'); (opts.statusFor(p) || []).forEach((l) => st.appendChild(el('p', '', esc(l)))); box.appendChild(st);
-  if (p.alive) {
-    const actions = el('div', 'pd-actions');
-    const btn = el('button', 'primary pd-engage', '私下接触'); btn.disabled = !opts.canEngage;
-    if (opts.canEngage) btn.addEventListener('click', () => opts.onEngage(p));
-    actions.appendChild(btn);
-    actions.appendChild(el('span', 'pd-reason', esc(opts.canEngage ? '私下接触每年仅限一人——而他未必照您说的办。' : (opts.engageReason || ''))));
-    box.appendChild(actions);
-  } else box.appendChild(el('div', 'pd-reason', '此人已不在牌桌上。'));
-  detail.appendChild(box);
+  if (person.blurb) box.appendChild(el('div', 'pd-blurb', esc(person.blurb)));
+  const st = el('div', 'pd-status');
+  (statusLines || []).forEach((l) => st.appendChild(el('p', '', esc(l))));
+  box.appendChild(st);
+  if (!person.alive) box.appendChild(el('div', 'pd-reason', '此人已不在牌桌上。'));
+  return box;
 }
 
 function stage() { return $('stage-content'); }
@@ -139,6 +133,68 @@ export function renderResult(text, summary, onContinue, opts = {}) {
   const b = el('button', 'primary continue', opts.nextYear ? '迈入新的一年 ▸' : '继续');
   b.addEventListener('click', onContinue);
   c.appendChild(b); s.appendChild(c);
+}
+
+export function renderAdvisorSummonCard(state, { selectedId, statusFor, onSelect, onEngage }) {
+  const s = stage(); s.innerHTML = '';
+  const c = el('div', 'card advisor-card');
+  c.innerHTML = `<div class="kicker">密谈</div><div class="title">年终召见</div><div class="narrative">一年将尽，账本、军令和传闻都被压进同一只文件夹。您只能把一位重臣叫到灯下；他会给出答复，也会给自己留下余地。</div>`;
+  const row = el('div', 'summon-tabs');
+  for (const p of state.people) {
+    const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
+    const b = el('button', `summon-person${p.id === selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
+    b.innerHTML = `<span class="sp-main"><span class="sp-name">${esc(p.name)}</span><span class="sp-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span></span><span class="pt-dot loy-${loy}"></span>`;
+    b.addEventListener('click', () => onSelect(p.id));
+    row.appendChild(b);
+  }
+  c.appendChild(row);
+  const p = state.people.find((x) => x.id === selectedId) || state.people.find((x) => x.alive);
+  if (p) {
+    c.appendChild(renderPersonProfile(p, statusFor(p)));
+    const actions = el('div', 'pd-actions advisor-actions');
+    const btn = el('button', 'primary pd-engage', p.alive ? '私下接触' : '此人已离席');
+    btn.disabled = !p.alive;
+    if (p.alive) btn.addEventListener('click', () => onEngage(p));
+    actions.appendChild(btn);
+    c.appendChild(actions);
+  }
+  s.appendChild(c);
+}
+
+export function renderAdvisorActionCard(person, pack, { canReshuffle, onReshuffle, onChoose }) {
+  const s = stage(); s.innerHTML = '';
+  const c = el('div', 'card advisor-card');
+  c.innerHTML = `<div class="kicker">密谈</div><div class="title">私下接触 · ${esc(person.name)}</div><div class="narrative">${esc(pack.intro || '他坐在灯下，等您先开口。')}</div>`;
+  const opts = el('div', 'options advisor-options');
+  (pack.options || []).forEach((opt) => {
+    const b = el('button', 'option advisor-option');
+    b.innerHTML = `<span class="ao-kind">${esc(opt.kind || '行动')}</span>${esc(opt.label || '')}`;
+    b.addEventListener('click', () => onChoose(opt));
+    opts.appendChild(b);
+  });
+  c.appendChild(opts);
+  const re = el('button', 'ghost advisor-reshuffle', '换一批');
+  re.disabled = !canReshuffle;
+  if (canReshuffle) re.addEventListener('click', onReshuffle);
+  c.appendChild(re);
+  s.appendChild(c);
+}
+
+export function renderAdvisorCardResult(person, { reveal, narrative, clue, summary }, onContinue) {
+  const s = stage(); s.innerHTML = '';
+  const c = el('div', 'card');
+  c.innerHTML = `<div class="kicker">密谈结果</div><div class="title">${esc(person.name)}退下之后</div>`;
+  const parts = [narrative, reveal, clue].filter(Boolean).map(esc);
+  if (parts.length) c.appendChild(el('div', 'result-text', parts.join('\n\n')));
+  if (summary && summary.length) {
+    const chips = el('div', 'summary-chips');
+    summary.forEach((x) => chips.appendChild(chipFor(x)));
+    c.appendChild(chips);
+  }
+  const b = el('button', 'primary continue', '迈入新的一年');
+  b.addEventListener('click', onContinue);
+  c.appendChild(b);
+  s.appendChild(c);
 }
 
 export function renderBudget(state, onConfirm) {
@@ -183,10 +239,10 @@ function briefingBody(state) {
   const guide = el('div', 'bf-guide');
   guide.innerHTML = `<div class="kicker" style="margin-bottom:6px">怎么玩</div>
     <ul>
-      <li>六个核心指标：<b>军队、精英、民心、国际，中庸是保命，不是美德</b>；财政别见底，健康别归零。</li>
+      <li>六个核心指标：<b>军队、精英、民心、国际，中庸是保命，不是美德</b>。财政别见底，健康别归零。</li>
       <li>事件卡的每个选择都会牵动这些指标——没有标准答案，全是取舍。</li>
-      <li>四位重臣可点开查看，每年可私下接触一人——但他未必照您说的办；忠诚的好用，有本事却不忠的或许更好用。</li>
-      <li>分数到结局才揭晓：在位越久×地盘越大、私产越多、有人接班都加分；而史书怎么写您，会放大或抹平这一切。</li>
+      <li>四位重臣可点击查看，每年可私下接触一人——但他未必照您说的办。忠诚的好用，有本事却不忠的或许更好用。</li>
+      <li>分数到结局才揭晓：在位越久×地盘越大、私产越多、有人接班都加分。而史书怎么写您，会放大或抹平这一切。</li>
     </ul>`;
   c.appendChild(guide);
   return c;
@@ -238,7 +294,7 @@ export function renderAdvisorOptions(person, pack, { canReshuffle, onReshuffle, 
   box.innerHTML = `<h3>${esc(person.name)}</h3>`;
   if (pack.intro) box.appendChild(el('div', 'adv-reveal', esc(pack.intro)));
   (pack.options || []).forEach((opt) => { const b = el('button', 'adv-opt'); b.innerHTML = `<span class="ao-kind">${esc(opt.kind || '行动')}</span>${esc(opt.label || '')}`; b.addEventListener('click', () => onChoose(opt)); box.appendChild(b); });
-  const re = el('button', 'ghost', canReshuffle ? '换一批（本年一次）' : '今年问不出别的了'); re.disabled = !canReshuffle; if (canReshuffle) re.addEventListener('click', onReshuffle);
+  const re = el('button', 'ghost', '换一批'); re.disabled = !canReshuffle; if (canReshuffle) re.addEventListener('click', onReshuffle);
   box.appendChild(re); return box;
 }
 export function renderAdvisorOutcome(person, { reveal, narrative, clue, summary }) {

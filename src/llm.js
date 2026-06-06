@@ -164,7 +164,7 @@ export async function advisorOptions(state, content, person) {
       { role: 'user', content: `${summarize(state, content)}
 
 元首私下接触「${person.name}」（${person.title}）。性格：${person.traits.join('、')}；私心：${person.hiddenInterest}；当前对元首：${sig}；${comp}。
-生成恰好 3 个动作选项，kind 各不相同(探听/拉拢/敲打/委以重任/暗查中选3)。每项自洽、直接给结果，文字简练。
+生成恰好 3 个动作选项，kind 各不相同(从探听/拉拢/敲打/委以重任/暗查/试探中选3)。每项自洽、直接给结果，文字简练。
 - fidelity 只能取：${allowed.join(' / ')}。faithful 忠实；discounted 打折；feigned 阳奉阴违(表面顺从、暗里谋私)；betrayal 背刺(把意图透露给对元首不利方)。
 - 该人若离心或私心重，"探听"给的情报可片面甚至误导(写进 reveal)，但不点破。
 - fidelity 非 faithful 时，foreshadow_clue 必填(事后可察觉、当下不点破的线索)。

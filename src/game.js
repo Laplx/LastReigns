@@ -1,7 +1,7 @@
 // 入口 / 编排：连续卡片流、年份自然流逝、预算降频、链显式化、私信、结局。
 
 import * as ui from './ui.js';
-import { createInitialState, leaderAge } from './state.js';
+import { createInitialState, leaderAge, rngShuffle } from './state.js';
 import * as engine from './engine.js';
 import * as events from './events.js';
 import * as chains from './chains.js';
@@ -10,12 +10,15 @@ import { resetAtmosphere } from './atmosphere.js';
 
 let content, state, selectedPersonId = null;
 let chainNarr = {}, _poolBusy = false, _poolPromise = null, _specialBusy = false, _atmoBusy = false;
+let advisorPrefetchYear = 0, advisorPrefetch = {};
+const THEMES = ['paper', 'slate', 'crimson', 'verdigris'];
+function applyRandomTheme() { document.body.dataset.theme = THEMES[Math.floor(Math.random() * THEMES.length)]; }
 function lvlCfg() {
   const l = llm.llmLevel();
-  const base = { lowWater: 20, llmGroup: 4, llmConcurrency: 99 };
-  if (l === 'low') return { ...base, specP: 0, reskin: false, bootStatic: 40, bootLlm: 0, topupStatic: 20, topupLlm: 0 };
-  if (l === 'high') return { ...base, specP: 0.15, reskin: true, bootStatic: 20, bootLlm: 20, topupStatic: 10, topupLlm: 10 };
-  return { ...base, specP: 0.08, reskin: true, bootStatic: 28, bootLlm: 12, topupStatic: 12, topupLlm: 8 };
+  const base = { lowWater: 20, targetPool: 40, llmGroup: 2, llmConcurrency: 5 };
+  if (l === 'low') return { ...base, specP: 0, reskin: false, bootStatic: 20, bootLlm: 0, topupStatic: 20, topupLlm: 0 };
+  if (l === 'high') return { ...base, specP: 0.15, reskin: true, bootStatic: 20, bootLlm: 10, topupStatic: 10, topupLlm: 10 };
+  return { ...base, specP: 0.08, reskin: true, bootStatic: 20, bootLlm: 10, topupStatic: 12, topupLlm: 8 };
 }
 
 async function loadContent() {
@@ -66,6 +69,7 @@ function openSettingsFlow() {
 
 function showBriefing() {
   resetAtmosphere();
+  advisorPrefetchYear = 0; advisorPrefetch = {};
   const seed = (Date.now() ^ Math.floor(performance.now() * 1000)) >>> 0;
   state = createInitialState(seed, content);
   document.getElementById('boot').classList.add('hidden');
@@ -130,9 +134,10 @@ async function buildNormalPool({ boot = false, progress = null } = {}) {
     if (added < llmNeed) events.fillStaticNormalPool(state, content, llmNeed - added, boot ? 'boot' : 'instant');
   }
 }
-function maybeTopupNormalPool() {
+function maybeTopupNormalPool(force = false) {
   const cfg = lvlCfg();
-  if (_poolBusy || events.availableNormalCount(state, content) >= cfg.lowWater) return;
+  const count = events.availableNormalCount(state, content);
+  if (_poolBusy || (!force && count >= cfg.lowWater) || (force && count >= cfg.targetPool)) return;
   if (state.poolStats) state.poolStats.lowWater = (state.poolStats.lowWater || 0) + 1;
   _poolBusy = true;
   _poolPromise = buildNormalPool({ boot: false }).catch(() => {}).finally(() => { _poolBusy = false; _poolPromise = null; });
@@ -147,7 +152,7 @@ async function ensureNormalCardReady() {
   stop();
 }
 async function startGame() {
-  ui.renderTopbar(state);
+  ui.renderTopbar(state, simmeringSummary());
   const cfg = lvlCfg();
   if (llm.isAvailable() && cfg.bootLlm > 0) {
     const prog = ui.showLoadingProgress(LOADING.boot);
@@ -158,6 +163,7 @@ async function startGame() {
     await buildNormalPool({ boot: true });
   }
   refreshPanels();
+  maybeTopupNormalPool(true);
   gameLoop();
 }
 
@@ -202,15 +208,16 @@ function takePrioritySpecial() {
 }
 
 function coreItems(summary) { return (summary || []).filter((s) => s.type === 'core'); }
-function refreshPanels(flashItems) { ui.renderTopbar(state); ui.renderStatus(state, content, flashItems || null); renderPeoplePanel(); }
+function refreshPanels(flashItems) { ui.renderTopbar(state, simmeringSummary()); ui.renderStatus(state, content, flashItems || null); renderPeoplePanel(); }
 function renderPeoplePanel() {
   if (!selectedPersonId || !state.people.find((p) => p.id === selectedPersonId && p.alive)) selectedPersonId = (state.people.find((p) => p.alive) || {}).id;
-  const canEngage = state.lastDeepContactYear !== state.year;
-  const engageReason = state.lastDeepContactYear === state.year ? '今年您已私下接触过一位了。' : (llm.isAvailable() ? '' : '叙事联网未就绪，将使用规则兜底。');
   ui.renderPeople(state, {
-    selectedId: selectedPersonId, statusFor: buildPersonStatus, canEngage, engageReason, simmering: simmeringSummary(),
-    onSelect: (id) => { selectedPersonId = id; renderPeoplePanel(); },
-    onEngage: (p) => engagePerson(p),
+    selectedId: selectedPersonId,
+    onSelect: (id) => {
+      selectedPersonId = id;
+      const p = state.people.find((x) => x.id === id);
+      if (p) ui.openOverlay(ui.renderPersonProfile(p, buildPersonStatus(p)));
+    },
   });
 }
 
@@ -250,12 +257,15 @@ async function nextCard() {
   if (!card) { await ensureNormalCardReady(); card = events.drawOne(state, content); }
   if (!card) { engine.makeEnding(state, 'natural'); return; }
   await presentCard(card);
-  afterCard();
+  await afterCard();
 }
 
-function afterCard() {
+async function afterCard() {
   state.cardsThisYear++;
-  if (state.cardsThisYear >= state.yearLength) yearTick();
+  if (state.cardsThisYear >= state.yearLength) {
+    if (annualAdvisorDue()) await presentAnnualAdvisorCard();
+    yearTick();
+  }
 }
 function yearTick() {
   engine.annualHealthDecay(state);
@@ -268,7 +278,20 @@ function yearTick() {
   if (ending || state.over) return;
   if (state.year >= state.maxYears) { engine.makeEnding(state, 'natural'); return; }
   state.year++; state.cardsThisYear = 0; state.chainCardsThisYear = 0; state.yearLength = 3 + Math.floor(state.rng() * 3);
+  advisorPrefetchYear = 0; advisorPrefetch = {};
   refreshPanels();
+}
+
+function annualAdvisorDue() {
+  return state.lastDeepContactYear !== state.year && state.people.some((p) => p.alive);
+}
+
+function nextYearAfterThisCard() {
+  return state.cardsThisYear + 1 >= state.yearLength && !annualAdvisorDue();
+}
+
+function maybePrefetchAdvisorForYear() {
+  if (state.cardsThisYear + 1 >= state.yearLength && annualAdvisorDue()) prefetchAdvisorPacks();
 }
 
 function crisisWarningsForCard() {
@@ -337,10 +360,11 @@ function presentCard(card) {
     const disp = events.substCard(state, card);
     ui.renderCard(disp, {
       onChoose: (i) => {
-        const willTick = state.cardsThisYear + 1 >= state.yearLength;
+        const willTick = nextYearAfterThisCard();
         const { resultText, summary } = events.resolveOption(state, card, i);
         if (card.onResolve) card.onResolve(state, i);
         refreshPanels(coreItems(summary));
+        maybePrefetchAdvisorForYear();
         ui.renderResult(resultText, summary, resolve, { nextYear: willTick });
       },
     });
@@ -349,11 +373,88 @@ function presentCard(card) {
 function presentBudget() {
   return new Promise((resolve) => {
     ui.renderBudget(state, (alloc) => {
-      const willTick = state.cardsThisYear + 1 >= state.yearLength;
+      const willTick = nextYearAfterThisCard();
       const { summary } = engine.applyBudget(state, alloc);
       refreshPanels(coreItems(summary));
+      maybePrefetchAdvisorForYear();
       ui.renderResult('预算已拨付，各方各取所需。', summary, resolve, { nextYear: willTick });
     });
+  });
+}
+
+function presentAnnualAdvisorCard() {
+  return new Promise((resolve) => {
+    const alive = state.people.filter((p) => p.alive);
+    if (!alive.length) { state.lastDeepContactYear = state.year; resolve(); return; }
+    if (!selectedPersonId || !alive.find((p) => p.id === selectedPersonId)) selectedPersonId = alive[0].id;
+    prefetchAdvisorPacks();
+
+    const showSummon = () => {
+      ui.renderAdvisorSummonCard(state, {
+        selectedId: selectedPersonId,
+        statusFor: buildPersonStatus,
+        onSelect: (id) => { selectedPersonId = id; showSummon(); },
+        onEngage: async (person) => {
+          const pack = await advisorPackFor(person);
+          showAdvisorOptions(person, pack, resolve);
+        },
+      });
+    };
+    showSummon();
+  });
+}
+
+function prefetchAdvisorPacks() {
+  if (!llm.isAvailable() || !state || state.over) return;
+  if (advisorPrefetchYear !== state.year) { advisorPrefetchYear = state.year; advisorPrefetch = {}; }
+  for (const person of state.people.filter((p) => p.alive)) {
+    if (advisorPrefetch[person.id]) continue;
+    const entry = { done: false, pack: null, promise: null };
+    entry.promise = llm.advisorOptions(state, content, person)
+      .then((pack) => pack || offlineAdvisorOptions(person))
+      .catch(() => offlineAdvisorOptions(person))
+      .then((pack) => { entry.pack = pack; return pack; })
+      .finally(() => { entry.done = true; });
+    advisorPrefetch[person.id] = entry;
+  }
+}
+
+async function advisorPackFor(person) {
+  if (advisorPrefetchYear !== state.year) { advisorPrefetchYear = state.year; advisorPrefetch = {}; }
+  const entry = advisorPrefetch[person.id];
+  if (!entry) return loadAdvisorPack(person);
+  if (entry.done) return entry.pack || offlineAdvisorOptions(person);
+  const stop = ui.showLoading(LOADING.advisor(person.name));
+  try { return (await entry.promise) || offlineAdvisorOptions(person); }
+  finally { stop(); }
+}
+
+async function loadAdvisorPack(person) {
+  let pack = null;
+  if (llm.isAvailable()) {
+    const stop = ui.showLoading(LOADING.advisor(person.name));
+    try { pack = await llm.advisorOptions(state, content, person); } catch { pack = null; }
+    stop();
+    if (!pack) ui.toast('叙事联网中断，改用规则兜底');
+  }
+  return pack || offlineAdvisorOptions(person);
+}
+
+function showAdvisorOptions(person, pack, resolveYear) {
+  ui.renderAdvisorActionCard(person, pack, {
+    canReshuffle: state.advisorReshuffleUsedYear !== state.year,
+    onReshuffle: async () => {
+      state.advisorReshuffleUsedYear = state.year;
+      const nextPack = await loadAdvisorPack(person);
+      showAdvisorOptions(person, nextPack, resolveYear);
+    },
+    onChoose: (opt) => {
+      state.lastDeepContactYear = state.year;
+      const { narrative, clue, summary } = engine.applyAdvisorCommand(state, person, opt);
+      state.archive.push({ year: state.year, title: `私下接触 · ${person.name}`, result: opt.label || opt.kind || '密谈' });
+      refreshPanels(coreItems(summary));
+      ui.renderAdvisorCardResult(person, { reveal: opt.reveal, narrative, clue, summary }, resolveYear);
+    },
   });
 }
 
@@ -417,35 +518,65 @@ function offlineAdvisorOptions(person) {
   const probeF = pickAdvisorFidelity(person, 0.04);
   const buyF = pickAdvisorFidelity(person, -0.06);
   const pressF = pickAdvisorFidelity(person, 0.08);
+  const trustF = pickAdvisorFidelity(person, -0.02);
+  const auditF = pickAdvisorFidelity(person, 0.03);
+  const testF = pickAdvisorFidelity(person, 0.06);
+  const options = [
+    {
+      kind: '探听', label: '让他递一份实话', fidelity: probeF,
+      reveal: advisorReveal(person, focus, probeF),
+      public_narrative: '他低声汇报了几件“还不宜写进文件”的小事。',
+      foreshadow_clue: probeF === 'faithful' ? '' : '（他离开前，把随身记事本中间几页撕得很干净。）',
+      proposed_effects: comp === 'high' ? { [focus]: '+small' } : {},
+      hidden_effects: { elite: '-small' },
+      memory_note: `${person.name}递过一份私下消息，真假还有待回看。`,
+    },
+    {
+      kind: '拉拢', label: '给他一点甜头', fidelity: buyF,
+      reveal: '', public_narrative: '他收下您的暗示，承诺会把该稳住的人稳住。',
+      foreshadow_clue: buyF === 'faithful' ? '' : '（他感谢得太快，像是早就知道您会开这个价。）',
+      proposed_effects: { loyalty: { [person.id]: '+mid' }, wealth: -0.25 },
+      hidden_effects: { finance: '-small' },
+      memory_note: `${person.name}接受过一次私下安抚。`,
+    },
+    {
+      kind: '敲打', label: '逼他立刻办事', fidelity: pressF,
+      reveal: '', public_narrative: '他当场点头，把责任接了过去。',
+      foreshadow_clue: pressF === 'faithful' ? '' : '（他出门时对秘书说了一句很轻的话，秘书没有记进会议纪要。）',
+      proposed_effects: { [focus]: '+mid', loyalty: { [person.id]: '-small' } },
+      hidden_effects: { elite: '-small', finance: '-small' },
+      memory_note: `${person.name}被您当面敲打过。`,
+    },
+    {
+      kind: '委任', label: '把一件大事交给他', fidelity: trustF,
+      reveal: '', public_narrative: '他沉默片刻，像是在估量这份信任的重量。',
+      foreshadow_clue: trustF === 'faithful' ? '' : '（他没有立刻问目标，却先问了预算和人事名单。）',
+      proposed_effects: { [focus]: '+big', loyalty: { [person.id]: '+small' } },
+      hidden_effects: { elite: '-small', finance: '-small' },
+      memory_note: `${person.name}被委以一件足以扩张影响的大事。`,
+    },
+    {
+      kind: '暗查', label: '让人查他的账', fidelity: auditF,
+      reveal: advisorReveal(person, focus, auditF),
+      public_narrative: '安全局递来的材料不算厚，却足够让几个人睡不好。',
+      foreshadow_clue: auditF === 'faithful' ? '' : '（材料的装订线很新，像是有人临时换过几页。）',
+      proposed_effects: { elite: '+small', loyalty: { [person.id]: '-small' } },
+      hidden_effects: { intl: '+small' },
+      memory_note: `${person.name}曾被您暗中查过账。`,
+    },
+    {
+      kind: '试探', label: '给他一件半真差事', fidelity: testF,
+      reveal: advisorReveal(person, focus, testF),
+      public_narrative: '他答应得恰到好处，既不热切，也不推辞。',
+      foreshadow_clue: testF === 'faithful' ? '' : '（那件半真半假的差事，第二天就出现在了不该出现的谈话里。）',
+      proposed_effects: { [focus]: '+small' },
+      hidden_effects: { elite: '-small' },
+      memory_note: `${person.name}被您用一件半真差事试探过。`,
+    },
+  ];
   return {
     intro: `${posture}（规则兜底）`,
-    options: [
-      {
-        kind: '探听', label: '让他递一份实话', fidelity: probeF,
-        reveal: advisorReveal(person, focus, probeF),
-        public_narrative: '他低声汇报了几件“还不宜写进文件”的小事。',
-        foreshadow_clue: probeF === 'faithful' ? '' : '（他离开前，把随身记事本中间几页撕得很干净。）',
-        proposed_effects: comp === 'high' ? { [focus]: '+small' } : {},
-        hidden_effects: { elite: '-small' },
-        memory_note: `${person.name}递过一份私下消息，真假还有待回看。`,
-      },
-      {
-        kind: '拉拢', label: '给他一点甜头', fidelity: buyF,
-        reveal: '', public_narrative: '他收下您的暗示，承诺会把该稳住的人稳住。',
-        foreshadow_clue: buyF === 'faithful' ? '' : '（他感谢得太快，像是早就知道您会开这个价。）',
-        proposed_effects: { loyalty: { [person.id]: '+mid' }, wealth: -0.25 },
-        hidden_effects: { finance: '-small' },
-        memory_note: `${person.name}接受过一次私下安抚。`,
-      },
-      {
-        kind: '敲打', label: '逼他立刻办事', fidelity: pressF,
-        reveal: '', public_narrative: '他当场点头，把责任接了过去。',
-        foreshadow_clue: pressF === 'faithful' ? '' : '（他出门时对秘书说了一句很轻的话，秘书没有记进会议纪要。）',
-        proposed_effects: { [focus]: '+mid', loyalty: { [person.id]: '-small' } },
-        hidden_effects: { elite: '-small', finance: '-small' },
-        memory_note: `${person.name}被您当面敲打过。`,
-      },
-    ],
+    options: rngShuffle(state, options).slice(0, 3),
   };
 }
 async function engagePerson(person) {
@@ -538,4 +669,5 @@ const LOADING = {
   advisor: (name) => [`${name}正斟酌着措辞……`, `${name}也给自己留了个心眼……`, '茶续了一杯，话还没说到点上……'],
 };
 
+applyRandomTheme();
 boot();
