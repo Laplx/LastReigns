@@ -69,6 +69,12 @@ export function renderStatus(state, content, flashItems) {
 const LOY_TXT = { loyal: '高', ok: '中', uneasy: '动摇', danger: '危' };
 const COMP_TXT = { high: '强', mid: '中', low: '弱' };
 export function renderPeople(state, opts) {
+  const simmer = $('simmering-summary');
+  if (simmer) {
+    const text = opts.simmering || '';
+    simmer.classList.toggle('hidden', !text);
+    simmer.innerHTML = text ? `<span class="simmering-label">正在发酵</span><span>${esc(text)}</span>` : '';
+  }
   const tabs = $('people-tabs'); tabs.innerHTML = '';
   for (const p of state.people) {
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
@@ -138,8 +144,8 @@ export function renderResult(text, summary, onContinue, opts = {}) {
 export function renderBudget(state, onConfirm) {
   const s = stage(); s.innerHTML = '';
   const fields = [
-    { key: 'army', label: '军队', desc: '安抚军心，还是养出山头？' },
-    { key: 'elite', label: '精英福利', desc: '分给自己人，还是喂大寡头？' },
+    { key: 'army', label: '军队', desc: '同心之始，分化之机' },
+    { key: 'elite', label: '精英福利', desc: '分给自己人，抑或喂大寡头' },
     { key: 'welfare', label: '民生基建', desc: '安抚民心，还是造神？' },
     { key: 'self', label: '个人账户', desc: '中饱私囊，但会掏空国库' },
   ];

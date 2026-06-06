@@ -262,6 +262,11 @@ body { font-weight: 450; color: var(--ink); }
 
 /* ====================== v1.3 ====================== */
 .panel-kicker { font-size: .72em; letter-spacing: .16em; color: var(--gold); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+.people-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.people-head .panel-kicker { margin-bottom: 0; flex: none; }
+.simmering-summary { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: flex-end; gap: 8px; color: var(--ink-dim); font-family: var(--sans); font-size: .88em; line-height: 1.35; text-align: right; }
+.simmering-label { flex: none; font-family: var(--sans); color: var(--gold); font-size: .74em; font-weight: 800; letter-spacing: .12em; }
+.simmering-summary span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* 装饰指标：整行居中 */
 .deco-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 44px; }
@@ -336,6 +341,9 @@ body { font-weight: 450; color: var(--ink); }
 
 @media (max-width: 560px) {
   .deco-grid { grid-template-columns: 1fr 1fr; }
+  .people-head { align-items: flex-start; flex-direction: column; }
+  .simmering-summary { justify-content: flex-start; text-align: left; }
+  .simmering-summary span:last-child { white-space: normal; }
   .people-row { flex-wrap: wrap; }
   .person { min-width: 45%; }
 }

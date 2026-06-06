@@ -12,7 +12,7 @@ let content, state, selectedPersonId = null;
 let chainNarr = {}, _poolBusy = false, _poolPromise = null, _specialBusy = false, _atmoBusy = false;
 function lvlCfg() {
   const l = llm.llmLevel();
-  const base = { lowWater: 20, llmGroup: 2, llmConcurrency: 3 };
+  const base = { lowWater: 20, llmGroup: 4, llmConcurrency: 99 };
   if (l === 'low') return { ...base, specP: 0, reskin: false, bootStatic: 40, bootLlm: 0, topupStatic: 20, topupLlm: 0 };
   if (l === 'high') return { ...base, specP: 0.15, reskin: true, bootStatic: 20, bootLlm: 20, topupStatic: 10, topupLlm: 10 };
   return { ...base, specP: 0.08, reskin: true, bootStatic: 28, bootLlm: 12, topupStatic: 12, topupLlm: 8 };
@@ -208,10 +208,25 @@ function renderPeoplePanel() {
   const canEngage = state.lastDeepContactYear !== state.year;
   const engageReason = state.lastDeepContactYear === state.year ? '今年您已私下接触过一位了。' : (llm.isAvailable() ? '' : '叙事联网未就绪，将使用规则兜底。');
   ui.renderPeople(state, {
-    selectedId: selectedPersonId, statusFor: buildPersonStatus, canEngage, engageReason,
+    selectedId: selectedPersonId, statusFor: buildPersonStatus, canEngage, engageReason, simmering: simmeringSummary(),
     onSelect: (id) => { selectedPersonId = id; renderPeoplePanel(); },
     onEngage: (p) => engagePerson(p),
   });
+}
+
+function simmeringSummary() {
+  const titles = chains.activeChainTitles(state, content);
+  if (titles.length >= 2) return `“${titles[0]}”与“${titles[1]}”同时压在桌面下。`;
+  if (titles.length === 1) return `“${titles[0]}”还没有自行消失。`;
+  const i = state.ind;
+  if (i.finance < 24) return '财政部的回函越来越短，等钱的人越来越多。';
+  if (i.army < 28 || i.army > 78) return '军营里的口径开始与官邸不太一致。';
+  if (i.elite < 30 || i.elite > 78) return '几位大人物在等别人先说错话。';
+  if (i.morale < 28 || i.morale > 80) return '街面上的声音比简报里写得更整齐。';
+  if (i.intl < 22 || i.intl > 80) return '使馆区的灯和记者的镜头都不太寻常。';
+  if (i.health < 55) return '秘书处开始微调您的公开行程。';
+  if (state.year >= state.budgetDueYear - 1) return '下一轮分配临近，各方已经开始试探。';
+  return '官邸暂时安静，文件夹仍在慢慢变厚。';
 }
 
 async function gameLoop() { while (!state.over) await nextCard(); finishGame(); }
@@ -517,7 +532,7 @@ function buildObituaryFallback() {
 }
 
 const LOADING = {
-  boot: ['幕僚们正在为新主子拟定卷宗……', '各方势力正在打探您的底细……', '官邸的钟摆，计时还是倒计时……'],
+  boot: ['幕僚们正在为新主子拟定卷宗……', '各方势力正在打探您的底细……', '官邸的钟摆，计时还是倒计时……', '稍等片刻，有人将呈上第一份密报……'],
   budget: ['财政部正在核账……', '正在筹备本年政务……', '大人们都在等着分这块饼……'],
   obituary: ['史官们正在落笔……', '官方与民间，正在争夺同一段历史……'],
   advisor: (name) => [`${name}正斟酌着措辞……`, `${name}也给自己留了个心眼……`, '茶续了一杯，话还没说到点上……'],

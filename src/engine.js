@@ -239,7 +239,7 @@ export function checkCrises(state) {
     roll(state, 'morale', 8, 0.18, 'uprising', 94, 0.13, 'frenzy'),
     roll(state, 'intl', 6, 0.16, 'collapse', 94, 0.14, 'tribunal'),
     roll(state, 'finance', 7, 0.18, 'mutiny', null, 0, null),
-    rngChance(state, 0.006) ? 'accident' : null, // 略荒诞的意外
+    state.year >= 4 && rngChance(state, 0.006) ? 'accident' : null, // 略荒诞的意外
   ].filter(Boolean);
   if (rolls.length) return makeEnding(state, rolls[Math.floor(state.rng() * rolls.length)]);
 
