@@ -63,13 +63,19 @@ export function getActiveSteps(state, content) {
 
 function buildChainCard(state, def, ac, narrCache) {
   const step = def.steps[ac.step];
+  const deferred = (ac.defers || 0) > 0;
+  const title = deferred ? `${step.title} · 续报` : step.title;
+  const baseNarrative = (narrCache && narrCache[`${def.id}_${ac.step}`]) || step.narrative;
+  const narrative = deferred
+    ? `这件事被搁置后，并没有自行消失。相同的人、相同的账本、相同的外国记者，又以更糟的姿态回到桌上。\n\n${baseNarrative}`
+    : baseNarrative;
   return {
-    id: `chain_${def.id}_${ac.step}`,
+    id: `chain_${def.id}_${ac.step}_${ac.defers || 0}`,
     type: 'chain', chain: true,
     kicker: step.kicker || def.title,
-    title: step.title,
+    title,
     speaker: step.speaker,
-    narrative: (narrCache && narrCache[`${def.id}_${ac.step}`]) || step.narrative,
+    narrative,
     options: step.options.map((o) => ({ text: o.text, hint: o.hint, effects: o.effects, result: o.result })),
     onResolve: (st, i) => advanceChain(st, def, ac, i),
   };

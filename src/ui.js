@@ -45,7 +45,7 @@ export function renderStatus(state, content, flashItems) {
   for (const meta of INDICATOR_META) {
     const v = state.ind[meta.key];
     const cind = el('div', 'cind'); cind.dataset.key = meta.key;
-    cind.title = coreMood(state, content, meta.key).text;
+    cind.title = state.atmosphereOverride?.[meta.key] || coreMood(state, content, meta.key).text;
     cind.innerHTML = `<div class="ci-icon">${ICONS[meta.key] || ''}</div>
       <div class="vbar"><div class="fill ${fillClass(meta, v)}" style="height:${v}%"></div>${meta.danger === 'both' ? '<span class="sweet"></span>' : ''}</div>
       <div class="ci-name">${meta.name}</div>`;
@@ -74,7 +74,7 @@ export function renderPeople(state, opts) {
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
     const t = el('button', `ptab${p.id === opts.selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
     t.innerHTML = `<span class="pt-name">${esc(p.name)}</span><span class="pt-title">${esc(p.title)}</span>
-      <span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span>`;
+      <span class="pt-meter"><span class="pt-mark">忠</span><span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span></span>`;
     if (p.alive) t.addEventListener('click', () => opts.onSelect(p.id));
     tabs.appendChild(t);
   }
@@ -85,13 +85,10 @@ export function renderPeople(state, opts) {
   box.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(p.name)}</span><span class="pd-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span></div>`;
   const tag = el('div', 'pd-tags');
   (p.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
-  box.appendChild(tag);
   const loy = loyaltySignal(p.loyalty), comp = competenceSignal(p.competence);
-  const stats = el('div', 'pd-stats');
-  stats.innerHTML = `
-    <div class="stat"><span class="stat-ic">忠</span><span class="statbar"><span class="statfill loy-${loy}" style="width:${p.loyalty}%"></span></span><span class="stat-v loy-t-${loy}">忠诚·${LOY_TXT[loy]}</span></div>
-    <div class="stat"><span class="stat-ic">能</span><span class="statbar"><span class="statfill comp-${comp}" style="width:${p.competence}%"></span></span><span class="stat-v">能力·${COMP_TXT[comp]}</span></div>`;
-  box.appendChild(stats);
+  tag.appendChild(el('span', `pd-tag pd-loy-${loy}`, `忠诚·${LOY_TXT[loy]}`));
+  tag.appendChild(el('span', `pd-tag pd-comp-${comp}`, `能力·${COMP_TXT[comp]}`));
+  box.appendChild(tag);
   if (p.blurb) box.appendChild(el('div', 'pd-blurb', esc(p.blurb)));
   const st = el('div', 'pd-status'); (opts.statusFor(p) || []).forEach((l) => st.appendChild(el('p', '', esc(l)))); box.appendChild(st);
   if (p.alive) {
@@ -141,9 +138,9 @@ export function renderResult(text, summary, onContinue, opts = {}) {
 export function renderBudget(state, onConfirm) {
   const s = stage(); s.innerHTML = '';
   const fields = [
-    { key: 'army', label: '军队', desc: '军饷与将领的封赏（过多则军方坐大）' },
-    { key: 'elite', label: '精英福利', desc: '部长亲信的好处（过多则寡头坐大）' },
-    { key: 'welfare', label: '民生基建', desc: '安抚民心（过多则造神失控）' },
+    { key: 'army', label: '军队', desc: '安抚军心，还是养出山头？' },
+    { key: 'elite', label: '精英福利', desc: '分给自己人，还是喂大寡头？' },
+    { key: 'welfare', label: '民生基建', desc: '安抚民心，还是造神？' },
     { key: 'self', label: '个人账户', desc: '中饱私囊，但会掏空国库' },
   ];
   const vals = { army: 25, elite: 25, welfare: 25, self: 25 };
@@ -176,13 +173,13 @@ export function renderArchive(state) {
 // 《独裁者手册》腔的玩法说明，开局与"手册"按钮共用
 function briefingBody(state) {
   const c = el('div', 'briefing');
-  c.appendChild(el('div', 'narrative', `您靠一场政变上了台。从今天起，目标只有一个：坐稳这把椅子，最好能坐到寿终正寝。`));
+  c.appendChild(el('div', 'narrative', `一场深夜政变后，您成了${esc(state.nation)}的新主人。前任的体温还没凉透，您的椅子已经有人在惦记了。目标只有一个：活得久、捞得多、死在自己的床上。`));
   const guide = el('div', 'bf-guide');
   guide.innerHTML = `<div class="kicker" style="margin-bottom:6px">怎么玩</div>
     <ul>
-      <li>盯住六根比例条：<b>军队、精英、民心、国际，中庸是保命，不是美德</b>（太高太低都会出事）；财政别见底，健康别归零。</li>
+      <li>六个核心指标：<b>军队、精英、民心、国际，中庸是保命，不是美德</b>；财政别见底，健康别归零。</li>
       <li>事件卡的每个选择都会牵动这些指标——没有标准答案，全是取舍。</li>
-      <li>四位重臣（卡片下方）可点开查看，每年可私下接触一人——但他未必照您说的办；忠诚的好用，有本事却不忠的更好用，只要您按得住。</li>
+      <li>四位重臣可点开查看，每年可私下接触一人——但他未必照您说的办；忠诚的好用，有本事却不忠的或许更好用。</li>
       <li>分数到结局才揭晓：在位越久×地盘越大、私产越多、有人接班都加分；而史书怎么写您，会放大或抹平这一切。</li>
     </ul>`;
   c.appendChild(guide);
@@ -277,7 +274,7 @@ export function renderBriefing(state, onStart) {
   c.appendChild(btn); s.appendChild(c);
 }
 
-const ENDING_TITLE = { natural: '寿终正寝', coup: '政变之夜', assassination: '一杯毒酒', junta: '军政府上台', puppet: '沦为傀儡', uprising: '揭竿而起', frenzy: '狂热反噬', collapse: '孤立崩溃', mutiny: '欠饷哗变', tribunal: '海牙的审判', arrested: '阶下之囚', exile: '仓皇出逃', accident: '离奇的意外', eliteCollapse: '众叛亲离' };
+const ENDING_TITLE = { natural: '寿终正寝', coup: '政变之夜', assassination: '一杯毒酒', junta: '军政府上台', puppet: '沦为傀儡', uprising: '揭竿而起', frenzy: '狂热反噬', collapse: '政权崩溃', mutiny: '欠饷哗变', tribunal: '海牙的审判', arrested: '阶下之囚', exile: '仓皇出逃', accident: '离奇的意外', eliteCollapse: '众叛亲离' };
 export function renderEnding(state, score, obituary) {
   hidePanels();
   const s = stage(); s.innerHTML = '';
@@ -300,6 +297,16 @@ export function renderEnding(state, score, obituary) {
     <tr><td>身后成就</td><td>+${score.achScore}</td></tr>
     <tr class="total"><td>最终得分</td><td>${score.total}</td></tr>`;
   c.appendChild(t);
+  const seed = el('div', 'seed-row ending-seed');
+  seed.appendChild(el('span', 'seed-label', '本局种子'));
+  seed.appendChild(el('span', 'seed-code', esc(String(state.seed))));
+  const copy = el('button', 'ghost seed-copy', '复制');
+  copy.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(String(state.seed)); toast('本局种子已复制'); }
+    catch { toast(`本局种子：${state.seed}`, 4200); }
+  });
+  seed.appendChild(copy);
+  c.appendChild(seed);
   const again = el('button', 'primary', '再来一局'); again.addEventListener('click', () => location.reload()); c.appendChild(again);
   const exp = el('button', 'ghost', '导出存档'); exp.style.marginLeft = '10px'; exp.addEventListener('click', () => downloadSave(state)); c.appendChild(exp);
   s.appendChild(c);

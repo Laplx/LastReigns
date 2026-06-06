@@ -3,10 +3,10 @@
 import { rngChance, rngPick } from './state.js';
 import { applyEffects, adjustLoyalty } from './engine.js';
 
-// 预处理：标注每张卡"涉及哪些具名人物"（_feat），用规范名扫描。
+// 预处理：标注每张卡"涉及哪些具名人物"（_feat），用人名别名扫描。
 export function prepareContent(content) {
-  const canon = {}; // 规范名 → roleId
-  for (const p of content.people) canon[(p.namePool || [p.id])[0]] = p.id;
+  const canon = {}; // 人名别名 → roleId
+  for (const p of content.people) for (const name of (p.namePool || [p.id])) canon[name] = p.id;
   content._canon = canon;
   for (const c of content.events) c._feat = featOf(c, canon);
   return content;
@@ -18,8 +18,19 @@ function featOf(card, canon) {
   return [...feat];
 }
 
-// 国名替换（人名用规范名，已与事件文本一致，无需替换）
-export function subst(state, text) { return typeof text === 'string' ? text.replace(/恩加拉/g, state.nationShort) : text; }
+// 国名与本局人物名替换。事件数据可继续写每个角色的规范名。
+function substPeople(state, text) {
+  let out = text;
+  for (const p of state.people || []) {
+    for (const alias of p.aliases || [p.canonicalName, p.name]) {
+      if (alias && alias !== p.name) out = out.replaceAll(alias, p.name);
+    }
+  }
+  return out;
+}
+export function subst(state, text) {
+  return typeof text === 'string' ? substPeople(state, text.replace(/恩加拉/g, state.nationShort)) : text;
+}
 export function substCard(state, card) {
   const c = { ...card };
   c.narrative = subst(state, card.narrative);
@@ -59,16 +70,59 @@ function weightedPick(state, pool) {
   return pool[pool.length - 1];
 }
 function allNormals(state, content) { return [...content.events.filter((c) => c.type !== 'notify'), ...(state.llmPool || [])]; }
+function normalizeKey(text) {
+  return String(text || '')
+    .replace(/[“”"‘’'「」『』（）()《》<>，。、“”！？!?：:；;·\s]/g, '')
+    .trim()
+    .slice(0, 180);
+}
+function cardKey(c) {
+  const text = [c?.title || '', c?.narrative || ''].filter(Boolean).join('|');
+  return normalizeKey(text || c?.id || '');
+}
+function appendRecent(arr, value, limit) {
+  if (!value) return;
+  const i = arr.indexOf(value);
+  if (i >= 0) arr.splice(i, 1);
+  arr.push(value);
+  if (arr.length > limit) arr.splice(0, arr.length - limit);
+}
+function archiveKeys(state) {
+  return new Set((state.archive || []).flatMap((a) => [a.eventKey, a.title, a.result]).filter(Boolean).map(normalizeKey));
+}
+export function rememberShown(state, card) {
+  if (!state || !card) return;
+  if (!state.seenEventIds) state.seenEventIds = [];
+  if (!state.seenEventKeys) state.seenEventKeys = [];
+  appendRecent(state.seenEventIds, card.id, 220);
+  appendRecent(state.seenEventKeys, cardKey(card), 220);
+}
 function freshNormals(state, content) {
   const all = allNormals(state, content).filter((c) => isEligible(state, c));
-  let fresh = all.filter((c) => !state.seenEventIds.includes(c.id));
-  if (!fresh.length) { const recent = new Set(state.seenEventIds.slice(-15)); fresh = all.filter((c) => !recent.has(c.id)); }
+  const archived = archiveKeys(state);
+  const seenIds = new Set(state.seenEventIds || []);
+  const seenKeys = new Set(state.seenEventKeys || []);
+  let fresh = all.filter((c) => !seenIds.has(c.id) && !seenKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
+  if (!fresh.length) {
+    const recent = new Set((state.seenEventIds || []).slice(-24));
+    const recentKeys = new Set((state.seenEventKeys || []).slice(-24));
+    fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
+  }
+  if (!fresh.length) { const recent = new Set((state.seenEventIds || []).slice(-18)); const recentKeys = new Set((state.seenEventKeys || []).slice(-18)); fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c))); }
   return fresh;
 }
 function freshNotifies(state, content) {
   const all = content.events.filter((c) => c.type === 'notify' && isEligible(state, c));
-  let fresh = all.filter((c) => !state.seenEventIds.includes(c.id));
-  if (!fresh.length) { const recent = new Set(state.seenEventIds.slice(-6)); fresh = all.filter((c) => !recent.has(c.id)); }
+  const archived = archiveKeys(state);
+  const seenIds = new Set(state.seenEventIds || []);
+  const seenKeys = new Set(state.seenEventKeys || []);
+  let fresh = all.filter((c) => !seenIds.has(c.id) && !seenKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
+  if (!fresh.length) {
+    const recent = new Set((state.seenEventIds || []).slice(-10));
+    const recentKeys = new Set((state.seenEventKeys || []).slice(-10));
+    fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
+  }
+  if (!fresh.length) { const recent = new Set((state.seenEventIds || []).slice(-8)); const recentKeys = new Set((state.seenEventKeys || []).slice(-8)); fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c))); }
   return fresh;
 }
 
@@ -83,7 +137,7 @@ export function drawOne(state, content) {
 // ---- 事与愿违 ------------------------------------------------------------
 function personByName(state, name) {
   if (!name) return null;
-  return state.people.find((p) => p.alive && (name.includes(p.name) || p.name.includes(name)));
+  return state.people.find((p) => p.alive && [p.name, p.canonicalName, ...(p.aliases || [])].filter(Boolean).some((n) => name.includes(n) || n.includes(name)));
 }
 function pickTwistTarget(state, card, option) {
   const ids = new Set();
@@ -111,11 +165,11 @@ export function resolveOption(state, card, optionIndex) {
   if (option.commissionBiography) state.biographyCommissioned = true;
   const twist = maybeTwist(state, card, option);
 
-  if (card.id) state.seenEventIds.push(card.id);
+  rememberShown(state, card);
   if (card.unique) state.uniqueSeen.push(card.id);
 
   let resultText = subst(state, option.result || '');
   if (twist) resultText += `\n\n${twist.clue}`;
-  state.archive.push({ year: state.year, title: subst(state, card.title), result: subst(state, option.text) });
+  state.archive.push({ year: state.year, title: subst(state, card.title), result: subst(state, option.text), eventId: card.id, eventKey: cardKey(card) });
   return { resultText, changed, deltas, summary, twist };
 }

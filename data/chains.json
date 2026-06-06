@@ -120,7 +120,7 @@
             "hint": "快，但会出事",
             "effects": {
               "army": "+small",
-              "intl": "+mid",
+              "intl": "-mid",
               "history": "-mid",
               "morale": "-mid"
             },
@@ -158,7 +158,7 @@
             "text": "血腥镇压，杀一儆百",
             "hint": "立威，举世侧目",
             "effects": {
-              "intl": "+big",
+              "intl": "-big",
               "history": "-big",
               "army": "+small",
               "morale": "+big"
@@ -201,7 +201,7 @@
             "hint": "扬威，火上浇油",
             "effects": {
               "army": "+mid",
-              "intl": "+mid",
+              "intl": "-mid",
               "borderTension": "+big",
               "morale": "+small"
             },
@@ -239,7 +239,7 @@
             "text": "开战，赌一把领土",
             "hint": "赢了扩张，输了崩盘",
             "effects": {
-              "intl": "+big",
+              "intl": "-big",
               "army": "+small",
               "health": "-small",
               "annex": true,
@@ -281,18 +281,18 @@
             "text": "以间谍罪驱逐它们",
             "hint": "干脆，国际震怒",
             "effects": {
-              "intl": "+big",
+              "intl": "-big",
               "history": "-mid",
               "morale": "-small"
             },
-            "result": "NGO 被连夜请上飞机。西方的反应激烈得超出预期，但起码，眼前清静了。",
+            "result": "NGO 被连夜请上飞机。西方的门关上了不少，但起码，眼前清静了。",
             "goto": 1
           },
           {
             "text": "容忍它们，做做姿态",
             "hint": "缓和，养虎为患",
             "effects": {
-              "intl": "-mid",
+              "intl": "+big",
               "elite": "-small",
               "morale": "+small"
             },
@@ -317,7 +317,7 @@
             "text": "操控一场必胜的选举",
             "hint": "好看，破绽难免",
             "effects": {
-              "intl": "-mid",
+              "intl": "+mid",
               "elite": "-small",
               "flags": {
                 "stagedElection": true
@@ -326,14 +326,14 @@
                 "press": "+small"
               }
             },
-            "result": "您以压倒性优势“当选”。国际观察员的报告措辞微妙，但您连任了。",
+            "result": "您以压倒性优势“当选”。国际观察员的报告措辞微妙，下一轮要求也更具体了。",
             "goto": -1
           },
           {
             "text": "宣布取消选举，强力维稳",
             "hint": "硬",
             "effects": {
-              "intl": "+big",
+              "intl": "-big",
               "army": "+mid",
               "history": "-mid"
             },
@@ -344,7 +344,7 @@
             "text": "真的举行一场自由选举",
             "hint": "没人料到",
             "effects": {
-              "intl": "-big",
+              "intl": "+big",
               "elite": "-big",
               "army": "-mid",
               "history": "+big",
@@ -353,7 +353,7 @@
               },
               "morale": "+mid"
             },
-            "result": "投票箱是真的，计票也是真的。这一夜，恩加拉变了，您的权力也变了。",
+            "result": "投票箱是真的，计票也是真的。观察团和反对派一起住进了新秩序里，您的权力也变了。",
             "goto": -1
           }
         ]

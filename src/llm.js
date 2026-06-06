@@ -6,12 +6,14 @@ import { coreMood, decoLabel } from './atmosphere.js';
 import { loyaltySignal, competenceSignal, sanitizeEffects, allowedFidelities } from './engine.js';
 
 let _available = false, _model = '';
+let _settingsAvailable = false, _settingsModel = '';
 // 前端可配置的 LLM 设置（localStorage）：覆盖服务端 .env.local
 function loadSettings() { try { return JSON.parse(localStorage.getItem('lastreigns_llm') || '{}'); } catch { return {}; } }
 let _settings = loadSettings();
 export function getSettings() { return { ..._settings }; }
-export function saveSettings(s) { _settings = s || {}; try { localStorage.setItem('lastreigns_llm', JSON.stringify(_settings)); } catch {} }
+export function saveSettings(s) { _settings = s || {}; _settingsAvailable = false; _settingsModel = ''; try { localStorage.setItem('lastreigns_llm', JSON.stringify(_settings)); } catch {} }
 export function llmLevel() { return _settings.level || 'mid'; }
+export function hasClientSettings() { return !!(_settings && _settings.apiKey); }
 function effective() {
   if (!_settings.apiKey) return null;
   const fmt = _settings.format === 'anthropic' ? 'anthropic' : 'openai';
@@ -22,11 +24,16 @@ function effective() {
   };
 }
 export async function checkHealth() {
-  try { const r = await fetch('/api/health'); const j = await r.json(); _available = !!j.llm; _model = j.model || ''; return j; }
-  catch { _available = false; return { ok: false, llm: false }; }
+  try { const r = await fetch('/api/health'); const j = await r.json(); _available = !!j.llm; _model = _available ? (j.model || '') : ''; return j; }
+  catch { _available = false; _model = ''; return { ok: false, llm: false }; }
 }
-export function isAvailable() { return _available || !!(_settings && _settings.apiKey); }
-export function modelName() { const e = effective(); return e ? e.model : _model; }
+export async function refreshAvailability() {
+  const health = await checkHealth();
+  if (hasClientSettings()) return probeSettings();
+  return health;
+}
+export function isAvailable() { return hasClientSettings() ? _settingsAvailable : _available; }
+export function modelName() { return hasClientSettings() ? _settingsModel : _model; }
 
 async function call(messages, { json = false, temperature = 0.9, max_tokens = 1100, timeoutMs = 0 } = {}) {
   const ctrl = new AbortController();
@@ -46,10 +53,28 @@ async function call(messages, { json = false, temperature = 0.9, max_tokens = 11
 }
 async function callJSON(messages, opts) { const text = await call(messages, { ...opts, json: true }); const a = text.indexOf('{'), b = text.lastIndexOf('}'); return JSON.parse(a >= 0 && b > a ? text.slice(a, b + 1) : text); }
 
+async function probeSettings() {
+  const e = effective();
+  _settingsAvailable = false;
+  _settingsModel = '';
+  if (!e) return { ok: false, llm: false, source: 'client' };
+  try {
+    await call([
+      { role: 'system', content: '只回复 OK。' },
+      { role: 'user', content: 'OK' },
+    ], { temperature: 0, max_tokens: 8, timeoutMs: 8000 });
+    _settingsAvailable = true;
+    _settingsModel = e.model;
+    return { ok: true, llm: true, model: e.model, format: e.format, source: 'client' };
+  } catch {
+    return { ok: false, llm: false, model: e.model, format: e.format, source: 'client' };
+  }
+}
+
 const SYS = '你在为一款基于《独裁者手册》的讽刺向政治模拟游戏生成中文叙事。基调冷峻、克制、黑色幽默，绝不说教。偏事实/新闻/内部简报口吻，少用生硬比喻。绝不出现数字、百分比、指标名或箭头。中文引号一律用全角双引号""。';
 const EFFECT_SPEC = `effects 键只能从下列中选，值为档位字符串("+small"/"-small"/"+mid"/"-mid"/"+big"/"-big"/"+huge"/"-huge")：
 army(军队) elite(精英) morale(民心) intl(国际) finance(财政) health(健康)；可选 wealth(数字,-1~1)、wealthDomestic(数字)、deco{health_care,education,capital,press}(档位)。
-注意：军队/精英/民心/国际四项"过高过低都危险"(中段才安全)——例如 morale 太高=狂热失控、太低=民怨；intl 太高=制裁干预、太低=孤立。finance 低=国库见底。多数选项应对 1~2 项产生较大影响(big/huge)，可再带小影响。`;
+注意：军队/精英/民心/国际四项"过高过低都危险"(中段才安全)——例如 morale 太高=狂热失控、太低=民怨；intl 太高=外部干预、颜色渗透、无法自主决策，太低=孤立、制裁、失去外部承认。finance 低=国库见底。多数选项应对 1~2 项产生较大影响(big/huge)，可再带小影响。`;
 
 function summarize(state, content) {
   const moods = INDICATOR_META.map((m) => `${m.name}：${coreMood(state, content, m.key).text}`).join('；');
@@ -58,7 +83,7 @@ function summarize(state, content) {
   const chains = state.activeChains.map((a) => (content.chains.find((d) => d.id === a.id) || {}).title).filter(Boolean).join('、');
   const recent = state.archive.slice(-4).map((a) => a.title).join('、');
   return `背景：中非小国${state.nation}，独裁者${state.leader.name}。第${state.year}年，元首${leaderAge(state)}岁，国土约${Math.round(state.area)}平方公里${state.annexedRegions.length ? `（含新并入的${state.annexedRegions.join('、')}）` : ''}。
-当前氛围——${moods}。表面：${deco}。${state.sanctioned ? '正受国际制裁。' : ''}
+当前氛围——${moods}。表面：${deco}。${state.sanctioned ? '因孤立与失认承受制裁。' : ''}
 身边重臣：${people || '已无人可用'}。正在发酵：${chains || '暂无'}。最近：${recent || '无'}。`;
 }
 
@@ -75,7 +100,7 @@ function toCard(state, o, idx, tag) {
 
 // 开局/财政年：预生成一批本局专属事件
 export async function pregenEvents(state, content, n) {
-  if (!_available) return [];
+  if (!isAvailable()) return [];
   const names = state.people.filter((p) => p.alive).map((p) => `${p.name}(${p.title})`).join('、');
   try {
     const obj = await callJSON([
@@ -92,7 +117,7 @@ ${EFFECT_SPEC}
 }
 
 export async function generateSpecialEvent(state, content) {
-  if (!_available) return null;
+  if (!isAvailable()) return null;
   try {
     const obj = await callJSON([
       { role: 'system', content: SYS },
@@ -102,8 +127,24 @@ export async function generateSpecialEvent(state, content) {
   } catch { return null; }
 }
 
+export async function generateAtmosphereOverride(state, content) {
+  if (!isAvailable()) return null;
+  try {
+    const obj = await callJSON([
+      { role: 'system', content: SYS },
+      { role: 'user', content: `${summarize(state, content)}\n\n请为六个核心态势各写一句当前氛围短语，用于鼠标提示。每句 8~18 个汉字，像近侍、秘书、卫队、部长或身边人听来的异常反馈；不要出现数字、百分比、箭头、指标名，不要解释规则。严格输出 JSON：{"army":"...","elite":"...","morale":"...","intl":"...","finance":"...","health":"..."}` },
+    ], { temperature: 0.9, max_tokens: 360, timeoutMs: 9000 });
+    const out = {};
+    for (const key of INDICATOR_META.map((m) => m.key)) {
+      const text = String(obj[key] || obj.moods?.[key] || '').replace(/[0-9０-９%％→←+\-]/g, '').trim();
+      if (text) out[key] = text.slice(0, 36);
+    }
+    return Object.keys(out).length ? out : null;
+  } catch { return null; }
+}
+
 export async function advisorOptions(state, content, person) {
-  if (!_available) return null;
+  if (!isAvailable()) return null;
   const allowed = allowedFidelities(person);
   const sig = { loyal: '忠心', ok: '尚可', uneasy: '心思浮动', danger: '离心离德' }[loyaltySignal(person.loyalty)];
   const comp = { high: '能力出众、手腕老练', mid: '能力中等', low: '能力平庸、常误事' }[competenceSignal(person.competence)];
@@ -150,8 +191,8 @@ export async function reskinChainStep(state, content, def, stepIndex) {
 }
 
 export async function generateObituary(state, content, scoreCtx) {
-  if (!_available) return null;
-  const endingDesc = { natural: '在位多年后于官邸自然死亡', coup: '被军队政变推翻并死于非命', assassination: '在宴会后被毒杀', junta: '被坐大的军方架空、退居二线', puppet: '晚年沦为寡头的傀儡', uprising: '死于民众起义', frenzy: '被自己点燃的狂热吞噬', collapse: '政权在孤立中垮塌', mutiny: '死于欠饷军队的哗变', tribunal: '被押上海牙法庭', arrested: '沦为阶下囚并在狱中病故', exile: '流亡海外', accident: '死于离奇意外', eliteCollapse: '众叛亲离、被迫交权' }[state.ending.type] || '结束了统治';
+  if (!isAvailable()) return null;
+  const endingDesc = { natural: '在位多年后于官邸自然死亡', coup: '被军队政变推翻并死于非命', assassination: '在宴会后被毒杀', junta: '被坐大的军方架空、退居二线', puppet: '晚年沦为寡头的傀儡', uprising: '死于民众起义', frenzy: '被自己点燃的狂热吞噬', collapse: '政权在孤立、制裁与失去承认中垮塌', mutiny: '死于欠饷军队的哗变', tribunal: '在外部干预与国际司法压力下被押上海牙法庭', arrested: '沦为阶下囚并在狱中病故', exile: '流亡海外', accident: '死于离奇意外', eliteCollapse: '众叛亲离、被迫交权' }[state.ending.type] || '结束了统治';
   const histHint = state.hidden.historyNarrative >= 70 ? '后世多将其神化' : state.hidden.historyNarrative <= 25 ? '后世多将其钉上耻辱柱' : '后世评价两极';
   const achNames = (state.achievements || []).map((a) => a.name).join('、');
   try {

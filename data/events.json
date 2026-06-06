@@ -4,7 +4,7 @@
     "type": "normal",
     "category": "military",
     "kicker": "军务",
-    "weight": 3,
+    "weight": 2,
     "speaker": "卡苏拉将军",
     "title": "将军的“小小请求”",
     "narrative": "“阁下，部队的装备还是独立那年的老古董。”卡苏拉将军把一份预算推到您面前，“弟兄们最近……闲话有点多。给点甜头，他们的嘴就严实了。”",
@@ -64,7 +64,7 @@
           "loyalty": {
             "general": "+mid"
           },
-          "intl": "+mid",
+          "intl": "-mid",
           "borderTension": "+big",
           "morale": "+small"
         },
@@ -99,7 +99,7 @@
     "type": "normal",
     "category": "diplomacy",
     "kicker": "外交",
-    "weight": 3,
+    "weight": 2,
     "speaker": "杜邦先生",
     "title": "一场“像样的选举”",
     "narrative": "前宗主国的大使措辞优雅地“建议”恩加拉举行一次多党选举，“以彰显进步”。杜邦先生在一旁补充：“配合一下，巴黎的援助和那批军火许可就好办了。”",
@@ -108,7 +108,7 @@
         "text": "办一场结果已知的“选举”",
         "hint": "国际上好看，内部要花钱摆平",
         "effects": {
-          "intl": "-mid",
+          "intl": "+small",
           "deco": {
             "press": "+small"
           },
@@ -118,31 +118,31 @@
             "stagedElection": true
           }
         },
-        "result": "您以98.7%的得票连任。大使鼓了掌，没人当真。"
+        "result": "您以98.7%的得票连任。大使鼓了掌，观察员也留下了下一轮要求。"
       },
       {
         "text": "断然拒绝，强调“国情不同”",
         "hint": "硬气，但代价在后头",
         "effects": {
-          "intl": "+big",
+          "intl": "-big",
           "army": "+small",
           "loyalty": {
             "general": "+small"
           }
         },
-        "result": "大使收起笑容。几天后，一笔援助“因技术原因暂缓”。"
+        "result": "大使收起笑容。几天后，援助暂停，承认函也少了几封。"
       },
       {
         "text": "真的放开选举试试",
         "hint": "没人这么劝过您",
         "effects": {
-          "intl": "-big",
+          "intl": "+big",
           "elite": "-big",
           "army": "-mid",
           "history": "+big",
           "morale": "+mid"
         },
-        "result": "反对派一夜之间冒出十几个。将军和部长们看您的眼神变了。"
+        "result": "反对派一夜之间冒出十几个，观察团也住进了首都。将军和部长们看您的眼神变了。"
       }
     ]
   },
@@ -151,7 +151,7 @@
     "type": "normal",
     "category": "economy",
     "kicker": "矿业",
-    "weight": 3,
+    "weight": 2,
     "speaker": "陈先生",
     "title": "采矿权续约",
     "narrative": "陈先生带着合同和一只很沉的公文包来访。“铜矿的特许权今年到期。续约的话——劳工保护那几条，能不能“灵活处理”？包里是我们的诚意。”",
@@ -214,22 +214,22 @@
         "text": "邀请他们来，全程“妥善安排”",
         "hint": "安全局擅长这个",
         "effects": {
-          "intl": "-mid",
+          "intl": "+big",
           "loyalty": {
             "spy": "+mid"
           },
           "wealthDomestic": -0.2
         },
-        "result": "调查组看到的，都是您希望他们看到的。报告四平八稳。"
+        "result": "调查组进了门，报告四平八稳；只是从此他们知道了官邸哪扇门最容易打开。"
       },
       {
         "text": "拒绝入境，谴责干涉内政",
         "effects": {
-          "intl": "+big",
+          "intl": "-big",
           "army": "+small",
           "history": "-small"
         },
-        "result": "拒绝本身成了头条。失踪的人，依旧失踪。"
+        "result": "拒绝入境成了头条。承认少了，制裁多了，失踪的人依旧失踪。"
       },
       {
         "text": "甩锅给地方军阀，交几个替罪羊",
@@ -418,7 +418,7 @@
         "hint": "国库充实，民众挨饿",
         "effects": {
           "wealth": 0.6,
-          "intl": "-mid",
+          "intl": "+mid",
           "morale": "-big"
         },
         "result": "贷款到账。第二天，面包的价格涨了三成。"
@@ -428,7 +428,7 @@
         "hint": "他很乐意效劳",
         "effects": {
           "wealth": 0.4,
-          "intl": "-small",
+          "intl": "+small",
           "loyalty": {
             "finance": "+mid"
           }
@@ -439,7 +439,7 @@
       {
         "text": "拒绝，不想被人攥住把柄",
         "effects": {
-          "intl": "+small",
+          "intl": "-small",
           "wealthDomestic": -0.3,
           "loyalty": {
             "finance": "-small"
@@ -465,7 +465,7 @@
         "text": "连夜清场，抓几个带头的",
         "hint": "立竿见影，后患难说",
         "effects": {
-          "intl": "+mid",
+          "intl": "-mid",
           "loyalty": {
             "spy": "+mid",
             "priest": "-mid"
@@ -493,7 +493,7 @@
         "text": "亲自去和学生“对话”",
         "hint": "冒险的姿态",
         "effects": {
-          "intl": "-small",
+          "intl": "+small",
           "history": "+mid",
           "health": "-small",
           "elite": "-small",
@@ -719,7 +719,7 @@
           "deco": {
             "health_care": "+big"
           },
-          "intl": "-mid",
+          "intl": "+big",
           "elite": "-small",
           "morale": "+mid"
         },
@@ -732,7 +732,7 @@
           "deco": {
             "health_care": "-small"
           },
-          "intl": "+small",
+          "intl": "-mid",
           "morale": "-big"
         },
         "twistable": true,
@@ -821,7 +821,7 @@
         "text": "开放边境，接收难民",
         "hint": "博得美名，添了乱子",
         "effects": {
-          "intl": "-big",
+          "intl": "+big",
           "history": "+mid",
           "wealthDomestic": -0.3,
           "morale": "-mid"
@@ -832,19 +832,19 @@
         "text": "关闭边境，武力驱离",
         "hint": "将军支持",
         "effects": {
-          "intl": "+big",
+          "intl": "-mid",
           "loyalty": {
             "general": "+mid"
           },
           "borderTension": "+mid",
           "history": "-mid"
         },
-        "result": "边境线上响了几枪。镜头被挡在了铁丝网外。"
+        "result": "边境线上响了几枪。镜头被挡在铁丝网外，承认与援助也被挡在了门外。"
       },
       {
         "text": "象征性收一点，其余“劝返”",
         "effects": {
-          "intl": "-small",
+          "intl": "+small",
           "morale": "-small"
         },
         "twistable": true,
@@ -1111,7 +1111,7 @@
             "general": "+big"
           },
           "borderTension": "+big",
-          "intl": "+mid",
+          "intl": "-mid",
           "annex": true,
           "wealth": 0.4
         },
@@ -1234,7 +1234,7 @@
     "type": "normal",
     "category": "court",
     "kicker": "身后",
-    "weight": 3,
+    "weight": 2,
     "unique": true,
     "requires": {
       "healthMax": 56
@@ -1481,7 +1481,7 @@
     "type": "normal",
     "category": "economy",
     "kicker": "财政",
-    "weight": 3,
+    "weight": 2,
     "speaker": "恩戈齐博士",
     "title": "国库的窟窿",
     "narrative": "恩戈齐博士摊开账本：“国库快见底了。要么加税，要么举债，要么……您从私囊里垫一点？”他最后那句，说得格外轻。",
@@ -1587,12 +1587,12 @@
       {
         "text": "索性闭关到底，全民皆兵",
         "effects": {
-          "intl": "-small",
+          "intl": "-mid",
           "army": "+small",
           "morale": "+mid",
           "finance": "-mid"
         },
-        "result": "您把国门焊死，号召同仇敌忾。墙内一时同心，墙外愈发漆黑。"
+        "result": "您把国门焊死，号召同仇敌忾。墙内一时同心，墙外只剩制裁和沉默。"
       },
       {
         "text": "低声下气，四处求和",
@@ -1657,7 +1657,7 @@
     "type": "normal",
     "category": "military",
     "kicker": "军务",
-    "weight": 3,
+    "weight": 2,
     "requires": {
       "armyMin": 80
     },
@@ -2040,7 +2040,7 @@
       {
         "text": "倒向强势的一方",
         "effects": {
-          "intl": "-mid",
+          "intl": "+big",
           "finance": "+mid",
           "loyalty": {
             "dupont": "+small"
@@ -2051,19 +2051,19 @@
       {
         "text": "继续骑墙，谁也不得罪",
         "effects": {
-          "intl": "+mid",
+          "intl": "-mid",
           "borderTension": "+small"
         },
-        "result": "您含糊其辞。两边都觉得您不可靠，开始另寻代理人。"
+        "result": "您含糊其辞。两边都觉得您不可靠，门一扇扇关上。"
       },
       {
         "text": "高调不结盟，自立门户",
         "effects": {
-          "intl": "+small",
+          "intl": "-small",
           "morale": "+mid",
           "history": "+small"
         },
-        "result": "您发表了一篇慷慨激昂的演说。听着提气，账还是得自己算。"
+        "result": "您发表了一篇慷慨激昂的演说。听着提气，承认和账单却都得自己想办法。"
       }
     ]
   },
@@ -2079,21 +2079,21 @@
       {
         "text": "交人换好处",
         "effects": {
-          "intl": "-mid",
+          "intl": "+mid",
           "finance": "+mid",
           "history": "-mid",
           "morale": "-small"
         },
-        "result": "您把人送上了引渡的飞机。流亡圈子里，从此多了一条关于您的骂名。"
+        "result": "您把人送上了引渡的飞机。好处到了账，流亡圈子里也多了一条关于您的骂名。"
       },
       {
         "text": "收留他，当个筹码",
         "effects": {
-          "intl": "+mid",
+          "intl": "-mid",
           "borderTension": "+mid",
           "wealth": 0.3
         },
-        "result": "您把他护了下来——人情，是要连本带利收回来的。"
+        "result": "您把他护了下来。筹码是筹码，外面的门也因此关上几扇。"
       },
       {
         "text": "让他\"意外\"消失",
@@ -2163,7 +2163,7 @@
       {
         "text": "放人换松绑",
         "effects": {
-          "intl": "-big",
+          "intl": "+mid",
           "elite": "-small",
           "deco": {
             "press": "+small"
@@ -2174,23 +2174,23 @@
       {
         "text": "只放一两个做做样子",
         "effects": {
-          "intl": "-small",
+          "intl": "+small",
           "morale": "-small"
         },
-        "result": "您象征性地放了人。西方将信将疑，制裁松了半寸。"
+        "result": "您象征性地放了人。西方将信将疑，制裁松了半寸，监督多了半寸。"
       },
       {
         "text": "一个不放，硬扛到底",
         "effects": {
-          "intl": "+mid",
+          "intl": "-mid",
           "army": "+small",
           "history": "-small"
         },
-        "result": "您寸步不让。强硬是强硬，国库的外汇也快见底了。"
+        "result": "您寸步不让。强硬是强硬，国库的外汇和外面的承认也快见底了。"
       }
     ],
     "requires": {
-      "intlMin": 55
+      "intlMax": 30
     }
   },
   {
@@ -2285,10 +2285,7 @@
         "text": "连夜贬值，国库回血",
         "effects": {
           "finance": "+big",
-          "morale": "-big",
-          "deco": {
-            "economy": "-small"
-          }
+          "morale": "-big"
         },
         "result": "一觉醒来，所有人的钱都毛了。国库却奇迹般地满了。"
       },
@@ -2495,7 +2492,7 @@
         "effects": {
           "morale": "-big",
           "finance": "+mid",
-          "intl": "-small"
+          "intl": "+small"
         },
         "result": "面包涨了三成。经济学家点头，老百姓砸锅。"
       }
@@ -2598,7 +2595,7 @@
         "text": "全面管控，必要时断网",
         "effects": {
           "morale": "+mid",
-          "intl": "+mid",
+          "intl": "-mid",
           "deco": {
             "press": "-big"
           },
@@ -2810,9 +2807,6 @@
           "loyalty": {
             "reformer": "+big"
           },
-          "deco": {
-            "economy": "+small"
-          },
           "morale": "+small"
         },
         "result": "内阁年轻了十岁。老人们靠边站，磨刀霍霍。"
@@ -2979,7 +2973,7 @@
         "text": "接受国际援助，全力救灾",
         "effects": {
           "morale": "+mid",
-          "intl": "-big",
+          "intl": "+big",
           "finance": "+small",
           "elite": "-small"
         },
@@ -2989,12 +2983,12 @@
         "text": "自力更生，封锁灾区",
         "effects": {
           "morale": "-big",
-          "intl": "+small",
+          "intl": "-mid",
           "deco": {
             "press": "-mid"
           }
         },
-        "result": "灾区被围了起来。里面的哭声，传不太出来。"
+        "result": "灾区被围了起来。里面的哭声传不出来，外面的援助也进不来。"
       },
       {
         "text": "高调慰问，低调救灾",
@@ -3136,7 +3130,7 @@
     "type": "normal",
     "category": "military",
     "kicker": "密报",
-    "weight": 3,
+    "weight": 2,
     "title": "政变的前兆",
     "narrative": "安全局截获了几通加密通话，矛头直指军方高层。山雨欲来，您手里的牌不多了。",
     "options": [
@@ -3291,8 +3285,7 @@
         "text": "篡改数据，报喜不报忧",
         "effects": {
           "deco": {
-            "press": "+small",
-            "economy": "+small"
+            "press": "+small"
           },
           "morale": "+small",
           "history": "-small"
@@ -3303,7 +3296,7 @@
         "text": "如实公布，倒逼施政",
         "effects": {
           "morale": "-small",
-          "intl": "-small",
+          "intl": "+small",
           "loyalty": {
             "reformer": "+small"
           },
@@ -3330,30 +3323,30 @@
       {
         "text": "严词驳斥，强调内政",
         "effects": {
-          "intl": "+big",
+          "intl": "-big",
           "morale": "+small",
           "army": "+small",
           "history": "-small"
         },
-        "result": "您义正词严地回击。国内叫好，国外的制裁清单又长了。"
+        "result": "您义正词严地回击。国内叫好，国外的承认和账户一同变冷。"
       },
       {
         "text": "部分妥协，放几个人",
         "effects": {
-          "intl": "-mid",
+          "intl": "+mid",
           "elite": "-small",
           "deco": {
             "press": "+small"
           }
         },
-        "result": "几扇牢门开了。反对派也跟着活络起来。"
+        "result": "几扇牢门开了。反对派也跟着活络起来，观察员的名片塞满了门缝。"
       },
       {
         "text": "冷处理，不予理会",
         "effects": {
-          "intl": "+small"
+          "intl": "-small"
         },
-        "result": "您当没看见。信热闹了几天，也就过去了。"
+        "result": "您当没看见。信热闹了几天，几笔外援也跟着没了声响。"
       }
     ]
   },
@@ -3458,7 +3451,7 @@
       {
         "text": "强硬交涉，陈兵示威",
         "effects": {
-          "intl": "+mid",
+          "intl": "-mid",
           "borderTension": "+big",
           "army": "+small",
           "morale": "+small"
@@ -3470,7 +3463,7 @@
         "effects": {
           "finance": "-big",
           "borderTension": "-mid",
-          "intl": "-small"
+          "intl": "+small"
         },
         "result": "您掏钱买了条河。屈辱是屈辱，水总算有了。"
       },
@@ -3500,7 +3493,7 @@
         "effects": {
           "finance": "+big",
           "morale": "-big",
-          "intl": "-mid",
+          "intl": "+big",
           "elite": "-small"
         },
         "result": "钱到了账，账本也交了出去。第二天，补贴没了。"
@@ -3509,9 +3502,9 @@
         "text": "只要钱，不要监督，谈崩",
         "effects": {
           "finance": "-small",
-          "intl": "+small"
+          "intl": "-mid"
         },
-        "result": "谈判破裂。您保住了面子，丢掉了一笔活钱。"
+        "result": "谈判破裂。您保住了面子，丢掉了一笔活钱和几张愿意握手的脸。"
       },
       {
         "text": "接受贷款，账目交财长\"美化\"",
@@ -3565,7 +3558,7 @@
         "text": "亲自去对话",
         "effects": {
           "morale": "+mid",
-          "intl": "-small",
+          "intl": "+small",
           "health": "-small",
           "elite": "-small",
           "history": "+mid"
@@ -3721,7 +3714,7 @@
             "health_care": "+mid"
           },
           "morale": "+small",
-          "intl": "-small"
+          "intl": "+small"
         },
         "result": "您把事情摆上了台面。花了钱，但堵住了更大的窟窿。"
       },
@@ -3740,7 +3733,7 @@
       {
         "text": "甩锅邻国投毒",
         "effects": {
-          "intl": "+mid",
+          "intl": "-mid",
           "morale": "+mid",
           "borderTension": "+mid"
         },

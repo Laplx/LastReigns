@@ -9,6 +9,7 @@ npm-debug.log*
 # claude temp / local
 .tmp_*
 *.local.log
+.serena/
 
 # os
 .DS_Store

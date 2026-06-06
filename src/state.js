@@ -23,7 +23,7 @@ export const INDICATOR_META = [
   { key: 'army', name: '军队', danger: 'both' },
   { key: 'elite', name: '精英', danger: 'both' },
   { key: 'morale', name: '民心', danger: 'both' },   // 0=离心民怨 100=狂热造神 中=安稳
-  { key: 'intl', name: '国际', danger: 'both' },     // 0=孤立 100=制裁干预 中=安稳
+  { key: 'intl', name: '国际', danger: 'both' },     // 0=孤立/制裁/失认 100=干预/渗透/颜色革命 中=安稳
   { key: 'finance', name: '财政', danger: 'low' },   // 低=国库见底；高=仅机会成本
   { key: 'health', name: '健康', danger: 'low' },    // 低=死亡；高=仅招忌
 ];
@@ -42,7 +42,9 @@ export function createInitialState(seed, content) {
   for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
   const chosen = pool.slice(0, 4).map((p) => ({
     id: p.id,
-    name: (p.namePool || [p.id])[0], // 用规范名，保证事件文本一致
+    name: pick(p.namePool || [p.id]),
+    canonicalName: (p.namePool || [p.id])[0],
+    aliases: p.namePool || [p.id],
     title: p.title, traits: p.traits || [], blurb: p.blurb || '', persona: p.persona || '',
     hiddenInterest: p.hiddenInterest || '',
     loyalty: p.initLoyalty ?? 55, competence: p.competence ?? 55,
@@ -59,7 +61,7 @@ export function createInitialState(seed, content) {
     leader: { name: leaderName, startAge: 52 },
 
     // 6 核心指标
-    ind: { army: 60, elite: 58, morale: 50, intl: 35, finance: 55, health: 100 },
+    ind: { army: 50, elite: 50, morale: 50, intl: 50, finance: 55, health: 100 },
 
     hidden: { borderTension: 25, legacy: 40, historyNarrative: 50, heir: null },
 
@@ -81,11 +83,14 @@ export function createInitialState(seed, content) {
     activeChains: [], completedChains: [], chainJustActivated: null,
 
     flags: {}, deferred: {}, biographyCommissioned: false,
+    atmosphereOverride: {}, atmosphereOverrideYear: 0,
 
     advisorReshuffleUsedYear: 0, lastDeepContactYear: 0, budgetDueYear: 1,
-    seenEventIds: [], uniqueSeen: [],
+    crisisNoticeYear: 0, prioritySpecialYear: 0,
+    seenEventIds: [], seenEventKeys: [], uniqueSeen: [],
 
     llmPool: [],   // 本局 LLM 预生成的事件池
+    prioritySpecialQueue: [],
 
     archive: [], achievements: [],
   };

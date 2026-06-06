@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "validate:data": "node scripts/validate-data.mjs"
   },
   "engines": {
     "node": ">=18"
