@@ -6,12 +6,27 @@ import { coreMood, decoLabel } from './atmosphere.js';
 import { loyaltySignal, competenceSignal, sanitizeEffects, allowedFidelities } from './engine.js';
 
 let _available = false, _model = '';
+// 前端可配置的 LLM 设置（localStorage）：覆盖服务端 .env.local
+function loadSettings() { try { return JSON.parse(localStorage.getItem('lastreigns_llm') || '{}'); } catch { return {}; } }
+let _settings = loadSettings();
+export function getSettings() { return { ..._settings }; }
+export function saveSettings(s) { _settings = s || {}; try { localStorage.setItem('lastreigns_llm', JSON.stringify(_settings)); } catch {} }
+export function llmLevel() { return _settings.level || 'mid'; }
+function effective() {
+  if (!_settings.apiKey) return null;
+  const fmt = _settings.format === 'anthropic' ? 'anthropic' : 'openai';
+  return {
+    apiKey: _settings.apiKey, format: fmt,
+    baseUrl: _settings.baseUrl || (fmt === 'anthropic' ? 'https://api.deepseek.com/anthropic' : 'https://api.deepseek.com'),
+    model: _settings.model || 'deepseek-chat',
+  };
+}
 export async function checkHealth() {
   try { const r = await fetch('/api/health'); const j = await r.json(); _available = !!j.llm; _model = j.model || ''; return j; }
   catch { _available = false; return { ok: false, llm: false }; }
 }
-export function isAvailable() { return _available; }
-export function modelName() { return _model; }
+export function isAvailable() { return _available || !!(_settings && _settings.apiKey); }
+export function modelName() { const e = effective(); return e ? e.model : _model; }
 
 async function call(messages, { json = false, temperature = 0.9, max_tokens = 1100, timeoutMs = 0 } = {}) {
   const ctrl = new AbortController();
@@ -19,6 +34,8 @@ async function call(messages, { json = false, temperature = 0.9, max_tokens = 11
   try {
     const body = { messages, temperature, max_tokens };
     if (json) body.response_format = { type: 'json_object' };
+    const e = effective();
+    if (e) { body.apiKey = e.apiKey; body.baseUrl = e.baseUrl; body.format = e.format; body.model = e.model; }
     const r = await fetch('/api/llm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
     if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error || `http_${r.status}`); }
     const data = await r.json();
@@ -68,7 +85,7 @@ export async function pregenEvents(state, content, n) {
 为本局生成 ${n} 个"互不相同"的事件卡，尽量围绕本局这四位重臣展开：${names}；也可涉及国名"${state.nationShort}"、课税/财政、边境、外交、民生、腐败、宫廷阴谋等。情节各异、不要雷同、不要与最近发生的重复。每卡≤180字叙事 + 2~3 个有取舍的选项(选项文字不得出现数字)。
 ${EFFECT_SPEC}
 每个选项给出 result(≤80字)。严格输出 JSON：{"events":[{"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}]}` },
-    ], { temperature: 1.05, max_tokens: 2600, timeoutMs: 14000 });
+    ], { temperature: 1.05, max_tokens: 520 + n * 300, timeoutMs: 10000 + n * 3500 });
     const arr = Array.isArray(obj.events) ? obj.events : [];
     return arr.map((o, i) => toCard(state, o, i, 'pre')).filter(Boolean);
   } catch { return []; }
@@ -96,7 +113,7 @@ export async function advisorOptions(state, content, person) {
       { role: 'user', content: `${summarize(state, content)}
 
 元首私下接触「${person.name}」（${person.title}）。性格：${person.traits.join('、')}；私心：${person.hiddenInterest}；当前对元首：${sig}；${comp}。
-生成 3~4 个动作选项，覆盖不同 kind：探听/拉拢/敲打/委以重任/暗查。每项自洽、直接给结果。
+生成恰好 3 个动作选项，kind 各不相同(探听/拉拢/敲打/委以重任/暗查中选3)。每项自洽、直接给结果，文字简练。
 - fidelity 只能取：${allowed.join(' / ')}。faithful 忠实；discounted 打折；feigned 阳奉阴违(表面顺从、暗里谋私)；betrayal 背刺(把意图透露给对元首不利方)。
 - 该人若离心或私心重，"探听"给的情报可片面甚至误导(写进 reveal)，但不点破。
 - fidelity 非 faithful 时，foreshadow_clue 必填(事后可察觉、当下不点破的线索)。
@@ -104,17 +121,31 @@ export async function advisorOptions(state, content, person) {
 ${EFFECT_SPEC}
 reveal=选后所见情报(≤90字,可空)；public_narrative=当面的话(≤70字)。
 严格输出 JSON：{"intro":"他此刻神态(≤40字)","options":[{"kind":"探听","label":"动作(≤16字)","fidelity":"...","reveal":"...","public_narrative":"...","foreshadow_clue":"...","proposed_effects":{...},"hidden_effects":{...},"memory_note":"一句供日后引用"}]}` },
-    ], { temperature: 0.98, max_tokens: 1500, timeoutMs: 18000 });
+    ], { temperature: 0.95, max_tokens: 1050, timeoutMs: 14000 });
     if (!Array.isArray(obj.options) || !obj.options.length) return null;
     return {
       intro: String(obj.intro || '').slice(0, 80),
-      options: obj.options.slice(0, 4).map((o) => ({
+      options: obj.options.slice(0, 3).map((o) => ({
         kind: String(o.kind || '行动').slice(0, 6), label: String(o.label || '……').slice(0, 24), fidelity: o.fidelity,
         reveal: o.reveal ? String(o.reveal).slice(0, 200) : '', public_narrative: String(o.public_narrative || '').slice(0, 160),
         foreshadow_clue: o.foreshadow_clue ? String(o.foreshadow_clue).slice(0, 160) : '',
         proposed_effects: o.proposed_effects || {}, hidden_effects: o.hidden_effects || {}, memory_note: o.memory_note ? String(o.memory_note).slice(0, 120) : '',
       })),
     };
+  } catch { return null; }
+}
+
+// D1b：把手写事件链节点的"叙事"结合当前局势/人物在后台改写，保持结构不变。
+export async function reskinChainStep(state, content, def, stepIndex) {
+  if (!isAvailable()) return null;
+  const step = (def.steps || [])[stepIndex]; if (!step) return null;
+  try {
+    const text = await call([
+      { role: 'system', content: SYS },
+      { role: 'user', content: `${summarize(state, content)}\n\n正在发酵的事态「${def.title}」走到一个节点，原始情境是：\n「${step.narrative}」\n请结合${state.nation}当前局势与这四位重臣，把它改写成≤160字的新叙事——同一件事、同样的抉择压力，可点名相关重臣，让它读起来不像预制文本。只输出改写后的叙事正文，别的都不要。` },
+    ], { temperature: 1.0, max_tokens: 460, timeoutMs: 13000 });
+    const t = (text || '').trim();
+    return t.length > 8 ? t.slice(0, 340) : null;
   } catch { return null; }
 }
 

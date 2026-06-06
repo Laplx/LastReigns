@@ -256,6 +256,81 @@ body { font-weight: 450; color: var(--ink); }
 
 @media (max-width: 560px) { .deco-grid { grid-template-columns: 1fr 1fr; } }
 
+/* ====================== v1.3 ====================== */
+.panel-kicker { font-size: .72em; letter-spacing: .16em; color: var(--gold); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+
+/* 装饰指标：整行居中 */
+.deco-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; }
+.dind { flex: 0 0 auto; }
+
+/* 人物：选项卡 */
+.people-tabs { display: flex; gap: 6px; }
+.ptab { flex: 1; background: var(--paper-2); border: 1px solid var(--line); border-bottom: none; border-radius: 9px 9px 0 0; padding: 8px 10px; cursor: pointer; text-align: left; transition: background .12s; }
+.ptab:hover { background: #f3e8cf; }
+.ptab.active { background: var(--paper); border-color: var(--gold-dim); box-shadow: 0 -2px 0 var(--gold) inset; }
+.ptab.gone { opacity: .45; cursor: default; }
+.ptab .pt-name { display: block; font-family: var(--serif); font-weight: 700; font-size: .9em; }
+.ptab .pt-loy { display: block; margin-top: 5px; height: 5px; background: #e3d8bf; border-radius: 3px; overflow: hidden; }
+.ptab .pt-loy .loyfill { height: 100%; border-radius: 3px; transition: width .4s; }
+.people-detail { border: 1px solid var(--gold-dim); border-radius: 0 0 10px 10px; background: var(--paper); padding: 12px 14px; }
+.pd .pd-head { display: flex; align-items: baseline; gap: 10px; }
+.pd .pd-name { font-family: var(--serif); font-weight: 800; font-size: 1.05em; }
+.pd .pd-title { color: var(--ink-faint); font-size: .8em; }
+.pd-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.pd-tag { font-size: .74em; background: var(--paper-2); border: 1px solid var(--line); border-radius: 14px; padding: 2px 10px; color: var(--ink-dim); }
+.chip-loy.loy-loyal, .chip-comp.comp-high { border-color: #b9c48f; color: var(--green); }
+.chip-loy.loy-uneasy { border-color: #e3c98f; color: var(--amber); }
+.chip-loy.loy-danger { border-color: #e0b09f; color: var(--red); }
+.pd-blurb { font-family: var(--serif); color: var(--ink-dim); font-style: italic; font-size: .92em; margin: 4px 0 8px; }
+.pd-status { font-family: var(--serif); }
+.pd-status p { margin: 4px 0; }
+.pd-actions { margin-top: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.pd-engage { padding: 8px 18px; font-size: .92em; }
+.pd-reason { font-size: .8em; color: var(--ink-faint); }
+
+/* 私信选项：与主卡选项同字体同字号 */
+.adv-opt { font-family: var(--serif); font-size: .98em; font-weight: 600; color: var(--ink); padding: 12px 14px; border-radius: 9px; }
+.adv-opt:hover { background: #f3e8cf; }
+.adv-opt .ao-kind { font-family: var(--sans); }
+.adv-reveal { font-weight: 500; }
+
+/* 加载进度条 */
+.lo-progress { width: 220px; height: 6px; background: #e3d8bf; border-radius: 4px; margin: 14px auto 0; overflow: hidden; }
+.lo-bar { height: 100%; width: 4%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); border-radius: 4px; transition: width .6s cubic-bezier(.19,1,.22,1); }
+.ob-quote { text-align: center; color: var(--ink-dim); }
+
+/* ====================== v1.4 ====================== */
+/* 修复：比例条的 fill 必须 block，否则 width 不生效（之前忠诚条为空的原因） */
+.loyfill, .statfill { display: block; height: 100%; border-radius: 3px; }
+.statfill.comp-high { background: #3f63ad; } .statfill.comp-mid { background: #b9aa86; } .statfill.comp-low { background: #d9cdb3; }
+
+/* 人物 tab 加大，显示名字+职位 */
+.ptab { padding: 9px 12px; min-height: 56px; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+.ptab .pt-name { font-size: .95em; }
+.ptab .pt-title { display: block; font-size: .68em; color: var(--ink-faint); line-height: 1.25; }
+.ptab .pt-loy { display: block; margin-top: 4px; height: 5px; background: #e3d8bf; border-radius: 3px; overflow: hidden; }
+
+/* 详情：忠诚/能力 图标+变色比例条 */
+.pd-stats { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+.pd-stats .stat { display: flex; align-items: center; gap: 8px; }
+.pd-stats .stat-ic { width: 18px; height: 18px; flex: none; border-radius: 4px; background: var(--paper-2); border: 1px solid var(--line); color: var(--ink-dim); font-size: .72em; text-align: center; line-height: 18px; font-family: var(--serif); }
+.pd-stats .statbar { display: block; flex: 1; height: 7px; background: #e3d8bf; border-radius: 4px; overflow: hidden; }
+.pd-stats .stat-v { flex: none; font-size: .76em; color: var(--ink-dim); min-width: 64px; }
+.pd-stats .stat-v.loy-t-loyal { color: var(--green); } .pd-stats .stat-v.loy-t-uneasy { color: var(--amber); } .pd-stats .stat-v.loy-t-danger { color: var(--red); }
+
+/* 非核心指标再拉开间距 */
+.deco-grid { gap: 10px 30px; }
+
+/* 设置 / 确认弹窗（层级高于启动屏） */
+.settings-ov { position: fixed; inset: 0; background: rgba(60,48,24,.5); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 20px; }
+.settings-box { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--gold-dim); border-radius: var(--radius); max-width: 440px; width: 100%; padding: 22px; box-shadow: var(--shadow); }
+.settings-box h3 { font-family: var(--serif); margin: 0 0 6px; }
+.set-field { margin: 10px 0; }
+.set-label { display: block; font-size: .78em; color: var(--ink-dim); margin-bottom: 4px; }
+.set-input { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--ink); border-radius: 7px; padding: 8px 10px; font-family: var(--sans); font-size: .92em; }
+.set-actions { margin-top: 16px; display: flex; gap: 10px; }
+.boot-actions { display: flex; gap: 10px; justify-content: center; align-items: center; }
+
 @media (max-width: 560px) {
   .deco-grid { grid-template-columns: 1fr 1fr; }
   .people-row { flex-wrap: wrap; }

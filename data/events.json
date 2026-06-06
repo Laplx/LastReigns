@@ -1834,5 +1834,2002 @@
         "result": "您当作没听见，继续过您的好日子。御医的警告，但愿只是多虑。"
       }
     ]
+  },
+  {
+    "id": "arms_kickback",
+    "type": "normal",
+    "category": "military",
+    "kicker": "军购",
+    "weight": 2,
+    "title": "一笔军购",
+    "narrative": "军方要采购一批二手坦克，报价高得离谱。差价去哪了，所有人心知肚明。",
+    "options": [
+      {
+        "text": "照单全签，回扣大家分",
+        "effects": {
+          "army": "+big",
+          "loyalty": {
+            "general": "+mid"
+          },
+          "finance": "-big",
+          "wealth": 0.4
+        },
+        "result": "坦克到了港，旧得能当文物。账上的窟窿，没人再提。"
+      },
+      {
+        "text": "压价采购，省下的进国库",
+        "effects": {
+          "army": "-small",
+          "finance": "+mid",
+          "loyalty": {
+            "general": "-mid"
+          }
+        },
+        "result": "您砍了价。将军觉得您不懂\"行规\"，脸拉得老长。"
+      },
+      {
+        "text": "取消采购，钱另有他用",
+        "effects": {
+          "army": "-mid",
+          "finance": "+small"
+        },
+        "result": "军方的采购清单被退了回去。军营里，开始有人怀念前任。"
+      }
+    ]
+  },
+  {
+    "id": "veterans_pension",
+    "type": "normal",
+    "category": "military",
+    "kicker": "军务",
+    "weight": 2,
+    "title": "老兵的欠饷",
+    "narrative": "一批参加过独立战争的老兵堵在国防部门口，要补发拖欠多年的抚恤金。",
+    "options": [
+      {
+        "text": "足额补发，再请他们吃顿饭",
+        "effects": {
+          "army": "+mid",
+          "morale": "+small",
+          "finance": "-mid"
+        },
+        "result": "老兵们端着酒杯红了眼眶。这点钱，买的是军心。"
+      },
+      {
+        "text": "打个折，分期慢慢给",
+        "effects": {
+          "army": "-small",
+          "finance": "-small"
+        },
+        "result": "老兵们将信将疑地散了。承诺这东西，最不值钱。"
+      },
+      {
+        "text": "派人驱散，\"财政正在研究\"",
+        "effects": {
+          "army": "-mid",
+          "morale": "-small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "一名老兵把褪色的勋章丢在了台阶上。"
+      }
+    ]
+  },
+  {
+    "id": "promotion_faction",
+    "type": "normal",
+    "category": "military",
+    "kicker": "人事",
+    "weight": 2,
+    "title": "空缺的位子",
+    "narrative": "总参谋部出了个肥缺。两派军官都在活动，您提拔谁，就是得罪另一拨。",
+    "options": [
+      {
+        "text": "提拔将军的人",
+        "effects": {
+          "army": "+mid",
+          "loyalty": {
+            "general": "+big"
+          },
+          "elite": "-small"
+        },
+        "result": "将军的势力又粗了一圈。这棵树，迟早要挡您的光。"
+      },
+      {
+        "text": "提拔一个谁也不沾的中立派",
+        "effects": {
+          "army": "-small",
+          "elite": "+small"
+        },
+        "result": "两派都不满意——这往往说明您选对了。"
+      },
+      {
+        "text": "空着，谁也别想",
+        "effects": {
+          "army": "-mid",
+          "loyalty": {
+            "general": "-small"
+          }
+        },
+        "result": "位子空着，野心也悬着。军中暗流，又急了几分。"
+      }
+    ]
+  },
+  {
+    "id": "guard_expand",
+    "type": "normal",
+    "category": "military",
+    "kicker": "安保",
+    "weight": 1,
+    "title": "扩充卫队",
+    "narrative": "一连串政变的新闻让您夜不能寐。安全局建议扩充一支只忠于您本人的卫队。",
+    "options": [
+      {
+        "text": "建立私人卫队，重金供养",
+        "effects": {
+          "army": "+small",
+          "loyalty": {
+            "spy": "+mid"
+          },
+          "finance": "-big"
+        },
+        "result": "一支金光闪闪的卫队站到了您门口。它很贵，但睡得着觉。"
+      },
+      {
+        "text": "小规模就好，别太招摇",
+        "effects": {
+          "army": "+small",
+          "finance": "-small"
+        },
+        "result": "您留了个心眼，没把摊子铺大。"
+      },
+      {
+        "text": "不必，军队就是我的卫队",
+        "effects": {
+          "army": "-small"
+        },
+        "result": "您选择相信军队。但愿这份信任，不要太贵。"
+      }
+    ]
+  },
+  {
+    "id": "mercenaries",
+    "type": "normal",
+    "category": "military",
+    "kicker": "外援",
+    "weight": 1,
+    "title": "沉默的雇佣兵",
+    "narrative": "一家境外保安公司愿意提供\"训练有素、绝对听话\"的武装人员，价码不菲，且不留痕迹。",
+    "options": [
+      {
+        "text": "雇佣他们镇场子",
+        "effects": {
+          "army": "+big",
+          "intl": "+mid",
+          "finance": "-big",
+          "morale": "-small"
+        },
+        "result": "一批说着外语的硬汉进了驻地。听话是听话，就是不知听谁的话。"
+      },
+      {
+        "text": "只签个备而不用的协议",
+        "effects": {
+          "army": "+small",
+          "finance": "-small",
+          "intl": "+small"
+        },
+        "result": "协议锁进了保险柜。但愿用不上。"
+      },
+      {
+        "text": "拒绝，外人靠不住",
+        "effects": {},
+        "result": "您把推销员请了出去。有些便宜，占不得。"
+      }
+    ]
+  },
+  {
+    "id": "great_power_pick",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "外交",
+    "weight": 2,
+    "title": "选边站",
+    "narrative": "两个大国同时递来橄榄枝，都要您表态站队。脚踏两只船的日子，怕是到头了。",
+    "options": [
+      {
+        "text": "倒向强势的一方",
+        "effects": {
+          "intl": "-mid",
+          "finance": "+mid",
+          "loyalty": {
+            "dupont": "+small"
+          }
+        },
+        "result": "您挑了看起来更硬的靠山。援助来了，链子也套上了。"
+      },
+      {
+        "text": "继续骑墙，谁也不得罪",
+        "effects": {
+          "intl": "+mid",
+          "borderTension": "+small"
+        },
+        "result": "您含糊其辞。两边都觉得您不可靠，开始另寻代理人。"
+      },
+      {
+        "text": "高调不结盟，自立门户",
+        "effects": {
+          "intl": "+small",
+          "morale": "+mid",
+          "history": "+small"
+        },
+        "result": "您发表了一篇慷慨激昂的演说。听着提气，账还是得自己算。"
+      }
+    ]
+  },
+  {
+    "id": "extradite",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "引渡",
+    "weight": 1,
+    "title": "一份引渡请求",
+    "narrative": "邻国要求引渡一名逃到您这儿的反对派金主，开出的条件很诱人。",
+    "options": [
+      {
+        "text": "交人换好处",
+        "effects": {
+          "intl": "-mid",
+          "finance": "+mid",
+          "history": "-mid",
+          "morale": "-small"
+        },
+        "result": "您把人送上了引渡的飞机。流亡圈子里，从此多了一条关于您的骂名。"
+      },
+      {
+        "text": "收留他，当个筹码",
+        "effects": {
+          "intl": "+mid",
+          "borderTension": "+mid",
+          "wealth": 0.3
+        },
+        "result": "您把他护了下来——人情，是要连本带利收回来的。"
+      },
+      {
+        "text": "让他\"意外\"消失",
+        "effects": {
+          "intl": "+big",
+          "history": "-big",
+          "loyalty": {
+            "spy": "+mid"
+          }
+        },
+        "result": "那人再没出现过。邻国心照不宣，西方却嗅到了血腥味。"
+      }
+    ]
+  },
+  {
+    "id": "foreign_factory",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "招商",
+    "weight": 2,
+    "title": "外资设厂",
+    "narrative": "一家跨国公司想来建厂，能解决就业，但要求税收减免和\"灵活的\"劳工与环保标准。",
+    "options": [
+      {
+        "text": "全盘答应，要的就是政绩",
+        "effects": {
+          "finance": "+mid",
+          "morale": "+mid",
+          "deco": {
+            "health_care": "-small"
+          },
+          "intl": "-small"
+        },
+        "result": "工厂的烟囱冒起了烟。下游的河，也换了颜色。"
+      },
+      {
+        "text": "谈条件，保留底线",
+        "effects": {
+          "finance": "+small",
+          "loyalty": {
+            "reformer": "+small"
+          }
+        },
+        "result": "对方皱着眉签了字。底线守住了，热情也凉了半截。"
+      },
+      {
+        "text": "拒绝，肥水不给外人",
+        "effects": {
+          "morale": "-small",
+          "loyalty": {
+            "chen": "+small"
+          }
+        },
+        "result": "本地的关系户松了口气。就业的事，还得另想办法。"
+      }
+    ]
+  },
+  {
+    "id": "sanction_relief",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "国际",
+    "weight": 2,
+    "title": "制裁松动的机会",
+    "narrative": "一个国际斡旋人暗示：只要您\"象征性\"释放几名政治犯，几项制裁就能松绑。",
+    "options": [
+      {
+        "text": "放人换松绑",
+        "effects": {
+          "intl": "-big",
+          "elite": "-small",
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "几扇牢门开了，几道制裁松了。反对派也跟着精神了起来。"
+      },
+      {
+        "text": "只放一两个做做样子",
+        "effects": {
+          "intl": "-small",
+          "morale": "-small"
+        },
+        "result": "您象征性地放了人。西方将信将疑，制裁松了半寸。"
+      },
+      {
+        "text": "一个不放，硬扛到底",
+        "effects": {
+          "intl": "+mid",
+          "army": "+small",
+          "history": "-small"
+        },
+        "result": "您寸步不让。强硬是强硬，国库的外汇也快见底了。"
+      }
+    ],
+    "requires": {
+      "intlMin": 55
+    }
+  },
+  {
+    "id": "spy_scandal",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "丑闻",
+    "weight": 1,
+    "title": "间谍丑闻",
+    "narrative": "安全局抓到一名西方记者，搜出了一堆敏感照片。怎么处理，全世界都看着。",
+    "options": [
+      {
+        "text": "公开审判，杀一儆百",
+        "effects": {
+          "intl": "+big",
+          "morale": "+mid",
+          "deco": {
+            "press": "-mid"
+          }
+        },
+        "result": "审判上了头版。国内拍手称快，国外群情激愤。"
+      },
+      {
+        "text": "悄悄驱逐，息事宁人",
+        "effects": {
+          "intl": "-small",
+          "loyalty": {
+            "spy": "-small"
+          }
+        },
+        "result": "记者被连夜送上飞机。安全局长觉得您太软。"
+      },
+      {
+        "text": "拿他换点实惠",
+        "effects": {
+          "intl": "-mid",
+          "finance": "+small",
+          "wealth": 0.2
+        },
+        "result": "一场交换悄悄进行。人放了，好处也到了账。"
+      }
+    ]
+  },
+  {
+    "id": "tariff",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "财政",
+    "weight": 2,
+    "title": "关税的诱惑",
+    "narrative": "财政部建议大幅提高进口关税，国库能进账，但物价会跟着涨。",
+    "options": [
+      {
+        "text": "大幅加税，充实国库",
+        "effects": {
+          "finance": "+big",
+          "morale": "-mid",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "海关的进账多了。城里的物价，也跟着窜了上去。"
+      },
+      {
+        "text": "只对奢侈品加税",
+        "effects": {
+          "finance": "+small",
+          "elite": "-small"
+        },
+        "result": "权贵们的进口红酒贵了。他们记仇，但翻不了天。"
+      },
+      {
+        "text": "维持低关税，稳住民心",
+        "effects": {
+          "finance": "-small",
+          "morale": "+small"
+        },
+        "result": "物价稳住了，国库的窟窿还得另补。"
+      }
+    ]
+  },
+  {
+    "id": "currency_devalue",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "财政",
+    "weight": 2,
+    "title": "货币的把戏",
+    "narrative": "央行行长建议悄悄让货币贬值，账面上能凭空多出一大笔，代价是老百姓的存款缩水。",
+    "options": [
+      {
+        "text": "连夜贬值，国库回血",
+        "effects": {
+          "finance": "+big",
+          "morale": "-big",
+          "deco": {
+            "economy": "-small"
+          }
+        },
+        "result": "一觉醒来，所有人的钱都毛了。国库却奇迹般地满了。"
+      },
+      {
+        "text": "温和贬值，慢慢来",
+        "effects": {
+          "finance": "+mid",
+          "morale": "-small"
+        },
+        "result": "货币悄悄缩水。多数人还没反应过来。"
+      },
+      {
+        "text": "坚守币值，打肿脸充胖子",
+        "effects": {
+          "finance": "-mid",
+          "intl": "-small"
+        },
+        "result": "您死撑着汇率。面子保住了，外汇储备见了底。"
+      }
+    ]
+  },
+  {
+    "id": "soe_dividend",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "国企",
+    "weight": 1,
+    "title": "国企的红利",
+    "narrative": "国家石油公司今年大赚。这笔钱，是进国库、进私囊，还是分给嗷嗷待哺的部长们？",
+    "options": [
+      {
+        "text": "大部分进自己账户",
+        "effects": {
+          "wealth": 0.9,
+          "elite": "-small",
+          "finance": "+small"
+        },
+        "result": "一笔可观的数字，安静地躺进了苏黎世。"
+      },
+      {
+        "text": "分给部长们买忠诚",
+        "effects": {
+          "elite": "+big",
+          "finance": "+small",
+          "morale": "-small"
+        },
+        "result": "红包发下去，笑脸收上来。忠诚，明码标价。"
+      },
+      {
+        "text": "充入国库，以备不时",
+        "effects": {
+          "finance": "+big",
+          "elite": "-small"
+        },
+        "result": "钱进了国库。部长们意味深长地看着您，没说话。"
+      }
+    ]
+  },
+  {
+    "id": "black_market",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "黑市",
+    "weight": 1,
+    "title": "猖獗的黑市",
+    "narrative": "官方商店空空荡荡，黑市却什么都有。要不要查？查谁，又是个问题——黑市的后台，多半是自己人。",
+    "options": [
+      {
+        "text": "严打黑市，整顿市场",
+        "effects": {
+          "morale": "+small",
+          "elite": "-mid",
+          "finance": "+small"
+        },
+        "result": "几个倒爷被抓了典型。但他们背后的大人物，毫发无损。"
+      },
+      {
+        "text": "睁只眼闭只眼，抽成就好",
+        "effects": {
+          "wealth": 0.3,
+          "morale": "-mid",
+          "elite": "+small"
+        },
+        "result": "黑市照常红火，您也分了一杯羹。"
+      },
+      {
+        "text": "干脆把黑市收编",
+        "effects": {
+          "finance": "+mid",
+          "elite": "+small",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "黑市换了块官方招牌，生意照旧，只是利润改了流向。"
+      }
+    ]
+  },
+  {
+    "id": "sovereign_fund",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "财政",
+    "weight": 1,
+    "title": "主权基金",
+    "narrative": "顾问提议成立一支\"主权财富基金\"，名义上为国理财，实际上……名义和实际之间，总有操作空间。",
+    "options": [
+      {
+        "text": "成立基金，挂夫人名下",
+        "effects": {
+          "wealth": 0.7,
+          "loyalty": {
+            "firstlady": "+mid"
+          },
+          "finance": "-small",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "基金成立了，董事长是夫人。国之重器，家之私产。"
+      },
+      {
+        "text": "规规矩矩，真为国理财",
+        "effects": {
+          "finance": "+mid",
+          "loyalty": {
+            "reformer": "+small"
+          }
+        },
+        "result": "基金运作透明，收益进了国库。少见的一次\"不贪\"。"
+      },
+      {
+        "text": "不搞这套虚的",
+        "effects": {},
+        "result": "您摆摆手。有些钱，藏在明处反而扎眼。"
+      }
+    ]
+  },
+  {
+    "id": "festival",
+    "type": "normal",
+    "category": "social",
+    "kicker": "庆典",
+    "weight": 1,
+    "title": "盛大的庆典",
+    "narrative": "宣传部想办一场万人庆典为您歌功颂德。花钱不少，但能把民心的温度烧得更旺。",
+    "options": [
+      {
+        "text": "大办特办，全民同庆",
+        "effects": {
+          "morale": "+big",
+          "finance": "-mid",
+          "deco": {
+            "capital": "+small"
+          }
+        },
+        "result": "广场上红旗招展。被组织来的人群，喊得声嘶力竭。"
+      },
+      {
+        "text": "低调办，意思一下",
+        "effects": {
+          "morale": "+small",
+          "finance": "-small"
+        },
+        "result": "一场不大不小的活动，恰到好处。"
+      },
+      {
+        "text": "取消，把钱省下",
+        "effects": {
+          "morale": "-small",
+          "finance": "+small"
+        },
+        "result": "宣传部大失所望。务实，从来不讨喜。"
+      }
+    ]
+  },
+  {
+    "id": "price_subsidy",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "民生",
+    "weight": 2,
+    "title": "面包的价格",
+    "narrative": "主粮价格飞涨，街头开始有怨气。补贴能压住物价，但要烧掉一大笔钱。",
+    "options": [
+      {
+        "text": "大手笔补贴，稳住物价",
+        "effects": {
+          "morale": "+big",
+          "finance": "-big"
+        },
+        "result": "面包便宜了，怨气散了。国库的肉，又被剜下一块。"
+      },
+      {
+        "text": "只补贴最穷的人",
+        "effects": {
+          "morale": "+small",
+          "finance": "-small"
+        },
+        "result": "一部分人吃上了便宜面包，另一部分继续骂街。"
+      },
+      {
+        "text": "取消补贴，让市场说话",
+        "effects": {
+          "morale": "-big",
+          "finance": "+mid",
+          "intl": "-small"
+        },
+        "result": "面包涨了三成。经济学家点头，老百姓砸锅。"
+      }
+    ]
+  },
+  {
+    "id": "religious_clash",
+    "type": "normal",
+    "category": "court",
+    "kicker": "宗教",
+    "weight": 1,
+    "title": "教派冲突",
+    "narrative": "南方两个教派因一座圣地大打出手。神父奥比请您主持公道——可公道往往意味着得罪一方。",
+    "options": [
+      {
+        "text": "偏袒人多势众的一方",
+        "effects": {
+          "morale": "+small",
+          "loyalty": {
+            "priest": "-mid"
+          },
+          "history": "-small"
+        },
+        "result": "您选了人多的那边。少数派记下了这笔账。"
+      },
+      {
+        "text": "各打五十大板，强压下去",
+        "effects": {
+          "morale": "-mid",
+          "army": "+small"
+        },
+        "result": "军队进了圣地。两派都安静了，也都恨上了您。"
+      },
+      {
+        "text": "让奥比神父去调解",
+        "effects": {
+          "loyalty": {
+            "priest": "+mid"
+          },
+          "morale": "+small"
+        },
+        "result": "神父奔走数日，竟真把火压住了。教会的威望，又涨了。"
+      }
+    ]
+  },
+  {
+    "id": "ethnic_policy",
+    "type": "normal",
+    "category": "court",
+    "kicker": "民族",
+    "weight": 1,
+    "title": "北方的语言",
+    "narrative": "北方部族要求母语教学与自治权。给，则中央权威受损；不给，则边疆离心。",
+    "options": [
+      {
+        "text": "答应自治与母语",
+        "effects": {
+          "loyalty": {
+            "chief": "+big"
+          },
+          "morale": "+small",
+          "legacy": "-mid"
+        },
+        "result": "酋长满意而归。中央的政令，从此到北方就要打折。"
+      },
+      {
+        "text": "强推国语，强化一统",
+        "effects": {
+          "loyalty": {
+            "chief": "-big"
+          },
+          "morale": "-mid",
+          "army": "+small"
+        },
+        "result": "学校挂上了统一的课本。北方的孩子，听不懂老师在说什么。"
+      },
+      {
+        "text": "口头答应，实则拖延",
+        "effects": {
+          "loyalty": {
+            "chief": "-small"
+          },
+          "morale": "-small"
+        },
+        "twistable": true,
+        "result": "您许了诺。北方将信将疑地等着——等待是有期限的。"
+      }
+    ]
+  },
+  {
+    "id": "internet_control",
+    "type": "normal",
+    "category": "social",
+    "kicker": "舆论",
+    "weight": 2,
+    "title": "断网的开关",
+    "narrative": "网上开始流传对您不利的段子。安全局请示：要不要直接\"管一管\"这张网？",
+    "options": [
+      {
+        "text": "全面管控，必要时断网",
+        "effects": {
+          "morale": "+mid",
+          "intl": "+mid",
+          "deco": {
+            "press": "-big"
+          },
+          "loyalty": {
+            "spy": "+mid"
+          }
+        },
+        "result": "网安静了。安静得让外国投资人也跟着撤了资。"
+      },
+      {
+        "text": "精准删帖，抓几个出头的",
+        "effects": {
+          "deco": {
+            "press": "-mid"
+          },
+          "morale": "-small"
+        },
+        "result": "几个段子手\"喝了茶\"。剩下的人改用暗语接着调侃。"
+      },
+      {
+        "text": "一笑置之，显得有雅量",
+        "effects": {
+          "morale": "-small",
+          "history": "+small",
+          "loyalty": {
+            "spy": "-small"
+          }
+        },
+        "result": "您假装没看见。段子热闹了一阵，也就淡了。"
+      }
+    ]
+  },
+  {
+    "id": "talent_show",
+    "type": "normal",
+    "category": "social",
+    "kicker": "宣传",
+    "weight": 1,
+    "title": "造星运动",
+    "narrative": "宣传部想办一档全国选秀，捧出几个\"热爱元首\"的青年偶像，给造神运动添把火。",
+    "options": [
+      {
+        "text": "砸钱造星，全民追捧",
+        "effects": {
+          "morale": "+big",
+          "finance": "-mid",
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "荧屏上全是热泪盈眶的年轻人。狂热，又添了一把柴。"
+      },
+      {
+        "text": "小成本试水",
+        "effects": {
+          "morale": "+small",
+          "finance": "-small"
+        },
+        "result": "节目反响平平，但也没赔本。"
+      },
+      {
+        "text": "低俗，不办",
+        "effects": {},
+        "result": "宣传部碰了一鼻子灰。"
+      }
+    ]
+  },
+  {
+    "id": "firstlady_meddle",
+    "type": "normal",
+    "category": "court",
+    "kicker": "家事",
+    "weight": 2,
+    "title": "夫人的手",
+    "narrative": "伊莎贝尔夫人最近频繁出席内阁会议，对人事指手画脚。部长们敢怒不敢言。",
+    "options": [
+      {
+        "text": "由她去，毕竟是自家人",
+        "effects": {
+          "loyalty": {
+            "firstlady": "+big"
+          },
+          "elite": "-mid",
+          "legacy": "+small"
+        },
+        "result": "夫人的话，渐渐有了圣旨的分量。内阁的脸色，越来越难看。"
+      },
+      {
+        "text": "私下劝她收敛",
+        "effects": {
+          "loyalty": {
+            "firstlady": "-small"
+          },
+          "elite": "+small"
+        },
+        "result": "枕边风停了几天。但您知道，这事没完。"
+      },
+      {
+        "text": "当众驳她一次",
+        "effects": {
+          "loyalty": {
+            "firstlady": "-big"
+          },
+          "elite": "+mid"
+        },
+        "result": "您当着众人驳了夫人。部长们暗爽，今晚的家宴怕是要冷。"
+      }
+    ]
+  },
+  {
+    "id": "child_scandal",
+    "type": "normal",
+    "category": "court",
+    "kicker": "家丑",
+    "weight": 1,
+    "title": "少爷闯祸",
+    "narrative": "您的公子酒驾撞死了人，视频已经传开。家丑外扬，民怨沸腾。",
+    "options": [
+      {
+        "text": "花钱摆平，封锁消息",
+        "effects": {
+          "wealth": -0.3,
+          "morale": "-mid",
+          "deco": {
+            "press": "-mid"
+          }
+        },
+        "result": "苦主拿了封口费，视频被删了。但截图，总有人存着。"
+      },
+      {
+        "text": "大义灭亲，公开处理",
+        "effects": {
+          "morale": "+big",
+          "loyalty": {
+            "firstlady": "-big"
+          },
+          "history": "+mid"
+        },
+        "result": "您挥泪斩了\"马谡\"。百姓称颂，夫人却恨您入骨。"
+      },
+      {
+        "text": "甩锅给司机，息事宁人",
+        "effects": {
+          "morale": "-small",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "twistable": true,
+        "result": "一个倒霉的司机顶了罪。明眼人都看在眼里。"
+      }
+    ]
+  },
+  {
+    "id": "elder_demands",
+    "type": "normal",
+    "category": "court",
+    "kicker": "党务",
+    "weight": 2,
+    "title": "元老的脸面",
+    "narrative": "老恩贡贝倚老卖老，又来要官要权，话里话外提醒您是谁把您扶上位的。",
+    "options": [
+      {
+        "text": "给足体面，加官进爵",
+        "effects": {
+          "loyalty": {
+            "uncle": "+big"
+          },
+          "elite": "-small",
+          "finance": "-small"
+        },
+        "result": "叔父满意地走了。旧党的网络，又紧了一分，也旧了一分。"
+      },
+      {
+        "text": "虚与委蛇，给个空衔",
+        "effects": {
+          "loyalty": {
+            "uncle": "-small"
+          }
+        },
+        "result": "您给了个有名无实的头衔。叔父嘴上没说，\"当年\"念叨得更勤。"
+      },
+      {
+        "text": "敲打他，别倚老卖老",
+        "effects": {
+          "loyalty": {
+            "uncle": "-big"
+          },
+          "elite": "-small"
+        },
+        "twistable": true,
+        "result": "您把话挑明了。叔父涨红了脸，党内老人们开始低声议论。"
+      }
+    ]
+  },
+  {
+    "id": "cabinet_reshuffle",
+    "type": "normal",
+    "category": "court",
+    "kicker": "改组",
+    "weight": 1,
+    "title": "内阁改组",
+    "narrative": "是时候洗一次牌了。换上新人能稀释老派系的势力，但新人未必比旧人干净。",
+    "options": [
+      {
+        "text": "大换血，提拔年轻技术官僚",
+        "effects": {
+          "elite": "-mid",
+          "loyalty": {
+            "reformer": "+big"
+          },
+          "deco": {
+            "economy": "+small"
+          },
+          "morale": "+small"
+        },
+        "result": "内阁年轻了十岁。老人们靠边站，磨刀霍霍。"
+      },
+      {
+        "text": "小修小补，平衡各方",
+        "effects": {
+          "elite": "+small"
+        },
+        "result": "您挪了几把椅子。谁也没大动，谁也没满意。"
+      },
+      {
+        "text": "维持原样，多一事不如少一事",
+        "effects": {
+          "elite": "+small",
+          "morale": "-small"
+        },
+        "result": "内阁原封不动。暮气，又沉了一层。"
+      }
+    ]
+  },
+  {
+    "id": "reformer_press",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "改革",
+    "weight": 2,
+    "title": "改革派的奏章",
+    "narrative": "索万吉司长又递来一份反腐方案，言辞恳切。改，则动了所有人的奶酪；不改，则积重难返。",
+    "options": [
+      {
+        "text": "力挺改革，给他放权",
+        "effects": {
+          "elite": "-huge",
+          "finance": "+mid",
+          "morale": "+mid",
+          "history": "+big",
+          "loyalty": {
+            "reformer": "+big"
+          }
+        },
+        "result": "改革雷厉风行。受损的权贵们，已经在背后磨刀。"
+      },
+      {
+        "text": "表扬他，把方案\"研究研究\"",
+        "effects": {
+          "loyalty": {
+            "reformer": "-small"
+          },
+          "elite": "+small"
+        },
+        "twistable": true,
+        "result": "方案锁进了抽屉。年轻人眼里的光，暗了一点。"
+      },
+      {
+        "text": "调离他，扼杀于摇篮",
+        "effects": {
+          "loyalty": {
+            "reformer": "-big"
+          },
+          "elite": "+mid",
+          "history": "-small"
+        },
+        "result": "索万吉被发配去了档案室。临走前他看了您一眼，没说话。"
+      }
+    ]
+  },
+  {
+    "id": "merchant_gift",
+    "type": "normal",
+    "category": "corruption",
+    "kicker": "献媚",
+    "weight": 1,
+    "title": "商人的厚礼",
+    "narrative": "陈先生送来一份\"薄礼\"——一辆防弹豪车，外加一句\"日后还望多多关照\"。",
+    "options": [
+      {
+        "text": "笑纳，礼尚往来",
+        "effects": {
+          "wealth": 0.4,
+          "loyalty": {
+            "chen": "+mid"
+          },
+          "morale": "-small"
+        },
+        "result": "车开进了车库。关照，是要还的。"
+      },
+      {
+        "text": "退回，但留个人情",
+        "effects": {
+          "loyalty": {
+            "chen": "+small"
+          }
+        },
+        "result": "您客气地退了礼。陈先生更高看您一眼——不贪的人，更难对付。"
+      },
+      {
+        "text": "收下并公开，立廉洁人设",
+        "effects": {
+          "morale": "+mid",
+          "loyalty": {
+            "chen": "-mid"
+          },
+          "history": "+small"
+        },
+        "result": "您把车捐了出去，上了头条。陈先生笑容僵在了脸上。"
+      }
+    ]
+  },
+  {
+    "id": "tribal_feud",
+    "type": "normal",
+    "category": "court",
+    "kicker": "部族",
+    "weight": 1,
+    "title": "部族械斗",
+    "narrative": "北方两个部族为水源大打出手，死了人。处置不当，整个北方都可能跟着乱。",
+    "options": [
+      {
+        "text": "武力弹压，恢复秩序",
+        "effects": {
+          "army": "+small",
+          "morale": "-mid",
+          "loyalty": {
+            "chief": "-mid"
+          }
+        },
+        "result": "军队压住了械斗。北方安静了，怨气却埋进了土里。"
+      },
+      {
+        "text": "请酋长出面调解",
+        "effects": {
+          "loyalty": {
+            "chief": "+mid"
+          },
+          "morale": "+small",
+          "legacy": "-small"
+        },
+        "result": "酋长用古老的方式平了事。代价是中央又欠了他一个人情。"
+      },
+      {
+        "text": "偏袒一方，快刀斩乱麻",
+        "effects": {
+          "loyalty": {
+            "chief": "-small"
+          },
+          "morale": "-small",
+          "borderTension": "+small"
+        },
+        "result": "您拉一派打一派。乱是平了，仇是结下了。"
+      }
+    ]
+  },
+  {
+    "id": "earthquake",
+    "type": "normal",
+    "category": "disaster",
+    "kicker": "天灾",
+    "weight": 2,
+    "title": "地动山摇",
+    "narrative": "一场地震夷平了南方几座城镇。国际援助纷至沓来，但接受援助意味着开放灾区。",
+    "options": [
+      {
+        "text": "接受国际援助，全力救灾",
+        "effects": {
+          "morale": "+mid",
+          "intl": "-big",
+          "finance": "+small",
+          "elite": "-small"
+        },
+        "result": "外国救援队来了，也顺便看见了不少您不想被看见的东西。"
+      },
+      {
+        "text": "自力更生，封锁灾区",
+        "effects": {
+          "morale": "-big",
+          "intl": "+small",
+          "deco": {
+            "press": "-mid"
+          }
+        },
+        "result": "灾区被围了起来。里面的哭声，传不太出来。"
+      },
+      {
+        "text": "高调慰问，低调救灾",
+        "effects": {
+          "morale": "-small",
+          "deco": {
+            "press": "+small"
+          },
+          "wealth": 0.2
+        },
+        "result": "您在镜头前落了泪。救灾款，半路就少了一半。"
+      }
+    ]
+  },
+  {
+    "id": "flood",
+    "type": "normal",
+    "category": "disaster",
+    "kicker": "天灾",
+    "weight": 1,
+    "title": "决堤之水",
+    "narrative": "上游决堤，下游成泽国。有人说，是某位大人挪用了修堤的款子。",
+    "options": [
+      {
+        "text": "彻查贪腐，追责到底",
+        "effects": {
+          "elite": "-big",
+          "morale": "+big",
+          "finance": "-small",
+          "history": "+small"
+        },
+        "result": "几个蛀虫被揪了出来。百姓拍手，权贵噤声。"
+      },
+      {
+        "text": "先救灾，旧账以后再算",
+        "effects": {
+          "morale": "+small",
+          "finance": "-mid"
+        },
+        "result": "您把精力放在救人上。那笔糊涂账，也就慢慢糊涂了过去。"
+      },
+      {
+        "text": "甩锅天意，组织祈祷",
+        "effects": {
+          "morale": "-big",
+          "loyalty": {
+            "priest": "+small"
+          },
+          "history": "-mid"
+        },
+        "result": "您说这是天罚。灾民在水里，听着广播里的祷词。"
+      }
+    ]
+  },
+  {
+    "id": "locust",
+    "type": "normal",
+    "category": "disaster",
+    "kicker": "天灾",
+    "weight": 1,
+    "title": "蝗灾",
+    "narrative": "铺天盖地的蝗虫啃光了北方的庄稼。粮荒在即。",
+    "options": [
+      {
+        "text": "开仓放粮，紧急赈济",
+        "effects": {
+          "morale": "+big",
+          "finance": "-big",
+          "loyalty": {
+            "chief": "+small"
+          }
+        },
+        "result": "粮车开进了灾区。国库瘪了，民心稳了。"
+      },
+      {
+        "text": "高价从邻国购粮",
+        "effects": {
+          "finance": "-mid",
+          "intl": "-small",
+          "morale": "+small"
+        },
+        "result": "邻国趁火打劫，粮价翻倍。但总算没饿死人。"
+      },
+      {
+        "text": "封锁灾情，维持稳定",
+        "effects": {
+          "morale": "-mid",
+          "deco": {
+            "press": "-mid"
+          }
+        },
+        "result": "报纸上一片丰收。北方的路上，多了逃荒的人。"
+      }
+    ]
+  },
+  {
+    "id": "great_fire",
+    "type": "normal",
+    "category": "disaster",
+    "kicker": "事故",
+    "weight": 1,
+    "title": "首都大火",
+    "narrative": "贫民窟一场大火，烧了三天三夜。火是怎么起的，众说纷纭。",
+    "options": [
+      {
+        "text": "借机拆迁，建您的新城",
+        "effects": {
+          "deco": {
+            "capital": "+big"
+          },
+          "morale": "-big",
+          "wealth": 0.3,
+          "history": "-mid"
+        },
+        "result": "废墟上立起了崭新的大道。原来住这儿的人，去了没人问的地方。"
+      },
+      {
+        "text": "原地重建，安置灾民",
+        "effects": {
+          "morale": "+mid",
+          "finance": "-mid"
+        },
+        "result": "您掏钱原地重建。灾民千恩万谢，开发商捶胸顿足。"
+      },
+      {
+        "text": "草草善后，转移视线",
+        "effects": {
+          "morale": "-small",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "一场庆典盖过了焦土的味道。"
+      }
+    ]
+  },
+  {
+    "id": "coup_omen",
+    "type": "normal",
+    "category": "military",
+    "kicker": "密报",
+    "weight": 3,
+    "title": "政变的前兆",
+    "narrative": "安全局截获了几通加密通话，矛头直指军方高层。山雨欲来，您手里的牌不多了。",
+    "options": [
+      {
+        "text": "动用家族遗产，连夜召集元老压住军头",
+        "hint": "祖辈的人情，用一次少一次",
+        "cost": {
+          "oneTime": "familyLegacy"
+        },
+        "effects": {
+          "army": "+huge",
+          "finance": "-mid",
+          "loyalty": {
+            "uncle": "+mid"
+          }
+        },
+        "result": "几位德高望重的老人出面斡旋，军头悻悻收手。这张老牌，您打掉了。"
+      },
+      {
+        "text": "先发制人，血腥清洗军中",
+        "effects": {
+          "army": "-big",
+          "elite": "-mid",
+          "morale": "-small",
+          "loyalty": {
+            "spy": "+big"
+          }
+        },
+        "twistable": true,
+        "result": "您赶在政变前动了手。是消弭了祸患，还是逼反了更多人？"
+      },
+      {
+        "text": "加官进爵，紧急安抚",
+        "effects": {
+          "army": "+mid",
+          "loyalty": {
+            "general": "+big"
+          },
+          "finance": "-big"
+        },
+        "result": "您破财消灾。将军受宠若惊地谢恩——但裂痕已经在那里了。"
+      }
+    ],
+    "requires": {
+      "armyMax": 40
+    }
+  },
+  {
+    "id": "traitor_grip",
+    "type": "normal",
+    "category": "court",
+    "kicker": "密档",
+    "weight": 2,
+    "title": "一份黑材料",
+    "narrative": "安全局递来一沓照片——足以让某位心怀异志的大人身败名裂。要不要用？",
+    "options": [
+      {
+        "text": "亮出黑材料，逼他乖乖就范",
+        "hint": "把柄在手，攥一次少一次",
+        "cost": {
+          "oneTime": "kompromat"
+        },
+        "effects": {
+          "elite": "+big",
+          "morale": "-small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "那位大人看完照片，脸色煞白，从此对您言听计从。"
+      },
+      {
+        "text": "留着不用，养虎自重",
+        "effects": {
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "您把照片收回保险柜。有些底牌，留着比打出去更有用。"
+      },
+      {
+        "text": "直接公开，杀一儆百",
+        "effects": {
+          "elite": "-mid",
+          "morale": "+mid",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "丑闻上了头版。其他大人吓得不轻，也开始防着您手里还有什么。"
+      }
+    ],
+    "requires": {
+      "eliteMax": 45
+    }
+  },
+  {
+    "id": "border_reserves",
+    "type": "normal",
+    "category": "military",
+    "kicker": "边境",
+    "weight": 2,
+    "title": "边境告急",
+    "narrative": "邻国陈兵压境，前线兵力捉襟见肘。您想起了那些早已解甲、却仍念着旧情的老部下。",
+    "options": [
+      {
+        "text": "召回旧部，驰援前线",
+        "hint": "军中旧情，用一次少一次",
+        "cost": {
+          "oneTime": "oldGuard"
+        },
+        "effects": {
+          "army": "+big",
+          "borderTension": "-mid",
+          "intl": "+small"
+        },
+        "result": "几位老将披挂上阵，前线稳住了。这份旧情，您消耗了一次。"
+      },
+      {
+        "text": "从内地抽调正规军",
+        "effects": {
+          "army": "-small",
+          "borderTension": "-small",
+          "morale": "-small"
+        },
+        "result": "后方空虚了些，前线总算补上了人。"
+      },
+      {
+        "text": "虚张声势，外交斡旋",
+        "effects": {
+          "intl": "+mid",
+          "borderTension": "-small",
+          "finance": "-small"
+        },
+        "result": "您靠嘴皮子拖住了对手。能拖多久，是另一回事。"
+      }
+    ],
+    "requires": {
+      "borderMin": 45
+    }
+  },
+  {
+    "id": "census",
+    "type": "normal",
+    "category": "social",
+    "kicker": "政务",
+    "weight": 1,
+    "title": "人口普查",
+    "narrative": "一场全国普查暴露出真实的贫困数字，触目惊心。要不要让它见光？",
+    "options": [
+      {
+        "text": "篡改数据，报喜不报忧",
+        "effects": {
+          "deco": {
+            "press": "+small",
+            "economy": "+small"
+          },
+          "morale": "+small",
+          "history": "-small"
+        },
+        "result": "报告里一片欣欣向荣。真实的数字，锁进了保险柜。"
+      },
+      {
+        "text": "如实公布，倒逼施政",
+        "effects": {
+          "morale": "-small",
+          "intl": "-small",
+          "loyalty": {
+            "reformer": "+small"
+          },
+          "history": "+small"
+        },
+        "result": "难看的数字见了光。至少，有人开始认真想办法了。"
+      },
+      {
+        "text": "索性不查，眼不见为净",
+        "effects": {},
+        "result": "普查不了了之。不知道，有时是一种福气。"
+      }
+    ]
+  },
+  {
+    "id": "amnesty_call",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "人权",
+    "weight": 1,
+    "title": "一封公开信",
+    "narrative": "国际人权组织发表公开信，点名要求您释放政治犯、开放选举。信被各大媒体转载。",
+    "options": [
+      {
+        "text": "严词驳斥，强调内政",
+        "effects": {
+          "intl": "+big",
+          "morale": "+small",
+          "army": "+small",
+          "history": "-small"
+        },
+        "result": "您义正词严地回击。国内叫好，国外的制裁清单又长了。"
+      },
+      {
+        "text": "部分妥协，放几个人",
+        "effects": {
+          "intl": "-mid",
+          "elite": "-small",
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "几扇牢门开了。反对派也跟着活络起来。"
+      },
+      {
+        "text": "冷处理，不予理会",
+        "effects": {
+          "intl": "+small"
+        },
+        "result": "您当没看见。信热闹了几天，也就过去了。"
+      }
+    ]
+  },
+  {
+    "id": "monument",
+    "type": "normal",
+    "category": "social",
+    "kicker": "宣传",
+    "weight": 1,
+    "title": "一座丰碑",
+    "narrative": "宣传部提议为您铸一座全国最高的雕像，俯瞰首都。伟人，需要被仰望。",
+    "options": [
+      {
+        "text": "铸像立碑，越高越好",
+        "effects": {
+          "deco": {
+            "capital": "+mid"
+          },
+          "morale": "+mid",
+          "finance": "-mid",
+          "history": "-small",
+          "flags": {
+            "currencyNamed": true
+          }
+        },
+        "result": "一座巨像拔地而起，日夜俯视着这座城。"
+      },
+      {
+        "text": "修个朴素点的纪念园",
+        "effects": {
+          "deco": {
+            "capital": "+small"
+          },
+          "finance": "-small"
+        },
+        "result": "一座小园子落成，谈不上气派，也挑不出错。"
+      },
+      {
+        "text": "把钱省下来",
+        "effects": {
+          "finance": "+small",
+          "morale": "-small"
+        },
+        "result": "宣传部很失望。务实的领袖，雕像总是来得晚。"
+      }
+    ]
+  },
+  {
+    "id": "purge_rumor",
+    "type": "normal",
+    "category": "court",
+    "kicker": "密报",
+    "weight": 1,
+    "title": "风声鹤唳",
+    "narrative": "宫里流言四起，说您要大开杀戒。人人自危，反而可能逼出真正的阴谋。",
+    "options": [
+      {
+        "text": "辟谣安抚，稳定人心",
+        "effects": {
+          "elite": "+mid",
+          "loyalty": {
+            "spy": "-small"
+          }
+        },
+        "result": "您出面辟了谣。大人们松了口气，暗地里却仍在站队。"
+      },
+      {
+        "text": "将错就错，敲打众人",
+        "effects": {
+          "elite": "-mid",
+          "morale": "+small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "您含笑不语，任由恐惧蔓延。沉默，有时比刀更利。"
+      },
+      {
+        "text": "揪出造谣者，杀鸡儆猴",
+        "effects": {
+          "elite": "-small",
+          "deco": {
+            "press": "-small"
+          },
+          "loyalty": {
+            "spy": "+mid"
+          }
+        },
+        "result": "几个嘴碎的倒了霉。可流言这东西，从来斩不尽。"
+      }
+    ]
+  },
+  {
+    "id": "water_deal",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "边境",
+    "weight": 1,
+    "title": "一条河的归属",
+    "narrative": "上游邻国要修大坝，会卡住您的水源。谈判桌上，是低头还是动粗？",
+    "options": [
+      {
+        "text": "强硬交涉，陈兵示威",
+        "effects": {
+          "intl": "+mid",
+          "borderTension": "+big",
+          "army": "+small",
+          "morale": "+small"
+        },
+        "result": "您把军队拉到了边境。对方暂缓了工程，火药味却浓了。"
+      },
+      {
+        "text": "花钱买水权",
+        "effects": {
+          "finance": "-big",
+          "borderTension": "-mid",
+          "intl": "-small"
+        },
+        "result": "您掏钱买了条河。屈辱是屈辱，水总算有了。"
+      },
+      {
+        "text": "坐视不理",
+        "effects": {
+          "morale": "-mid",
+          "deco": {
+            "health_care": "-small"
+          }
+        },
+        "result": "大坝照修。来年的旱季，会有人为这个决定流泪。"
+      }
+    ]
+  },
+  {
+    "id": "aid_strings",
+    "type": "normal",
+    "category": "economy",
+    "kicker": "外援",
+    "weight": 1,
+    "title": "附条件的援助",
+    "narrative": "一个国际组织愿提供巨额低息贷款，条件是削减补贴、私有化国企、接受监督。",
+    "options": [
+      {
+        "text": "接受贷款，吞下条件",
+        "effects": {
+          "finance": "+big",
+          "morale": "-big",
+          "intl": "-mid",
+          "elite": "-small"
+        },
+        "result": "钱到了账，账本也交了出去。第二天，补贴没了。"
+      },
+      {
+        "text": "只要钱，不要监督，谈崩",
+        "effects": {
+          "finance": "-small",
+          "intl": "+small"
+        },
+        "result": "谈判破裂。您保住了面子，丢掉了一笔活钱。"
+      },
+      {
+        "text": "接受贷款，账目交财长\"美化\"",
+        "effects": {
+          "finance": "+mid",
+          "loyalty": {
+            "finance": "+mid"
+          }
+        },
+        "twistable": true,
+        "result": "账做得天衣无缝。恩戈齐的\"辛苦费\"，也算得清清楚楚。"
+      }
+    ]
+  },
+  {
+    "id": "youth_unrest",
+    "type": "normal",
+    "category": "social",
+    "kicker": "社会",
+    "weight": 2,
+    "title": "广场上的年轻人",
+    "narrative": "大学生又聚集了，这次喊的口号格外刺耳。安全局长请示：清场，还是谈谈？",
+    "options": [
+      {
+        "text": "连夜清场，抓带头的",
+        "effects": {
+          "morale": "-big",
+          "intl": "+big",
+          "loyalty": {
+            "spy": "+mid"
+          },
+          "deco": {
+            "education": "-small"
+          },
+          "history": "-mid"
+        },
+        "result": "凌晨的广场恢复了平静。失踪名单，在地下流传。"
+      },
+      {
+        "text": "派人许诺改革，拖过这阵",
+        "effects": {
+          "morale": "-small",
+          "loyalty": {
+            "reformer": "+small"
+          }
+        },
+        "twistable": true,
+        "result": "学生暂时散了。许下的诺言，您自己都记不清。"
+      },
+      {
+        "text": "亲自去对话",
+        "effects": {
+          "morale": "+mid",
+          "intl": "-small",
+          "health": "-small",
+          "elite": "-small",
+          "history": "+mid"
+        },
+        "result": "您听学生讲了半小时。权贵们觉得您\"掉了价\"。"
+      }
+    ],
+    "requires": {
+      "moraleMax": 35
+    }
+  },
+  {
+    "id": "palace_luxury",
+    "type": "normal",
+    "category": "corruption",
+    "kicker": "私事",
+    "weight": 1,
+    "title": "新的行宫",
+    "narrative": "夫人看中了海边一块地，想建座新行宫。钱不是问题——只要您不在乎别人怎么看。",
+    "options": [
+      {
+        "text": "建！享受是应得的",
+        "effects": {
+          "wealth": -0.4,
+          "deco": {
+            "capital": "+small"
+          },
+          "morale": "-mid",
+          "loyalty": {
+            "firstlady": "+mid"
+          }
+        },
+        "result": "行宫拔地而起。卫星图上，它和旁边的贫民窟挨得很近。"
+      },
+      {
+        "text": "低调买地，暂不动工",
+        "effects": {
+          "wealth": -0.2
+        },
+        "result": "地先攥在手里。风头过了再说。"
+      },
+      {
+        "text": "拒绝，眼下不是时候",
+        "effects": {
+          "loyalty": {
+            "firstlady": "-mid"
+          }
+        },
+        "result": "夫人不悦。海边的风，今晚怕是吹不进卧房了。"
+      }
+    ]
+  },
+  {
+    "id": "general_medal",
+    "type": "normal",
+    "category": "military",
+    "kicker": "军务",
+    "weight": 1,
+    "title": "将军的勋章",
+    "narrative": "边境小胜，将军要您亲授最高勋章。给，长他威风；不给，寒了军心。",
+    "options": [
+      {
+        "text": "隆重授勋，与他同框",
+        "effects": {
+          "army": "+mid",
+          "loyalty": {
+            "general": "+big"
+          },
+          "morale": "+small"
+        },
+        "result": "勋章别上了将军的胸口。镁光灯下，他笑得比您还像主角。"
+      },
+      {
+        "text": "低调授勋，淡化处理",
+        "effects": {
+          "army": "+small",
+          "loyalty": {
+            "general": "-small"
+          }
+        },
+        "result": "勋章给了，排场没给。将军心里记了一笔。"
+      },
+      {
+        "text": "把功劳揽到自己身上",
+        "effects": {
+          "army": "-mid",
+          "loyalty": {
+            "general": "-big"
+          },
+          "morale": "+small",
+          "history": "-small"
+        },
+        "result": "庆功会上，您成了唯一的英雄。将军鼓掌的手，有点僵。"
+      }
+    ]
+  },
+  {
+    "id": "opposition_exile",
+    "type": "normal",
+    "category": "diplomacy",
+    "kicker": "政敌",
+    "weight": 1,
+    "title": "流亡者的电台",
+    "narrative": "一个流亡海外的反对派领袖办起了广播电台，天天痛骂您，听众不少。",
+    "options": [
+      {
+        "text": "施压所在国，封掉电台",
+        "effects": {
+          "intl": "+mid",
+          "finance": "-small",
+          "morale": "+small"
+        },
+        "result": "电台被掐了。流亡者却成了\"自由的殉道者\"，名气更大了。"
+      },
+      {
+        "text": "派人\"做掉\"他",
+        "effects": {
+          "intl": "+big",
+          "history": "-big",
+          "loyalty": {
+            "spy": "+mid"
+          }
+        },
+        "result": "海外传来讣告。所有人都知道是谁干的，没人能证明。"
+      },
+      {
+        "text": "在国内办台对着骂",
+        "effects": {
+          "deco": {
+            "press": "-small"
+          },
+          "finance": "-small",
+          "morale": "+small"
+        },
+        "result": "您也办了个台。两边对骂，听众当起了热闹。"
+      }
+    ]
+  },
+  {
+    "id": "plague_rumor",
+    "type": "normal",
+    "category": "social",
+    "kicker": "民情",
+    "weight": 1,
+    "title": "瘟疫的传言",
+    "narrative": "南方传来疫病的风声，真假难辨。承认它要花钱治，否认它要赌运气。",
+    "options": [
+      {
+        "text": "公开应对，全力防治",
+        "effects": {
+          "finance": "-mid",
+          "deco": {
+            "health_care": "+mid"
+          },
+          "morale": "+small",
+          "intl": "-small"
+        },
+        "result": "您把事情摆上了台面。花了钱，但堵住了更大的窟窿。"
+      },
+      {
+        "text": "辟谣维稳，悄悄处理",
+        "effects": {
+          "deco": {
+            "press": "-mid",
+            "health_care": "-small"
+          },
+          "morale": "-small"
+        },
+        "twistable": true,
+        "result": "官方宣布\"纯属谣言\"。墓地却悄悄扩了一圈。"
+      },
+      {
+        "text": "甩锅邻国投毒",
+        "effects": {
+          "intl": "+mid",
+          "morale": "+mid",
+          "borderTension": "+mid"
+        },
+        "result": "您把锅扣给了邻国。民族主义的火，烧得正旺。"
+      }
+    ]
+  },
+  {
+    "id": "notify_stamp",
+    "type": "notify",
+    "category": "social",
+    "kicker": "通讯社",
+    "weight": 1,
+    "title": "一枚邮票",
+    "narrative": "邮政发行了印有您肖像的纪念邮票，据说在集邮圈\"一票难求\"——尽管多数是单位摊派购买的。",
+    "options": [
+      {
+        "text": "欣然题词留念",
+        "effects": {
+          "morale": "+small"
+        },
+        "result": "您在首日封上签了名。又一件印着您脸的东西，进入了流通。"
+      },
+      {
+        "text": "嫌画得不像，要求重制",
+        "effects": {
+          "deco": {
+            "capital": "-small"
+          }
+        },
+        "result": "邮票回炉重造。画师连夜把您修得年轻了十岁。"
+      }
+    ]
+  },
+  {
+    "id": "notify_memoir",
+    "type": "notify",
+    "category": "social",
+    "kicker": "出版",
+    "weight": 1,
+    "title": "您的传记",
+    "narrative": "一本歌颂您的官方传记隆重上市，被列为\"全民必读\"。书里的您，比镜子里的您伟大得多。",
+    "options": [
+      {
+        "text": "亲自为首发式剪彩",
+        "effects": {
+          "deco": {
+            "press": "+small"
+          },
+          "morale": "+small"
+        },
+        "result": "您站在书山前微笑。那个纸上的伟人，您自己都快信了。"
+      },
+      {
+        "text": "挑出几处\"不够到位\"，要求再版",
+        "effects": {
+          "deco": {
+            "education": "-small"
+          }
+        },
+        "result": "编辑连夜修订。歌功颂德，原来也是个技术活。"
+      }
+    ]
+  },
+  {
+    "id": "notify_condolence",
+    "type": "notify",
+    "category": "social",
+    "kicker": "国际",
+    "weight": 1,
+    "title": "邻国的吊唁",
+    "narrative": "邻国老独裁者寿终正寝，风光大葬。您派人送去花圈，看着电视里的国葬，若有所思。",
+    "options": [
+      {
+        "text": "感慨一句\"善终不易\"",
+        "effects": {
+          "health": "+small"
+        },
+        "result": "您忽然格外注意起自己的饮食和作息。"
+      },
+      {
+        "text": "研究他是怎么做到的",
+        "effects": {
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "您让人调来了那位同行的\"成功经验\"。同行，也是老师。"
+      }
+    ]
   }
 ]

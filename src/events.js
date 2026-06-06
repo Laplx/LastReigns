@@ -66,13 +66,15 @@ function freshNormals(state, content) {
   return fresh;
 }
 function freshNotifies(state, content) {
-  const recent = new Set(state.seenEventIds.slice(-8));
-  return content.events.filter((c) => c.type === 'notify' && isEligible(state, c) && !recent.has(c.id));
+  const all = content.events.filter((c) => c.type === 'notify' && isEligible(state, c));
+  let fresh = all.filter((c) => !state.seenEventIds.includes(c.id));
+  if (!fresh.length) { const recent = new Set(state.seenEventIds.slice(-6)); fresh = all.filter((c) => !recent.has(c.id)); }
+  return fresh;
 }
 
 export function drawOne(state, content) {
   const normals = freshNormals(state, content), notifies = freshNotifies(state, content);
-  const wantNotify = (notifies.length && rngChance(state, 0.28)) || normals.length === 0;
+  const wantNotify = (notifies.length && rngChance(state, 0.22)) || normals.length === 0;
   let pool = wantNotify ? notifies : normals;
   if (!pool.length) pool = normals.length ? normals : notifies;
   return pool.length ? weightedPick(state, pool) : null;

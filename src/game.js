@@ -8,7 +8,9 @@ import * as chains from './chains.js';
 import * as llm from './llm.js';
 import { resetAtmosphere } from './atmosphere.js';
 
-let content, state;
+let content, state, selectedPersonId = null;
+let chainNarr = {}, _bgBusy = false;
+function lvlCfg() { const l = llm.llmLevel(); return l === 'low' ? { specP: 0, topup: 0, pre: [0, 0], reskin: false } : l === 'high' ? { specP: 0.20, topup: 14, pre: [6, 4], reskin: true } : { specP: 0.12, topup: 8, pre: [5, 4], reskin: true }; }
 
 async function loadContent() {
   const j = (p) => fetch(p).then((r) => r.json());
@@ -25,10 +27,29 @@ async function boot() {
   const health = await llm.checkHealth();
   if (health.llm) { ui.setNetStatus('online', `叙事联网：${health.model}`); document.getElementById('boot-foot').textContent = `叙事联网已就绪（${health.model}）`; }
   else { ui.setNetStatus('offline', '离线模式'); document.getElementById('boot-foot').textContent = '离线模式：预设叙事（可玩，但私信顾问需联网）'; }
-  document.getElementById('btn-start').addEventListener('click', showBriefing);
+  document.getElementById('btn-start').addEventListener('click', onStartClick);
+  document.getElementById('btn-settings').addEventListener('click', openSettingsFlow);
   document.getElementById('btn-archive').addEventListener('click', () => state && ui.openOverlay(ui.renderArchive(state)));
+  document.getElementById('btn-manual').addEventListener('click', () => state && ui.openOverlay(ui.manualNode(state)));
   document.getElementById('overlay-close').addEventListener('click', ui.closeOverlay);
   document.getElementById('overlay').addEventListener('click', (e) => { if (e.target.id === 'overlay') ui.closeOverlay(); });
+}
+
+function onStartClick() {
+  if (!llm.isAvailable()) {
+    ui.confirmDialog('您还没有配置叙事 AI。游戏仍可进行，但事件叙事、私下接触、结局词条都会退化为预设内容，体验会大打折扣。', {
+      yesLabel: '仍要开始', onYes: showBriefing, altLabel: '去配置', onAlt: openSettingsFlow,
+    });
+  } else showBriefing();
+}
+function openSettingsFlow() {
+  ui.openSettings(llm.getSettings(), async (s) => {
+    llm.saveSettings(s);
+    await llm.checkHealth();
+    const foot = document.getElementById('boot-foot');
+    if (llm.isAvailable()) { ui.setNetStatus('online', '叙事联网：' + llm.modelName()); if (foot) foot.textContent = `叙事联网已就绪（${llm.modelName()}）`; }
+    else { ui.setNetStatus('offline', '离线'); if (foot) foot.textContent = '离线模式：预设叙事（可玩，但体验会大打折扣）'; }
+  });
 }
 
 function showBriefing() {
@@ -39,27 +60,69 @@ function showBriefing() {
   ui.renderBriefing(state, startGame);
 }
 
+function addToPool(evs) {
+  const titles = new Set([...content.events.map((e) => e.title), ...state.llmPool.map((e) => e.title)]);
+  for (const e of evs) if (e && e.title && !titles.has(e.title)) { state.llmPool.push(e); titles.add(e.title); }
+}
 async function startGame() {
   ui.renderTopbar(state);
-  // 开局利用等待时间，让 LLM 预生成一批本局专属题入池
-  if (llm.isAvailable()) {
-    const stop = ui.showLoading(LOADING.boot);
-    try { const ev = await llm.pregenEvents(state, content, 10); state.llmPool.push(...ev); } catch {}
-    stop();
+  // 开局利用等待时间，并行预生成一批本局专属题入池（带进度条）；数量随 AI 参与度
+  const [chunks, per] = lvlCfg().pre;
+  if (llm.isAvailable() && chunks > 0) {
+    const prog = ui.showLoadingProgress(LOADING.boot);
+    let done = 0; prog.set(0.04);
+    const results = await Promise.all(Array.from({ length: chunks }, () =>
+      llm.pregenEvents(state, content, per).then((r) => { done++; prog.set(done / chunks); return r; }).catch(() => [])
+    ));
+    addToPool(results.flat());
+    prog.done();
   }
   refreshPanels();
   gameLoop();
 }
 
+// 后台并行准备（不阻塞）：D1a 题池补充（参考历史/状态）+ D1b 事件链节点叙事改写
+function countFreshNormals() {
+  const seen = new Set(state.seenEventIds); let c = 0;
+  for (const e of content.events) if (e.type !== 'notify' && !seen.has(e.id)) c++;
+  for (const e of state.llmPool) if (!seen.has(e.id)) c++;
+  return c;
+}
+function bgPrep() {
+  if (!llm.isAvailable()) return;
+  const cfg = lvlCfg();
+  if (cfg.reskin) {
+    for (const s of chains.getActiveSteps(state, content)) {
+      if (chainNarr[s.key] !== undefined) continue;
+      chainNarr[s.key] = null; // pending
+      llm.reskinChainStep(state, content, s.def, s.step).then((t) => { if (t) chainNarr[s.key] = t; }).catch(() => {});
+    }
+  }
+  if (cfg.topup > 0 && !_bgBusy && countFreshNormals() < cfg.topup) {
+    _bgBusy = true;
+    llm.pregenEvents(state, content, 4).then((ev) => addToPool(ev)).catch(() => {}).finally(() => { _bgBusy = false; });
+  }
+}
+
 function coreItems(summary) { return (summary || []).filter((s) => s.type === 'core'); }
-function refreshPanels(flashItems) { ui.renderTopbar(state); ui.renderStatus(state, content, flashItems || null); ui.renderPeople(state, openPerson); }
+function refreshPanels(flashItems) { ui.renderTopbar(state); ui.renderStatus(state, content, flashItems || null); renderPeoplePanel(); }
+function renderPeoplePanel() {
+  if (!selectedPersonId || !state.people.find((p) => p.id === selectedPersonId && p.alive)) selectedPersonId = (state.people.find((p) => p.alive) || {}).id;
+  const canEngage = llm.isAvailable() && state.lastDeepContactYear !== state.year;
+  const engageReason = !llm.isAvailable() ? '离线模式下无法私下深谈（需联网）。' : (state.lastDeepContactYear === state.year ? '今年您已私下接触过一位了。' : '');
+  ui.renderPeople(state, {
+    selectedId: selectedPersonId, statusFor: buildPersonStatus, canEngage, engageReason,
+    onSelect: (id) => { selectedPersonId = id; renderPeoplePanel(); },
+    onEngage: (p) => engagePerson(p),
+  });
+}
 
 async function gameLoop() { while (!state.over) await nextCard(); finishGame(); }
 
 async function nextCard() {
   if (state.year >= state.budgetDueYear) {
-    if (llm.isAvailable()) { const stop = ui.showLoading(LOADING.budget); try { const ev = await llm.pregenEvents(state, content, 5); state.llmPool.push(...ev); } catch {} stop(); }
     chains.tryActivateChain(state, content); // 财政年作为事件链编排节点
+    bgPrep(); // 后台并行准备，不阻塞玩家
     await presentBudget();
     state.budgetDueYear = state.year + 3;
     return afterCard();
@@ -67,8 +130,8 @@ async function nextCard() {
   if (state.chainJustActivated) { const info = state.chainJustActivated; state.chainJustActivated = null; await presentCard(chains.makeChainAnnounceCard(info)); return afterCard(); }
 
   let card = null;
-  if (state.rng() < 0.55) card = chains.drawChainCard(state, content);
-  if (!card && llm.isAvailable() && state.rng() < 0.12) { const stop = ui.showLoading(LOADING.special); try { card = await llm.generateSpecialEvent(state, content); } catch { card = null; } stop(); }
+  if (state.rng() < 0.55) card = chains.drawChainCard(state, content, chainNarr);
+  if (!card && llm.isAvailable() && state.rng() < lvlCfg().specP) { const stop = ui.showLoading(LOADING.special); try { card = await llm.generateSpecialEvent(state, content); } catch { card = null; } stop(); }
   if (!card) card = events.drawOne(state, content);
   if (!card) { engine.makeEnding(state, 'natural'); return; }
   await presentCard(card);
@@ -83,6 +146,7 @@ function yearTick() {
   engine.annualHealthDecay(state);
   engine.annualDrift(state);
   chains.tryActivateChain(state, content);
+  bgPrep();
   const ending = engine.checkCrises(state);
   refreshPanels();
   if (state.flags.somethingNoReturn) { ui.toast('有些事情，已经无法回头。'); state.flags.somethingNoReturn = false; }
@@ -129,14 +193,6 @@ function buildPersonStatus(person) {
   if (rival) lines.push(`与${rival.name}素来不和。`);
   if (person.memory.length) lines.push(`您还记得：${person.memory[person.memory.length - 1].note}`);
   return lines;
-}
-function openPerson(person) {
-  if (!person || !person.alive) return;
-  const canEngage = llm.isAvailable() && state.lastDeepContactYear !== state.year;
-  let reason = '';
-  if (!llm.isAvailable()) reason = '离线模式下无法私下深谈（需叙事联网）。';
-  else if (state.lastDeepContactYear === state.year) reason = '今年您已私下接触过一位了。';
-  ui.openOverlay(ui.renderPersonDetail(person, buildPersonStatus(person), { canEngage, reason, onEngage: () => engagePerson(person) }));
 }
 async function engagePerson(person) {
   const stop = ui.showLoading(LOADING.advisor(person.name));

@@ -19,6 +19,7 @@
         <span id="phase-label" class="muted"></span>
       </div>
       <div class="tb-right">
+        <button id="btn-manual" class="ghost" title="独裁者手册">手册</button>
         <button id="btn-archive" class="ghost" title="档案室">档案室</button>
         <span id="net-status" class="net" title="叙事联网状态"></span>
       </div>
@@ -35,10 +36,11 @@
       <div id="stage-content"><!-- 由 ui.js 注入 --></div>
     </main>
 
-    <!-- ============ 关键人物（置于卡片下方，便于随手查阅/接触） ============ -->
+    <!-- ============ 关键人物（选项卡式，置于事件卡下方） ============ -->
     <section id="people-panel" class="panel">
-      <div class="people-hint muted">点击任一人物可查看近况、私下接触（每年限一人）</div>
-      <div id="people-row" class="people-row"></div>
+      <div class="panel-kicker">人物</div>
+      <div id="people-tabs" class="people-tabs"></div>
+      <div id="people-detail" class="people-detail"></div>
     </section>
 
     <!-- ============ 浮层：顾问私谈 / 匿名信 / 档案室 ============ -->
@@ -54,6 +56,7 @@
       <div class="lo-box">
         <div class="spinner"></div>
         <div class="lo-line" id="loading-line"></div>
+        <div class="lo-progress hidden" id="loading-progress"><div class="lo-bar" id="loading-bar"></div></div>
       </div>
     </div>
 
@@ -63,7 +66,10 @@
         <h1>最后的统治者</h1>
         <p class="subtitle">恩加拉共和国 · 一场关于权力的算术</p>
         <p class="epigraph">“政治从来不是关于善治，而是关于谁来统治、靠谁统治。”</p>
-        <button id="btn-start" class="primary">就任</button>
+        <div class="boot-actions">
+          <button id="btn-start" class="primary">就任</button>
+          <button id="btn-settings" class="ghost">设置</button>
+        </div>
         <div class="boot-foot muted" id="boot-foot"></div>
       </div>
     </div>

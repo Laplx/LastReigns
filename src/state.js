@@ -75,7 +75,8 @@ export function createInitialState(seed, content) {
 
     people: chosen,
 
-    oneTime: { intlCredibility: 2, familyLegacy: 1 },
+    // 一次性资源：用完即止
+    oneTime: { intlCredibility: 2, familyLegacy: 1, oldGuard: 1, kompromat: 1 },
 
     activeChains: [], completedChains: [], chainJustActivated: null,
 

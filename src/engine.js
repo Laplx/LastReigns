@@ -229,7 +229,8 @@ export function triggerDefection(state) {
   return cand;
 }
 
-const ENDING_COEF = { natural: 2.0, exile: 0.5, tribunal: 0.25, arrested: 0.2, accident: 0.4, puppet: 0.4, junta: 0.15, coup: 0, assassination: 0, uprising: 0, frenzy: 0, collapse: 0, mutiny: 0, eliteCollapse: 0 };
+// 被推翻类给保底系数：多年统治与私产仍折算少量分，不至于归零
+const ENDING_COEF = { natural: 2.0, exile: 0.5, puppet: 0.4, accident: 0.4, tribunal: 0.25, arrested: 0.2, junta: 0.18, coup: 0.15, assassination: 0.15, uprising: 0.15, frenzy: 0.15, collapse: 0.15, mutiny: 0.15, eliteCollapse: 0.15 };
 export function makeEnding(state, type) {
   state.over = true;
   const e = { type, year: state.year, age: leaderAge(state), coef: ENDING_COEF[type] ?? 0, naturalPeaceful: type === 'natural' && state.hidden.heir != null && state.hidden.legacy >= 50 };

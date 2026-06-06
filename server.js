@@ -36,6 +36,7 @@ const PORT = Number(env.PORT) || 5173;
 const LLM_API_KEY = env.LLM_API_KEY || '';
 const LLM_BASE_URL = (env.LLM_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, '');
 const LLM_MODEL = env.LLM_MODEL || 'deepseek-chat';
+const LLM_FORMAT = (env.LLM_FORMAT || 'openai').toLowerCase(); // openai | anthropic
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -62,50 +63,67 @@ async function readBody(req) {
 // ---- LLM proxy -----------------------------------------------------------
 // Front-end posts { messages, temperature?, max_tokens?, response_format?, model? }.
 // We forward to the OpenAI-compatible /chat/completions endpoint.
+// 双格式适配：前端可在请求体里传 apiKey/baseUrl/format/model，覆盖 .env.local 默认。
 async function handleLLM(req, res) {
-  if (!LLM_API_KEY) {
-    return send(res, 503, JSON.stringify({ error: 'no_api_key' }), {
-      'Content-Type': 'application/json',
-    });
-  }
   let payload;
-  try {
-    payload = JSON.parse(await readBody(req));
-  } catch {
-    return send(res, 400, JSON.stringify({ error: 'bad_json' }), {
-      'Content-Type': 'application/json',
-    });
-  }
+  try { payload = JSON.parse(await readBody(req)); }
+  catch { return send(res, 400, JSON.stringify({ error: 'bad_json' }), { 'Content-Type': 'application/json' }); }
+
+  const apiKey = payload.apiKey || LLM_API_KEY;
+  const baseUrl = (payload.baseUrl || LLM_BASE_URL).replace(/\/$/, '');
+  const format = (payload.format || LLM_FORMAT).toLowerCase();
+  const model = payload.model || LLM_MODEL;
+  if (!apiKey) return send(res, 503, JSON.stringify({ error: 'no_api_key' }), { 'Content-Type': 'application/json' });
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45_000);
   try {
-    const upstream = await fetch(`${LLM_BASE_URL}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${LLM_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: payload.model || LLM_MODEL,
-        messages: payload.messages,
-        temperature: payload.temperature ?? 0.9,
-        max_tokens: payload.max_tokens ?? 1200,
-        ...(payload.response_format ? { response_format: payload.response_format } : {}),
-        stream: false,
-      }),
-      signal: controller.signal,
-    });
-    const text = await upstream.text();
-    send(res, upstream.status, text, { 'Content-Type': 'application/json' });
+    const out = format === 'anthropic'
+      ? await callAnthropic(baseUrl, apiKey, model, payload, controller.signal)
+      : await callOpenAI(baseUrl, apiKey, model, payload, controller.signal);
+    send(res, out.status, out.body, { 'Content-Type': 'application/json' });
   } catch (err) {
     const code = err.name === 'AbortError' ? 'timeout' : 'upstream_unreachable';
-    send(res, 502, JSON.stringify({ error: code, detail: String(err.message || err) }), {
-      'Content-Type': 'application/json',
-    });
-  } finally {
-    clearTimeout(timeout);
+    send(res, 502, JSON.stringify({ error: code, detail: String(err.message || err) }), { 'Content-Type': 'application/json' });
+  } finally { clearTimeout(timeout); }
+}
+
+async function callOpenAI(baseUrl, apiKey, model, payload, signal) {
+  const upstream = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model, messages: payload.messages,
+      temperature: payload.temperature ?? 0.9, max_tokens: payload.max_tokens ?? 1200,
+      ...(payload.response_format ? { response_format: payload.response_format } : {}), stream: false,
+    }),
+    signal,
+  });
+  return { status: upstream.status, body: await upstream.text() };
+}
+
+// Anthropic Messages API：system 顶层、合并同角色、JSON 用 assistant 预填 '{'，再整形回 OpenAI 形状。
+async function callAnthropic(baseUrl, apiKey, model, payload, signal) {
+  const sys = (payload.messages || []).filter((m) => m.role === 'system').map((m) => m.content).join('\n\n');
+  const msgs = [];
+  for (const m of (payload.messages || []).filter((m) => m.role !== 'system')) {
+    const role = m.role === 'assistant' ? 'assistant' : 'user';
+    if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\n\n' + m.content;
+    else msgs.push({ role, content: m.content });
   }
+  const wantJson = payload.response_format && payload.response_format.type === 'json_object';
+  if (wantJson) msgs.push({ role: 'assistant', content: '{' });
+  const upstream = await fetch(`${baseUrl}/v1/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model, system: sys, messages: msgs, max_tokens: payload.max_tokens ?? 1200, temperature: payload.temperature ?? 0.9 }),
+    signal,
+  });
+  if (!upstream.ok) return { status: upstream.status, body: await upstream.text() };
+  const data = await upstream.json();
+  let text = (data.content || []).map((b) => b.text || '').join('');
+  if (wantJson && !text.trimStart().startsWith('{')) text = '{' + text;
+  return { status: 200, body: JSON.stringify({ choices: [{ message: { content: text } }] }) };
 }
 
 // ---- static files --------------------------------------------------------
@@ -128,7 +146,7 @@ async function handleStatic(req, res, urlPath) {
 const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && req.url === '/api/llm') return handleLLM(req, res);
   if (req.method === 'GET' && req.url === '/api/health') {
-    return send(res, 200, JSON.stringify({ ok: true, llm: !!LLM_API_KEY, model: LLM_MODEL }), {
+    return send(res, 200, JSON.stringify({ ok: true, llm: !!LLM_API_KEY, model: LLM_MODEL, format: LLM_FORMAT }), {
       'Content-Type': 'application/json',
     });
   }

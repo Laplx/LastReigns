@@ -3,8 +3,8 @@
     "id": "heir",
     "title": "继承人问题",
     "trigger": {
-      "minYear": 5,
-      "healthMax": 72
+      "minYear": 4,
+      "healthMax": 75
     },
     "steps": [
       {
@@ -106,7 +106,7 @@
     "id": "north",
     "title": "北方矿区叛乱",
     "trigger": {
-      "moraleMax": 38
+      "moraleMax": 42
     },
     "steps": [
       {
@@ -187,7 +187,7 @@
     "title": "邻国边境危机",
     "trigger": {
       "minYear": 3,
-      "borderMin": 30
+      "borderMin": 25
     },
     "steps": [
       {
@@ -268,7 +268,7 @@
     "id": "democracy",
     "title": "西方民主压力",
     "trigger": {
-      "intlMin": 58
+      "intlMin": 50
     },
     "steps": [
       {
@@ -364,7 +364,7 @@
     "id": "court",
     "title": "宫廷内斗",
     "trigger": {
-      "minYear": 4
+      "minYear": 3
     },
     "steps": [
       {

@@ -60,23 +60,49 @@ export function renderStatus(state, content, flashItems) {
   }
   if (flashItems) for (const it of flashItems) {
     const cind = core.querySelector(`.cind[data-key="${it.key}"]`); if (!cind) continue;
-    const f = el('div', `delta-float ${it.good ? 'up' : 'down'}`, `${it.delta > 0 ? '+' : ''}${it.delta}`);
+    const f = el('div', `delta-float ${it.delta > 0 ? 'up' : 'down'}`, `${it.delta > 0 ? '+' : ''}${it.delta}`);
     cind.appendChild(f);
   }
 }
 
-export function renderPeople(state, onClick) {
-  const row = $('people-row'); row.innerHTML = '';
+// 选项卡式：上排 tab(名字+忠诚条)，下方常驻当前选中者详情 + 私下接触
+const LOY_TXT = { loyal: '高', ok: '中', uneasy: '动摇', danger: '危' };
+const COMP_TXT = { high: '强', mid: '中', low: '弱' };
+export function renderPeople(state, opts) {
+  const tabs = $('people-tabs'); tabs.innerHTML = '';
   for (const p of state.people) {
-    const card = el('div', `person${p.alive ? '' : ' gone'}`);
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
-    const comp = competenceSignal(p.competence);
-    card.innerHTML = `<div class="p-top"><span class="p-name">${esc(p.name)}</span><span class="dot comp comp-${comp}" title="能力"></span></div>
-      <div class="p-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</div>
-      <div class="loybar"><div class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></div></div>`;
-    if (p.alive && onClick) card.addEventListener('click', () => onClick(p));
-    row.appendChild(card);
+    const t = el('button', `ptab${p.id === opts.selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
+    t.innerHTML = `<span class="pt-name">${esc(p.name)}</span><span class="pt-title">${esc(p.title)}</span>
+      <span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span>`;
+    if (p.alive) t.addEventListener('click', () => opts.onSelect(p.id));
+    tabs.appendChild(t);
   }
+  const detail = $('people-detail'); detail.innerHTML = '';
+  const p = state.people.find((x) => x.id === opts.selectedId) || state.people.find((x) => x.alive);
+  if (!p) return;
+  const box = el('div', 'pd');
+  box.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(p.name)}</span><span class="pd-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span></div>`;
+  const tag = el('div', 'pd-tags');
+  (p.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
+  box.appendChild(tag);
+  const loy = loyaltySignal(p.loyalty), comp = competenceSignal(p.competence);
+  const stats = el('div', 'pd-stats');
+  stats.innerHTML = `
+    <div class="stat"><span class="stat-ic">忠</span><span class="statbar"><span class="statfill loy-${loy}" style="width:${p.loyalty}%"></span></span><span class="stat-v loy-t-${loy}">忠诚·${LOY_TXT[loy]}</span></div>
+    <div class="stat"><span class="stat-ic">能</span><span class="statbar"><span class="statfill comp-${comp}" style="width:${p.competence}%"></span></span><span class="stat-v">能力·${COMP_TXT[comp]}</span></div>`;
+  box.appendChild(stats);
+  if (p.blurb) box.appendChild(el('div', 'pd-blurb', esc(p.blurb)));
+  const st = el('div', 'pd-status'); (opts.statusFor(p) || []).forEach((l) => st.appendChild(el('p', '', esc(l)))); box.appendChild(st);
+  if (p.alive) {
+    const actions = el('div', 'pd-actions');
+    const btn = el('button', 'primary pd-engage', '私下接触'); btn.disabled = !opts.canEngage;
+    if (opts.canEngage) btn.addEventListener('click', () => opts.onEngage(p));
+    actions.appendChild(btn);
+    actions.appendChild(el('span', 'pd-reason', esc(opts.canEngage ? '私下接触每年仅限一人——而他未必照您说的办。' : (opts.engageReason || ''))));
+    box.appendChild(actions);
+  } else box.appendChild(el('div', 'pd-reason', '此人已不在牌桌上。'));
+  detail.appendChild(box);
 }
 
 function stage() { return $('stage-content'); }
@@ -91,15 +117,15 @@ export function renderCard(card, { onChoose }) {
   c.appendChild(opts); s.appendChild(c);
 }
 
+// 红绿直接跟正负挂钩（+绿 −红）；比例条本身另按"位置"着色
 function chipFor(s) {
   const sign = s.delta > 0 ? '+' : '';
-  let isGood, txt;
-  if (s.type === 'core') { isGood = !!s.good; txt = `${s.label} ${sign}${s.delta}`; }
-  else if (s.type === 'wealth') { isGood = s.delta > 0; txt = `${s.label} ${sign}${s.delta.toFixed(2)}${s.unit}`; }
-  else if (s.type === 'area') { isGood = s.delta > 0; txt = `${s.label} ${sign}${Math.round(s.delta).toLocaleString('en-US')} ${s.unit}`; }
-  else if (s.type === 'loyalty') { isGood = s.delta > 0; txt = `${s.label} ${sign}${s.delta}`; }
-  else { isGood = true; txt = s.label; }
-  return el('span', `chip ${s.delta === 0 ? 'neutral' : isGood ? 'up' : 'down'}`, esc(txt) + (s.delta === 0 ? '' : s.delta > 0 ? ' ↑' : ' ↓'));
+  let txt;
+  if (s.type === 'wealth') txt = `${s.label} ${sign}${s.delta.toFixed(2)}${s.unit}`;
+  else if (s.type === 'area') txt = `${s.label} ${sign}${Math.round(s.delta).toLocaleString('en-US')} ${s.unit}`;
+  else txt = `${s.label} ${sign}${s.delta}`;
+  const cls = s.delta === 0 ? 'neutral' : s.delta > 0 ? 'up' : 'down';
+  return el('span', `chip ${cls}`, esc(txt) + (s.delta === 0 ? '' : s.delta > 0 ? ' ↑' : ' ↓'));
 }
 
 export function renderResult(text, summary, onContinue, opts = {}) {
@@ -147,21 +173,61 @@ export function renderArchive(state) {
   return box;
 }
 
-export function renderPersonDetail(person, statusLines, { canEngage, reason, onEngage }) {
+// 《独裁者手册》腔的玩法说明，开局与"手册"按钮共用
+function briefingBody(state) {
+  const c = el('div', 'briefing');
+  c.appendChild(el('div', 'narrative', `您靠一场政变上了台。从今天起，目标只有一个：坐稳这把椅子，最好能坐到寿终正寝。`));
+  const guide = el('div', 'bf-guide');
+  guide.innerHTML = `<div class="kicker" style="margin-bottom:6px">怎么玩</div>
+    <ul>
+      <li>盯住六根比例条：<b>军队、精英、民心、国际，中庸是保命，不是美德</b>（太高太低都会出事）；财政别见底，健康别归零。</li>
+      <li>事件卡的每个选择都会牵动这些指标——没有标准答案，全是取舍。</li>
+      <li>四位重臣（卡片下方）可点开查看，每年可私下接触一人——但他未必照您说的办；忠诚的好用，有本事却不忠的更好用，只要您按得住。</li>
+      <li>分数到结局才揭晓：在位越久×地盘越大、私产越多、有人接班都加分；而史书怎么写您，会放大或抹平这一切。</li>
+    </ul>`;
+  c.appendChild(guide);
+  return c;
+}
+export function manualNode(state) {
   const box = el('div');
-  box.innerHTML = `<h3>${esc(person.name)}</h3><div style="color:var(--ink-faint);font-size:.8em">${esc(person.title)}</div>`;
-  const tags = el('div', 'pd-tags');
-  (person.traits || []).forEach((t) => tags.appendChild(el('span', 'pd-tag', esc(t))));
-  tags.appendChild(el('span', 'pd-tag', `忠诚·${{ loyal: '高', ok: '中', uneasy: '动摇', danger: '危' }[loyaltySignal(person.loyalty)]}`));
-  tags.appendChild(el('span', 'pd-tag', `能力·${{ high: '强', mid: '中', low: '弱' }[competenceSignal(person.competence)]}`));
-  box.appendChild(tags);
-  if (person.blurb) box.appendChild(el('div', 'pd-blurb', esc(person.blurb)));
-  const st = el('div', 'pd-status'); statusLines.forEach((l) => st.appendChild(el('p', '', esc(l)))); box.appendChild(st);
-  const actions = el('div', 'pd-actions');
-  const btn = el('button', 'primary', '私下接触'); btn.disabled = !canEngage; if (canEngage) btn.addEventListener('click', onEngage);
-  actions.appendChild(btn);
-  actions.appendChild(el('span', 'pd-reason', esc(canEngage ? '私下接触每年仅限一人。' : (reason || ''))));
-  box.appendChild(actions); return box;
+  box.appendChild(el('h3', null, '独裁者手册 · 节选'));
+  box.appendChild(briefingBody(state));
+  return box;
+}
+
+// ---- 设置：自定义 LLM key / 格式 / 参与度 -------------------------------
+export function openSettings(cur, onSave) {
+  const ov = el('div', 'settings-ov');
+  const box = el('div', 'settings-box');
+  const field = (label, node) => { const w = el('div', 'set-field'); w.appendChild(el('label', 'set-label', label)); w.appendChild(node); return w; };
+  const inp = (val, type, ph) => { const i = el('input', 'set-input'); i.type = type || 'text'; i.value = val || ''; if (ph) i.placeholder = ph; return i; };
+  const fmt = el('select', 'set-input'); fmt.innerHTML = `<option value="openai">OpenAI 格式</option><option value="anthropic">Anthropic 格式</option>`; fmt.value = cur.format || 'openai';
+  const key = inp(cur.apiKey, 'password', 'sk-...'); const base = inp(cur.baseUrl, 'text', '留空用默认'); const model = inp(cur.model, 'text', '留空用默认');
+  const lvl = el('select', 'set-input'); lvl.innerHTML = `<option value="low">低（少打扰、少等待）</option><option value="mid">中（推荐）</option><option value="high">高（叙事最丰富）</option>`; lvl.value = cur.level || 'mid';
+  box.appendChild(el('h3', null, '设置 · 叙事 AI'));
+  box.appendChild(el('p', 'muted', '配置你自己的 LLM；留空则用服务端预置（若有）。无 AI 也能玩，但叙事与私信体验会大打折扣。'));
+  box.appendChild(field('接口格式', fmt));
+  box.appendChild(field('API Key', key));
+  box.appendChild(field('Base URL', base));
+  box.appendChild(field('模型', model));
+  box.appendChild(field('AI 参与程度', lvl));
+  const row = el('div', 'set-actions');
+  const save = el('button', 'primary', '保存'); const cancel = el('button', 'ghost', '取消');
+  save.addEventListener('click', () => { document.body.removeChild(ov); onSave({ format: fmt.value, apiKey: key.value.trim(), baseUrl: base.value.trim(), model: model.value.trim(), level: lvl.value }); });
+  cancel.addEventListener('click', () => document.body.removeChild(ov));
+  row.append(save, cancel); box.appendChild(row); ov.appendChild(box);
+  ov.addEventListener('click', (e) => { if (e.target === ov) document.body.removeChild(ov); });
+  document.body.appendChild(ov);
+}
+
+export function confirmDialog(msg, { yesLabel, onYes, altLabel, onAlt }) {
+  const ov = el('div', 'settings-ov'); const box = el('div', 'settings-box');
+  box.appendChild(el('p', '', esc(msg)));
+  const row = el('div', 'set-actions');
+  const y = el('button', 'primary', yesLabel || '确定'); y.addEventListener('click', () => { document.body.removeChild(ov); onYes && onYes(); });
+  row.appendChild(y);
+  if (altLabel) { const a = el('button', 'ghost', altLabel); a.addEventListener('click', () => { document.body.removeChild(ov); onAlt && onAlt(); }); row.appendChild(a); }
+  box.appendChild(row); ov.appendChild(box); document.body.appendChild(ov);
 }
 
 export function renderAdvisorOptions(person, pack, { canReshuffle, onReshuffle, onChoose }) {
@@ -190,22 +256,23 @@ export function showLoading(lines) {
   clearInterval(loadingTimer); loadingTimer = setInterval(() => { i = (i + 1) % arr.length; line.textContent = arr[i]; }, 1700);
   return function stop() { clearInterval(loadingTimer); box.classList.add('hidden'); };
 }
+export function showLoadingProgress(lines) {
+  const stop = showLoading(lines);
+  const wrap = $('loading-progress'), bar = $('loading-bar');
+  wrap.classList.remove('hidden'); bar.style.width = '4%';
+  return {
+    set(frac) { bar.style.width = Math.max(4, Math.min(100, Math.round(frac * 100))) + '%'; },
+    done() { bar.style.width = '100%'; setTimeout(() => { wrap.classList.add('hidden'); stop(); }, 220); },
+  };
+}
 
 export function renderBriefing(state, onStart) {
   hidePanels();
   const s = stage(); s.innerHTML = '';
-  const c = el('div', 'card briefing');
-  c.innerHTML = `<div class="kicker">就任</div><div class="title">您是${esc(state.leader.name)}</div>
-    <div class="narrative">一场深夜政变后，您成了${esc(state.nation)}的新主人。前任的体温还没凉透，您的椅子已经有人在惦记。\n\n目标只有一个：活得久、捞得多、死在自己的床上。</div>`;
-  const guide = el('div', 'bf-guide');
-  guide.innerHTML = `<div class="kicker" style="margin-bottom:6px">怎么玩</div>
-    <ul>
-      <li><b>盯住六根比例条</b>：军队、精英、民心、国际四条，太高太低都会要命（中段才安全）；财政别见底，健康别归零。</li>
-      <li><b>事件卡的每个选择都会牵动这些指标</b>——没有标准答案，全是取舍。</li>
-      <li><b>四位重臣</b>（卡片下方）可点开查看近况，每年可私下接触一人——但他未必照您说的办。</li>
-      <li>结局才揭晓分数：<b>在位越久×领土越大、私产越多、有继承人</b>都加分；而<b>历史怎么写您</b>，会放大或抹平这一切。</li>
-    </ul>`;
-  c.appendChild(guide);
+  const c = el('div', 'card');
+  c.appendChild(el('div', 'kicker', '就任'));
+  c.appendChild(el('div', 'title', `您是${esc(state.leader.name)}，${esc(state.nation)}的新主人`));
+  c.appendChild(briefingBody(state));
   const btn = el('button', 'primary', '入主官邸'); btn.addEventListener('click', onStart);
   c.appendChild(btn); s.appendChild(c);
 }
@@ -220,7 +287,7 @@ export function renderEnding(state, score, obituary) {
   const ob = el('div');
   ob.appendChild(el('div', 'obituary wiki', `【维基百科】\n${esc(obituary.folk || obituary.text || '')}`));
   if (obituary.official) ob.appendChild(el('div', 'obituary official', `【官方认可版】\n${esc(obituary.official)}`));
-  if (obituary.quote) ob.appendChild(el('p', '', `<em>"${esc(obituary.quote)}"</em>`));
+  if (obituary.quote) { const q = String(obituary.quote).replace(/^[\s"'“”‘’「『]+|[\s"'“”‘’」』]+$/g, ''); ob.appendChild(el('p', 'ob-quote', `<em>“${esc(q)}”</em>`)); }
   c.appendChild(ob);
   if (state.achievements && state.achievements.length) { const ach = el('div', 'achievements'); state.achievements.forEach((a) => ach.appendChild(el('span', 'ach', `${esc(a.name)} +${a.points}`))); c.appendChild(ach); }
   const t = el('table', 'score-table');

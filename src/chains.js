@@ -25,32 +25,43 @@ function triggerMet(state, def) {
 function defById(content, id) { return content.chains.find((d) => d.id === id); }
 
 // 年度 tick：尝试激活一条新链（≤2 条），并记下"新的暗流"供通知
+// 保证每局早期至少明显出现一条链（force-seed）。
 export function tryActivateChain(state, content) {
   if (state.activeChains.length >= 2) return null;
   const defs = content.chains || [];
-  const avail = defs.filter(
-    (d) => !state.activeChains.find((a) => a.id === d.id) &&
-           !state.completedChains.includes(d.id) &&
-           triggerMet(state, d)
-  );
-  if (!avail.length || !rngChance(state, 0.7)) return null;
-  const d = rngPick(state, avail);
+  const taken = (d) => state.activeChains.find((a) => a.id === d.id) || state.completedChains.includes(d.id);
+  let pool = defs.filter((d) => !taken(d) && triggerMet(state, d));
+
+  const forceSeed = state.activeChains.length === 0 && state.completedChains.length === 0 && state.year >= 4;
+  if (!pool.length && forceSeed) {
+    // 强制开局：放宽到只看 minYear 的链，保证至少一条登场
+    pool = defs.filter((d) => !taken(d) && ((d.trigger || {}).minYear == null || state.year >= d.trigger.minYear));
+  }
+  if (!pool.length) return null;
+  if (!forceSeed && !rngChance(state, 0.7)) return null;
+
+  const d = rngPick(state, pool);
   state.activeChains.push({ id: d.id, step: 0, defers: 0, shownYear: 0 });
   state.chainJustActivated = { id: d.id, title: d.title };
   return d;
 }
 
 // 逐卡浮现：返回一张活跃链的事件卡（每条链一年至多浮现一次），否则 null
-export function drawChainCard(state, content) {
+export function drawChainCard(state, content, narrCache) {
   const candidates = state.activeChains.filter((ac) => ac.shownYear < state.year && defById(content, ac.id)?.steps[ac.step]);
   if (!candidates.length) return null;
   const ac = candidates[0];
   const def = defById(content, ac.id);
   ac.shownYear = state.year;
-  return buildChainCard(state, def, ac);
+  return buildChainCard(state, def, ac, narrCache);
 }
 
-function buildChainCard(state, def, ac) {
+// 当前活跃链待显示的节点（供 game.js 后台改写叙事）
+export function getActiveSteps(state, content) {
+  return state.activeChains.map((ac) => { const def = defById(content, ac.id); return def && def.steps[ac.step] ? { def, step: ac.step, key: `${def.id}_${ac.step}` } : null; }).filter(Boolean);
+}
+
+function buildChainCard(state, def, ac, narrCache) {
   const step = def.steps[ac.step];
   return {
     id: `chain_${def.id}_${ac.step}`,
@@ -58,7 +69,7 @@ function buildChainCard(state, def, ac) {
     kicker: step.kicker || def.title,
     title: step.title,
     speaker: step.speaker,
-    narrative: step.narrative,
+    narrative: (narrCache && narrCache[`${def.id}_${ac.step}`]) || step.narrative,
     options: step.options.map((o) => ({ text: o.text, hint: o.hint, effects: o.effects, result: o.result })),
     onResolve: (st, i) => advanceChain(st, def, ac, i),
   };
