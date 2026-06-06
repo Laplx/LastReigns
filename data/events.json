@@ -45,6 +45,11 @@
         "twistable": true,
         "result": "将军立正、敬礼、转身离开，一个多余的字都没有。"
       }
+    ],
+    "theme": "army_budget",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -92,6 +97,11 @@
         },
         "result": "安全局连夜请几位编辑“喝了茶”。矿工的家属没等到说法。"
       }
+    ],
+    "theme": "border",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -144,6 +154,11 @@
         },
         "result": "反对派一夜之间冒出十几个，观察团也住进了首都。将军和部长们看您的眼神变了。"
       }
+    ],
+    "theme": "election_observer",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -196,6 +211,11 @@
         "twistable": true,
         "result": "陈先生客气地告辞。听说他转头就去拜访了别人。"
       }
+    ],
+    "theme": "mining_contract",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -205,7 +225,7 @@
     "kicker": "国际",
     "weight": 2,
     "requires": {
-      "intlMin": 40
+      "intlMin": 65
     },
     "title": "联合国的问询函",
     "narrative": "一封措辞冰冷的问询函要求恩加拉就“北方失踪人口”作出解释，并“欢迎”一个调查小组入境。",
@@ -243,6 +263,11 @@
         "twistable": true,
         "result": "几名中层军官被“依法处理”。军营里，气氛凉了几分。"
       }
+    ],
+    "theme": "un_inquiry",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -296,6 +321,11 @@
         },
         "result": "神父在布道里不点名地提到了“冷血”。北方开始有人离乡。"
       }
+    ],
+    "theme": "famine",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -346,6 +376,11 @@
         "twistable": true,
         "result": "夫人放下茶杯，“为了这个家”的话，再没提起。"
       }
+    ],
+    "theme": "family_patronage",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -401,6 +436,11 @@
         },
         "result": "效果图被锁进抽屉。账户的数字，悄悄长了一截。"
       }
+    ],
+    "theme": "capital_project",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -447,6 +487,11 @@
         },
         "result": "恩戈齐遗憾地摇头。国库的窟窿，还得自己想办法。"
       }
+    ],
+    "theme": "foreign_loan",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -456,7 +501,7 @@
     "kicker": "社会",
     "weight": 2,
     "requires": {
-      "moraleMax": 55
+      "moraleMax": 45
     },
     "title": "大学城的横幅",
     "narrative": "首都大学的学生连续三天罢课，横幅上写着您不爱看的字眼。安全局长安巴妮上校请示：“清场，还是……谈谈？”",
@@ -501,6 +546,11 @@
         },
         "result": "您在镜头前听学生说了半小时。权贵们觉得您“掉了价”。"
       }
+    ],
+    "theme": "student_unrest",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -551,6 +601,11 @@
         },
         "result": "您们谈了很久。他走时叹了口气，您也是。"
       }
+    ],
+    "theme": "church",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -603,6 +658,11 @@
         "twistable": true,
         "result": "上校收起计划，那本关于您的档案，想必还在更新。"
       }
+    ],
+    "theme": "security_budget",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -647,6 +707,11 @@
         "twistable": true,
         "result": "叔父涨红了脸拂袖而去。党内的老人们，开始低声议论。"
       }
+    ],
+    "theme": "old_guard",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -656,7 +721,7 @@
     "kicker": "舆论",
     "weight": 2,
     "requires": {
-      "intlMin": 35
+      "intlMin": 58
     },
     "title": "一份不听话的报纸",
     "narrative": "一份小报连续刊登了关于您家族财产的“调查报道”，数字精确得可疑。安巴妮上校说，泄密的源头，可能就在您身边。",
@@ -701,6 +766,11 @@
         "twistable": true,
         "result": "调查指向了一位您信任的人。证据，却又似是而非。"
       }
+    ],
+    "theme": "press_control",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -751,6 +821,11 @@
         },
         "result": "电视里全是康复的笑脸。墓地却悄悄扩了一圈。"
       }
+    ],
+    "theme": "epidemic",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -803,6 +878,11 @@
         },
         "result": "矿井被填上，立了块“安全生产先进单位”的牌子。"
       }
+    ],
+    "theme": "mine_safety",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -850,6 +930,11 @@
         "twistable": true,
         "result": "几百人被允许留下，剩下的“自愿返回”了战火。"
       }
+    ],
+    "theme": "refugees",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -896,6 +981,11 @@
         },
         "result": "恩戈齐有些失望。国库每年照旧进账，只是没法“一次到位”。"
       }
+    ],
+    "theme": "privatization",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -905,7 +995,7 @@
     "kicker": "密报",
     "weight": 2,
     "requires": {
-      "armyMax": 50
+      "armyMax": 42
     },
     "speaker": "安巴妮上校",
     "title": "一份密报",
@@ -947,6 +1037,11 @@
         },
         "result": "您选择了等待。每个深夜的电话铃声，都让您心头一紧。"
       }
+    ],
+    "theme": "coup_rumor",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -996,6 +1091,11 @@
         },
         "result": "索万吉被调去了档案室。临走前他看了您一眼，没说话。"
       }
+    ],
+    "theme": "reform_plan",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1046,6 +1146,11 @@
         },
         "result": "军队开进了北方。酋长冷冷地说：“我们记仇。”"
       }
+    ],
+    "theme": "autonomy",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1088,6 +1193,11 @@
         },
         "result": "您按住了贪念。恩戈齐耸耸肩，“机会不等人”。"
       }
+    ],
+    "theme": "offshore_money",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1139,6 +1249,11 @@
         },
         "result": "将军悻悻而归。那片矿带，暂时只能在地图上看着。"
       }
+    ],
+    "theme": "proxy_war",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1185,6 +1300,11 @@
         },
         "result": "宣传部长大失所望。务实有时并不讨喜。"
       }
+    ],
+    "theme": "leader_cult",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1227,6 +1347,11 @@
         },
         "result": "您故意透露“已掌握证据”。几位顾问的眼神，开始飘忽。"
       }
+    ],
+    "theme": "palace_report",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1271,6 +1396,10 @@
         },
         "result": "您摆摆手拒绝了。把自己交给历史，需要一点勇气，或者一点天真。"
       }
+    ],
+    "theme": "legacy_history",
+    "stages": [
+      "late"
     ]
   },
   {
@@ -1314,6 +1443,11 @@
         },
         "result": "您抓了个典型，剩下的人噤了声。沉默不是忠诚，您心里清楚。"
       }
+    ],
+    "theme": "anti_corruption",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1331,8 +1465,7 @@
           "deco": {
             "press": "+small",
             "education": "+small"
-          },
-          "intl": "-small"
+          }
         },
         "result": "您在镜头前接过奖杯，谈吐得体。没人提起北方的事。"
       },
@@ -1348,6 +1481,12 @@
         },
         "result": "部长代您领了奖，回来还激动了好几天。"
       }
+    ],
+    "theme": "education_award",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -1377,6 +1516,12 @@
         "effects": {},
         "result": "您剪完彩就走了。铜像留在原地，替您继续微笑。"
       }
+    ],
+    "theme": "capital_project",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -1393,8 +1538,7 @@
         "effects": {
           "loyalty": {
             "spy": "+small"
-          },
-          "army": "-small"
+          }
         },
         "result": "您整夜没睡。那个空办公室的画面，挥之不去。"
       },
@@ -1403,11 +1547,16 @@
         "effects": {
           "loyalty": {
             "general": "-small"
-          },
-          "intl": "-small"
+          }
         },
         "result": "您的谴责义正词严。台下的将军们，听得格外认真。"
       }
+    ],
+    "theme": "neighbor_coup",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -1425,8 +1574,7 @@
           "loyalty": {
             "general": "+small"
           },
-          "wealthDomestic": -0.2,
-          "morale": "+small"
+          "wealthDomestic": -0.2
         },
         "result": "老兵们捧着茶杯，有人红了眼眶。这点钱，买的是军心。"
       },
@@ -1435,11 +1583,16 @@
         "effects": {
           "loyalty": {
             "general": "-small"
-          },
-          "morale": "-small"
+          }
         },
         "result": "老兵们沉默地散去。其中一个，把勋章丢在了地上。"
       }
+    ],
+    "theme": "veterans",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -1469,11 +1622,16 @@
           },
           "loyalty": {
             "spy": "+small"
-          },
-          "morale": "-small"
+          }
         },
         "result": "几个“传谣者”被请去喝茶。笑话没了，恐惧的沉默却更刺耳。"
       }
+    ],
+    "theme": "street_rumor",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -1516,6 +1674,11 @@
         },
         "result": "您肉痛地从私囊里掏了钱。这是头一回，希望是最后一回。"
       }
+    ],
+    "theme": "tax",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1558,6 +1721,10 @@
         },
         "result": "金库的门又锁上了。所有人都记住了：这位主子，一毛不拔。"
       }
+    ],
+    "theme": "treasury",
+    "stages": [
+      "mid"
     ]
   },
   {
@@ -1603,6 +1770,11 @@
         },
         "result": "您放下身段四处递话。门缝开了一条，尊严也丢了一地。"
       }
+    ],
+    "theme": "isolation",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1650,6 +1822,11 @@
         },
         "result": "您给狂热指了个方向。几位碍眼的人，就此消失在人海里。"
       }
+    ],
+    "theme": "leader_cult",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -1698,6 +1875,11 @@
         },
         "result": "您把他和他的嫡系一起远远支开。眼不见，心稍安。"
       }
+    ],
+    "theme": "coup_rumor",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -1747,6 +1929,11 @@
         "twistable": true,
         "result": "您压下了这桩事。安全局长收起名单，那本关于您的档案，想必又厚了一页。"
       }
+    ],
+    "theme": "purge",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -1790,6 +1977,11 @@
         },
         "result": "您把它雪藏起来。有些财富，藏着比花着更让人安心。"
       }
+    ],
+    "theme": "resource_windfall",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1833,6 +2025,11 @@
         "twistable": true,
         "result": "您当作没听见，继续过您的好日子。御医的警告，但愿只是多虑。"
       }
+    ],
+    "theme": "health_decline",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -1875,6 +2072,11 @@
         },
         "result": "军方的采购清单被退了回去。军营里，开始有人怀念前任。"
       }
+    ],
+    "theme": "arms_deal",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1914,6 +2116,11 @@
         },
         "result": "一名老兵把褪色的勋章丢在了台阶上。"
       }
+    ],
+    "theme": "veterans",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1954,6 +2161,11 @@
         },
         "result": "位子空着，野心也悬着。军中暗流，又急了几分。"
       }
+    ],
+    "theme": "army_faction",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -1991,6 +2203,11 @@
         },
         "result": "您选择相信军队。但愿这份信任，不要太贵。"
       }
+    ],
+    "theme": "palace_guard",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2026,6 +2243,11 @@
         "effects": {},
         "result": "您把推销员请了出去。有些便宜，占不得。"
       }
+    ],
+    "theme": "mercenary",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2065,6 +2287,11 @@
         },
         "result": "您发表了一篇慷慨激昂的演说。听着提气，承认和账单却都得自己想办法。"
       }
+    ],
+    "theme": "great_power",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2106,6 +2333,11 @@
         },
         "result": "那人再没出现过。邻国心照不宣，西方却嗅到了血腥味。"
       }
+    ],
+    "theme": "extradition",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2149,6 +2381,11 @@
         },
         "result": "本地的关系户松了口气。就业的事，还得另想办法。"
       }
+    ],
+    "theme": "foreign_factory",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2191,7 +2428,12 @@
     ],
     "requires": {
       "intlMax": 30
-    }
+    },
+    "theme": "sanction",
+    "stages": [
+      "early",
+      "mid"
+    ]
   },
   {
     "id": "spy_scandal",
@@ -2232,6 +2474,11 @@
         },
         "result": "一场交换悄悄进行。人放了，好处也到了账。"
       }
+    ],
+    "theme": "spy_scandal",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2270,6 +2517,11 @@
         },
         "result": "物价稳住了，国库的窟窿还得另补。"
       }
+    ],
+    "theme": "customs_tax",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2305,6 +2557,11 @@
         },
         "result": "您死撑着汇率。面子保住了，外汇储备见了底。"
       }
+    ],
+    "theme": "currency",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2342,6 +2599,11 @@
         },
         "result": "钱进了国库。部长们意味深长地看着您，没说话。"
       }
+    ],
+    "theme": "state_company",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2382,6 +2644,11 @@
         },
         "result": "黑市换了块官方招牌，生意照旧，只是利润改了流向。"
       }
+    ],
+    "theme": "black_market",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2422,6 +2689,11 @@
         "effects": {},
         "result": "您摆摆手。有些钱，藏在明处反而扎眼。"
       }
+    ],
+    "theme": "sovereign_fund",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -2460,6 +2732,11 @@
         },
         "result": "宣传部大失所望。务实，从来不讨喜。"
       }
+    ],
+    "theme": "festival",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2496,6 +2773,11 @@
         },
         "result": "面包涨了三成。经济学家点头，老百姓砸锅。"
       }
+    ],
+    "theme": "bread_price",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2536,6 +2818,11 @@
         },
         "result": "神父奔走数日，竟真把火压住了。教会的威望，又涨了。"
       }
+    ],
+    "theme": "church",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2580,6 +2867,11 @@
         "twistable": true,
         "result": "您许了诺。北方将信将疑地等着——等待是有期限的。"
       }
+    ],
+    "theme": "autonomy",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2626,6 +2918,11 @@
         },
         "result": "您假装没看见。段子热闹了一阵，也就淡了。"
       }
+    ],
+    "theme": "internet_control",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2661,6 +2958,11 @@
         "effects": {},
         "result": "宣传部碰了一鼻子灰。"
       }
+    ],
+    "theme": "media_control",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2703,6 +3005,11 @@
         },
         "result": "您当着众人驳了夫人。部长们暗爽，今晚的家宴怕是要冷。"
       }
+    ],
+    "theme": "family_patronage",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2747,6 +3054,11 @@
         "twistable": true,
         "result": "一个倒霉的司机顶了罪。明眼人都看在眼里。"
       }
+    ],
+    "theme": "family_scandal",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2789,6 +3101,11 @@
         "twistable": true,
         "result": "您把话挑明了。叔父涨红了脸，党内老人们开始低声议论。"
       }
+    ],
+    "theme": "old_guard",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2826,6 +3143,11 @@
         },
         "result": "内阁原封不动。暮气，又沉了一层。"
       }
+    ],
+    "theme": "cabinet",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2872,6 +3194,11 @@
         },
         "result": "索万吉被发配去了档案室。临走前他看了您一眼，没说话。"
       }
+    ],
+    "theme": "reform_plan",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2914,6 +3241,11 @@
         },
         "result": "您把车捐了出去，上了头条。陈先生笑容僵在了脸上。"
       }
+    ],
+    "theme": "merchant_gift",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -2958,6 +3290,11 @@
         },
         "result": "您拉一派打一派。乱是平了，仇是结下了。"
       }
+    ],
+    "theme": "tribal_feud",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3001,6 +3338,11 @@
         },
         "result": "您在镜头前落了泪。救灾款，半路就少了一半。"
       }
+    ],
+    "theme": "earthquake",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3041,6 +3383,11 @@
         },
         "result": "您说这是天罚。灾民在水里，听着广播里的祷词。"
       }
+    ],
+    "theme": "flood",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3082,6 +3429,11 @@
         },
         "result": "报纸上一片丰收。北方的路上，多了逃荒的人。"
       }
+    ],
+    "theme": "famine",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3123,6 +3475,11 @@
         },
         "result": "一场庆典盖过了焦土的味道。"
       }
+    ],
+    "theme": "capital_fire",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3176,7 +3533,12 @@
     ],
     "requires": {
       "armyMax": 40
-    }
+    },
+    "theme": "coup_rumor",
+    "stages": [
+      "early",
+      "mid"
+    ]
   },
   {
     "id": "traitor_grip",
@@ -3225,7 +3587,12 @@
     ],
     "requires": {
       "eliteMax": 45
-    }
+    },
+    "theme": "palace_report",
+    "stages": [
+      "mid",
+      "late"
+    ]
   },
   {
     "id": "border_reserves",
@@ -3270,7 +3637,12 @@
     ],
     "requires": {
       "borderMin": 45
-    }
+    },
+    "theme": "border",
+    "stages": [
+      "early",
+      "mid"
+    ]
   },
   {
     "id": "census",
@@ -3309,6 +3681,11 @@
         "effects": {},
         "result": "普查不了了之。不知道，有时是一种福气。"
       }
+    ],
+    "theme": "census",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3348,6 +3725,11 @@
         },
         "result": "您当没看见。信热闹了几天，几笔外援也跟着没了声响。"
       }
+    ],
+    "theme": "human_rights",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3392,6 +3774,11 @@
         },
         "result": "宣传部很失望。务实的领袖，雕像总是来得晚。"
       }
+    ],
+    "theme": "statue",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -3437,6 +3824,11 @@
         },
         "result": "几个嘴碎的倒了霉。可流言这东西，从来斩不尽。"
       }
+    ],
+    "theme": "purge",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -3477,6 +3869,11 @@
         },
         "result": "大坝照修。来年的旱季，会有人为这个决定流泪。"
       }
+    ],
+    "theme": "water_rights",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3517,6 +3914,11 @@
         "twistable": true,
         "result": "账做得天衣无缝。恩戈齐的\"辛苦费\"，也算得清清楚楚。"
       }
+    ],
+    "theme": "foreign_loan",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3568,7 +3970,12 @@
     ],
     "requires": {
       "moraleMax": 35
-    }
+    },
+    "theme": "student_unrest",
+    "stages": [
+      "early",
+      "mid"
+    ]
   },
   {
     "id": "palace_luxury",
@@ -3609,6 +4016,11 @@
         },
         "result": "夫人不悦。海边的风，今晚怕是吹不进卧房了。"
       }
+    ],
+    "theme": "palace_luxury",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -3653,6 +4065,11 @@
         },
         "result": "庆功会上，您成了唯一的英雄。将军鼓掌的手，有点僵。"
       }
+    ],
+    "theme": "army_faction",
+    "stages": [
+      "early",
+      "mid"
     ]
   },
   {
@@ -3695,6 +4112,11 @@
         },
         "result": "您也办了个台。两边对骂，听众当起了热闹。"
       }
+    ],
+    "theme": "exile_network",
+    "stages": [
+      "mid",
+      "late"
     ]
   },
   {
@@ -3739,6 +4161,10 @@
         },
         "result": "您把锅扣给了邻国。民族主义的火，烧得正旺。"
       }
+    ],
+    "theme": "epidemic",
+    "stages": [
+      "late"
     ]
   },
   {
@@ -3752,9 +4178,7 @@
     "options": [
       {
         "text": "欣然题词留念",
-        "effects": {
-          "morale": "+small"
-        },
+        "effects": {},
         "result": "您在首日封上签了名。又一件印着您脸的东西，进入了流通。"
       },
       {
@@ -3766,6 +4190,12 @@
         },
         "result": "邮票回炉重造。画师连夜把您修得年轻了十岁。"
       }
+    ],
+    "theme": "leader_image",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -3782,8 +4212,7 @@
         "effects": {
           "deco": {
             "press": "+small"
-          },
-          "morale": "+small"
+          }
         },
         "result": "您站在书山前微笑。那个纸上的伟人，您自己都快信了。"
       },
@@ -3796,6 +4225,12 @@
         },
         "result": "编辑连夜修订。歌功颂德，原来也是个技术活。"
       }
+    ],
+    "theme": "official_biography",
+    "stages": [
+      "early",
+      "mid",
+      "late"
     ]
   },
   {
@@ -3809,9 +4244,7 @@
     "options": [
       {
         "text": "感慨一句\"善终不易\"",
-        "effects": {
-          "health": "+small"
-        },
+        "effects": {},
         "result": "您忽然格外注意起自己的饮食和作息。"
       },
       {
@@ -3822,6 +4255,2071 @@
           }
         },
         "result": "您让人调来了那位同行的\"成功经验\"。同行，也是老师。"
+      }
+    ],
+    "theme": "leader_mortality",
+    "stages": [
+      "mid",
+      "late"
+    ]
+  },
+  {
+    "id": "party_registry",
+    "type": "normal",
+    "category": "court",
+    "theme": "party_registry",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "党务",
+    "title": "一册党员名录",
+    "narrative": "执政党秘书处送来一册新党员名录，里面忽然多出许多陌生商人和地方头人。他们声称拥戴您，也期待拥戴应得的回报。",
+    "options": [
+      {
+        "text": "照单全收，扩充基本盘",
+        "effects": {
+          "elite": "+mid",
+          "finance": "-small",
+          "loyalty": {
+            "uncle": "+small"
+          }
+        },
+        "result": "名录厚了许多，掌声也整齐了许多。只是每个新名字后面，都跟着一张账单。"
+      },
+      {
+        "text": "逐个审查，压住投机者",
+        "effects": {
+          "elite": "-small",
+          "morale": "+small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "安全局开始翻旧账。门外排队的人少了，党内的脸色也冷了。"
+      }
+    ]
+  },
+  {
+    "id": "oath_ceremony",
+    "type": "normal",
+    "category": "social",
+    "theme": "leader_cult",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "仪式",
+    "title": "广场上的宣誓",
+    "narrative": "青年团建议在首都广场举行集体宣誓，把您的肖像举过头顶。他们说，这能让新政权显得有温度。",
+    "options": [
+      {
+        "text": "批准仪式，越盛大越好",
+        "effects": {
+          "morale": "+mid",
+          "history": "-small",
+          "deco": {
+            "capital": "+small"
+          }
+        },
+        "result": "广场被口号填满。热情是真的，排练也是真的。"
+      },
+      {
+        "text": "改成低调的社区活动",
+        "effects": {
+          "morale": "-small",
+          "finance": "+small",
+          "history": "+small"
+        },
+        "result": "宣传部有些失望，账房却松了口气。街头少了一天噪音。"
+      }
+    ]
+  },
+  {
+    "id": "radio_takeover",
+    "type": "normal",
+    "category": "social",
+    "theme": "media_control",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "广播",
+    "title": "电台的清晨",
+    "narrative": "国家电台有几名主持人还保留着旧政府的腔调。宣传部长建议换掉他们，让清晨新闻学会新的称呼。",
+    "options": [
+      {
+        "text": "全部撤换，统一口径",
+        "effects": {
+          "morale": "-small",
+          "elite": "+small",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "清晨新闻变得顺耳了。听众也学会在厨房里把音量调低。"
+      },
+      {
+        "text": "留几张旧脸，显得宽容",
+        "effects": {
+          "morale": "+small",
+          "elite": "-small",
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "旧主持人继续播报天气。党内有人问，宽容是不是太早了。"
+      }
+    ]
+  },
+  {
+    "id": "customs_house",
+    "type": "normal",
+    "category": "economy",
+    "theme": "customs_tax",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "关口",
+    "title": "海关的新章",
+    "narrative": "港口海关要求换一套新印章。旧章方便商人，方便官员，也方便钱从账本旁边流过。",
+    "options": [
+      {
+        "text": "换章清账，堵住漏洞",
+        "effects": {
+          "finance": "+mid",
+          "elite": "-small",
+          "loyalty": {
+            "reformer": "+small"
+          }
+        },
+        "result": "国库多了些进项。几位常来官邸喝酒的商人，忽然说自己身体不适。"
+      },
+      {
+        "text": "保留旧规矩，抽成上缴",
+        "effects": {
+          "wealthDomestic": 0.5,
+          "elite": "+small",
+          "history": "-small"
+        },
+        "result": "旧章继续盖下去，只是其中一份收益换了方向。"
+      }
+    ]
+  },
+  {
+    "id": "secret_prison",
+    "type": "normal",
+    "category": "court",
+    "theme": "security_budget",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "安保",
+    "title": "城外的旧仓库",
+    "narrative": "国家安全局局长看中城外一排旧仓库，说可以改造成“临时询问中心”。文件写得很干净，预算写得很含糊。",
+    "options": [
+      {
+        "text": "拨款改造，别留下字迹",
+        "effects": {
+          "elite": "+small",
+          "morale": "-mid",
+          "finance": "-small",
+          "loyalty": {
+            "spy": "+mid"
+          }
+        },
+        "result": "仓库很快装上新门。附近居民开始绕路。"
+      },
+      {
+        "text": "驳回方案，改设普通看守所",
+        "effects": {
+          "morale": "+small",
+          "elite": "-small",
+          "loyalty": {
+            "spy": "-small"
+          }
+        },
+        "result": "局长收起文件，笑着说理解。那笑容不太像理解。"
+      }
+    ]
+  },
+  {
+    "id": "party_school",
+    "type": "normal",
+    "category": "social",
+    "theme": "education_slogan",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "教育",
+    "title": "干部夜校",
+    "narrative": "教育部门建议开办干部夜校，第一门课叫“领袖思想入门”。教材已经写好，只差您一句批示。",
+    "options": [
+      {
+        "text": "列为必修，人人过关",
+        "effects": {
+          "elite": "+small",
+          "morale": "+small",
+          "deco": {
+            "education": "+small"
+          },
+          "history": "-small"
+        },
+        "result": "干部们深夜背诵。有人背得熟，有人背得怕。"
+      },
+      {
+        "text": "改成行政培训，少写颂词",
+        "effects": {
+          "finance": "+small",
+          "history": "+small",
+          "loyalty": {
+            "reformer": "+small"
+          }
+        },
+        "result": "教材薄了，口号少了。宣传口的人说，这样不够有灵魂。"
+      }
+    ]
+  },
+  {
+    "id": "militia_badges",
+    "type": "normal",
+    "category": "military",
+    "theme": "militia",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "民兵",
+    "title": "袖章与木棍",
+    "narrative": "地方干部请求成立“社区保卫队”。他们要的不是枪，只是袖章、木棍和夜里敲门的资格。",
+    "options": [
+      {
+        "text": "准许成立，交给地方管理",
+        "effects": {
+          "morale": "-mid",
+          "elite": "+small",
+          "army": "-small"
+        },
+        "result": "街口多了值夜的人。每个人都说自己是在保护秩序。"
+      },
+      {
+        "text": "并入正规警务，收回私权",
+        "effects": {
+          "army": "+small",
+          "elite": "-small",
+          "finance": "-small"
+        },
+        "result": "地方干部很不高兴。制服整齐了，抱怨也整齐了。"
+      }
+    ]
+  },
+  {
+    "id": "oil_service_contract",
+    "type": "normal",
+    "category": "economy",
+    "theme": "oil_contract",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "油井",
+    "title": "服务合同",
+    "narrative": "新油田尚未投产，服务合同已经摆满会议桌。每一家公司都承诺忠诚，每一份报价都像写给您的私人信件。",
+    "options": [
+      {
+        "text": "交给亲近财团",
+        "effects": {
+          "wealth": 0.8,
+          "elite": "+mid",
+          "finance": "-small",
+          "history": "-small"
+        },
+        "result": "合同签得很快。油还在地下，分红已经在路上。"
+      },
+      {
+        "text": "公开招标，留住外部信誉",
+        "effects": {
+          "finance": "+mid",
+          "intl": "+small",
+          "elite": "-small"
+        },
+        "result": "外商鼓掌，亲信沉默。透明，有时是一种冒犯。"
+      }
+    ]
+  },
+  {
+    "id": "construction_cartel",
+    "type": "normal",
+    "category": "economy",
+    "theme": "capital_project",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "工程",
+    "title": "承包商的同盟",
+    "narrative": "几家首都承包商私下结成同盟，轮流中标，轮流向宫里表示感谢。财政部长说，再这样下去，路会越修越短。",
+    "options": [
+      {
+        "text": "拆散同盟，重新招标",
+        "effects": {
+          "finance": "+mid",
+          "elite": "-mid",
+          "loyalty": {
+            "finance": "+small"
+          }
+        },
+        "result": "报价降了，饭局少了。几位承包商开始赞助不同的部长。"
+      },
+      {
+        "text": "默认规矩，只提高贡金",
+        "effects": {
+          "wealthDomestic": 0.7,
+          "elite": "+small",
+          "history": "-small"
+        },
+        "result": "工程照旧推进。路面平不平，取决于照片拍得近不近。"
+      }
+    ]
+  },
+  {
+    "id": "football_final",
+    "type": "normal",
+    "category": "social",
+    "theme": "football",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "球赛",
+    "title": "国家队进了决赛",
+    "narrative": "国家队意外闯进洲际决赛。足协主席请求您亲自督战，说胜利会属于国家，奖金最好也属于国家。",
+    "options": [
+      {
+        "text": "重奖球队，买下这个夜晚",
+        "effects": {
+          "morale": "+big",
+          "finance": "-mid",
+          "history": "+small"
+        },
+        "result": "球员们举着奖杯绕场。第二天，物价新闻被挤到了版角。"
+      },
+      {
+        "text": "要求节制庆祝，别烧国库",
+        "effects": {
+          "finance": "+small",
+          "morale": "-small",
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "庆祝被压短了。球迷记住了比分，也记住了谁没让他们狂欢。"
+      }
+    ]
+  },
+  {
+    "id": "regional_summit",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "regional_summit",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "峰会",
+    "title": "圆桌上的座位",
+    "narrative": "地区峰会安排座位时，礼宾官把您放在边角。外交部说可以抗议，也可以用援助支票把椅子搬近一点。",
+    "options": [
+      {
+        "text": "公开抗议，要求尊重",
+        "effects": {
+          "intl": "-small",
+          "morale": "+small",
+          "history": "-small"
+        },
+        "result": "国内报纸说您不受气。国外报纸说您太在意椅子。"
+      },
+      {
+        "text": "私下打点，换个好位置",
+        "effects": {
+          "intl": "+small",
+          "finance": "-small",
+          "wealthDomestic": -0.2
+        },
+        "result": "合影里您站得靠中。那张照片很贵。"
+      }
+    ]
+  },
+  {
+    "id": "donor_audit",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "donor_audit",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "援助",
+    "title": "捐助方的审计",
+    "narrative": "几个捐助方要求审计教育援助去向。账本显示许多乡村学校建在地图上，地图却不负责上课。",
+    "options": [
+      {
+        "text": "开放账本，牺牲几名小官",
+        "effects": {
+          "intl": "+mid",
+          "elite": "-small",
+          "deco": {
+            "education": "+small"
+          }
+        },
+        "result": "审计员看到了文件，也看到了替罪的人。援助暂时保住了。"
+      },
+      {
+        "text": "拒绝审计，指责他们干涉",
+        "effects": {
+          "intl": "-mid",
+          "elite": "+small",
+          "finance": "-small"
+        },
+        "result": "您赢了措辞，输了下一笔拨款。"
+      }
+    ]
+  },
+  {
+    "id": "union_split",
+    "type": "normal",
+    "category": "social",
+    "theme": "labor_union",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "工会",
+    "title": "两个主席",
+    "narrative": "全国工会突然出现两个主席。一个是工人选的，一个是内政部认可的。两人都说自己代表人民。",
+    "options": [
+      {
+        "text": "承认官方主席",
+        "effects": {
+          "elite": "+small",
+          "morale": "-mid",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "会议室里掌声整齐，厂门口的骂声也整齐。"
+      },
+      {
+        "text": "让他们重新选一次",
+        "effects": {
+          "morale": "+small",
+          "elite": "-small",
+          "intl": "+small"
+        },
+        "result": "投票箱被搬进工厂。所有人都盯着封条。"
+      }
+    ]
+  },
+  {
+    "id": "land_grab",
+    "type": "normal",
+    "category": "court",
+    "theme": "land_decree",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "土地",
+    "title": "河谷开发令",
+    "narrative": "河谷土地肥沃，家族企业想开发种植园。当地村社说，那些地从祖父的祖父时就属于他们。",
+    "options": [
+      {
+        "text": "签开发令，补偿从简",
+        "effects": {
+          "wealthDomestic": 0.8,
+          "morale": "-mid",
+          "elite": "+small",
+          "history": "-small"
+        },
+        "result": "推土机先到了，补偿表后到。河谷开始安静。"
+      },
+      {
+        "text": "搁置开发，换取地方安稳",
+        "effects": {
+          "morale": "+mid",
+          "elite": "-small",
+          "finance": "-small",
+          "loyalty": {
+            "chief": "+small"
+          }
+        },
+        "result": "村社长老献上了羊皮鼓。家族企业送来的账单也不薄。"
+      }
+    ]
+  },
+  {
+    "id": "hospital_wing",
+    "type": "normal",
+    "category": "social",
+    "theme": "health_show",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "weight": 2,
+    "kicker": "医院",
+    "title": "以您命名的新楼",
+    "narrative": "首都医院新楼落成，院长请求用您的名字命名。医生悄悄说，新楼有大厅，没有足够的药房。",
+    "options": [
+      {
+        "text": "剪彩命名，先把场面做足",
+        "effects": {
+          "legacy": "+small",
+          "deco": {
+            "health_care": "+small"
+          },
+          "finance": "-small"
+        },
+        "result": "大厅很亮，牌匾很重。病房里的灯坏了几盏。"
+      },
+      {
+        "text": "推迟命名，先补设备",
+        "effects": {
+          "morale": "+small",
+          "finance": "-mid",
+          "history": "+small"
+        },
+        "result": "医生们第一次在走廊里为您鼓掌，声音不大，却不像排练。"
+      }
+    ]
+  },
+  {
+    "id": "textbook_revision",
+    "type": "normal",
+    "category": "social",
+    "theme": "education_slogan",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "weight": 2,
+    "kicker": "课本",
+    "title": "历史课的页码",
+    "narrative": "新版历史课本把独立战争后的章节留了空。教育部等您决定：是写制度，还是写您。",
+    "options": [
+      {
+        "text": "把个人奋斗写进课本",
+        "effects": {
+          "legacy": "+mid",
+          "history": "-small",
+          "deco": {
+            "education": "-small"
+          }
+        },
+        "result": "学生们背下了您的童年。老师们学会跳过几个问题。"
+      },
+      {
+        "text": "写国家制度，少提个人",
+        "effects": {
+          "history": "+mid",
+          "elite": "-small",
+          "legacy": "-small"
+        },
+        "result": "课本显得克制。秘书提醒您，克制很少会立铜像。"
+      }
+    ]
+  },
+  {
+    "id": "satellite_deal",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "surveillance",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "卫星",
+    "title": "天空里的眼睛",
+    "narrative": "远东公司推销一套卫星监控系统，能看见边境，也能看见首都每条街。价格很高，诱惑也很高。",
+    "options": [
+      {
+        "text": "买下系统，交给安全局",
+        "effects": {
+          "army": "+small",
+          "elite": "+small",
+          "finance": "-big",
+          "loyalty": {
+            "spy": "+mid"
+          }
+        },
+        "result": "屏幕亮起，城市缩小成格子。每个格子里都可能有人。"
+      },
+      {
+        "text": "只买边境模块",
+        "effects": {
+          "borderTension": "-small",
+          "finance": "-small",
+          "loyalty": {
+            "general": "+small"
+          }
+        },
+        "result": "将军得到了地图，局长没得到城市。两人都说够用。"
+      }
+    ]
+  },
+  {
+    "id": "diamond_route",
+    "type": "normal",
+    "category": "corruption",
+    "theme": "smuggling",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "钻石",
+    "title": "夜里的航班",
+    "narrative": "财政部发现一条钻石走私路线，牵涉海关、军官和一位亲戚。路线很脏，收益很干净。",
+    "options": [
+      {
+        "text": "收归宫里统一管理",
+        "effects": {
+          "wealth": 1,
+          "elite": "+small",
+          "history": "-mid"
+        },
+        "result": "夜航没有停，只是换了收款人。"
+      },
+      {
+        "text": "查封路线，公开几张名单",
+        "effects": {
+          "finance": "+small",
+          "elite": "-mid",
+          "intl": "+small",
+          "loyalty": {
+            "finance": "+small"
+          }
+        },
+        "result": "名单公开后，许多人忽然想起自己从未去过机场。"
+      }
+    ]
+  },
+  {
+    "id": "court_marriage",
+    "type": "normal",
+    "category": "court",
+    "theme": "family_patronage",
+    "stages": [
+      "mid"
+    ],
+    "weight": 2,
+    "kicker": "家族",
+    "title": "一场婚礼",
+    "narrative": "第一夫人筹办家族婚礼，名单上有部长、将军和外商。她说，这不是政治，只是亲情需要见证。",
+    "options": [
+      {
+        "text": "按国礼操办",
+        "effects": {
+          "elite": "+mid",
+          "finance": "-small",
+          "history": "-small",
+          "loyalty": {
+            "firstlady": "+mid"
+          }
+        },
+        "result": "婚礼像一次小型峰会。每桌都坐着未来的麻烦。"
+      },
+      {
+        "text": "压低规格，别太招眼",
+        "effects": {
+          "morale": "+small",
+          "loyalty": {
+            "firstlady": "-small"
+          },
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "婚礼低调了，夫人的笑也低调了。"
+      }
+    ]
+  },
+  {
+    "id": "governor_barons",
+    "type": "normal",
+    "category": "court",
+    "theme": "provincial_barons",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "weight": 2,
+    "kicker": "地方",
+    "title": "省长们的晚宴",
+    "narrative": "几位省长联名进京，口头汇报丰收，私下抱怨拨款。他们彼此敬酒时，比向您敬酒更自然。",
+    "options": [
+      {
+        "text": "轮换省长，拆开他们",
+        "effects": {
+          "elite": "-mid",
+          "army": "+small",
+          "finance": "-small"
+        },
+        "result": "任命书连夜发出。地方上开始重新排队。"
+      },
+      {
+        "text": "给拨款，换取表面团结",
+        "effects": {
+          "elite": "+mid",
+          "finance": "-mid",
+          "morale": "+small"
+        },
+        "result": "省长们带着笑离开。您买到的团结，保质期写得很小。"
+      }
+    ]
+  },
+  {
+    "id": "exile_law",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "exile_network",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "weight": 2,
+    "kicker": "流亡",
+    "title": "海外反对派法案",
+    "narrative": "海外反对派游说所在国议会，推动一项点名您的法案。驻外使馆说，可以花钱游说，也可以把他们家人叫来谈谈。",
+    "options": [
+      {
+        "text": "重金游说，压下法案",
+        "effects": {
+          "intl": "+small",
+          "finance": "-mid",
+          "wealth": -0.3
+        },
+        "result": "法案被拖进委员会。民主也有日程表。"
+      },
+      {
+        "text": "敲打其国内亲属",
+        "effects": {
+          "intl": "-mid",
+          "elite": "+small",
+          "morale": "-small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "电话打出去后，海外的声音短暂变小。录音却开始流传。"
+      }
+    ]
+  },
+  {
+    "id": "successor_portrait",
+    "type": "normal",
+    "category": "court",
+    "theme": "succession",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "继承",
+    "title": "旁边那幅肖像",
+    "narrative": "官邸画师问，是否该在您的肖像旁预留一面墙。没人说继承人三个字，但每个人都看向同一块空白。",
+    "options": [
+      {
+        "text": "预留墙面，放出信号",
+        "effects": {
+          "legacy": "+mid",
+          "elite": "-small",
+          "health": "-small"
+        },
+        "result": "空墙比画像更会说话。宫里开始猜测谁能走进画框。"
+      },
+      {
+        "text": "命令撤掉空墙，别乱想",
+        "effects": {
+          "elite": "+small",
+          "legacy": "-small",
+          "health": "-small"
+        },
+        "result": "画师低头收尺。猜测没有消失，只是换了房间。"
+      }
+    ]
+  },
+  {
+    "id": "doctor_bulletin",
+    "type": "normal",
+    "category": "court",
+    "theme": "health_decline",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "requires": {
+      "healthMax": 70
+    },
+    "weight": 2,
+    "kicker": "病情",
+    "title": "医生公告",
+    "narrative": "私人医生建议发布一份健康公告。公告可以诚实，也可以写成胜利公报。",
+    "options": [
+      {
+        "text": "公布轻描淡写的版本",
+        "effects": {
+          "health": "-small",
+          "elite": "+small",
+          "legacy": "+small"
+        },
+        "result": "公告说您精神矍铄。所有读懂公告的人都开始准备。"
+      },
+      {
+        "text": "彻底隐瞒，封住医院消息",
+        "effects": {
+          "elite": "-small",
+          "morale": "-small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "医院走廊安静下来。安静本身成了消息。"
+      }
+    ]
+  },
+  {
+    "id": "archive_fire",
+    "type": "normal",
+    "category": "court",
+    "theme": "archives",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "档案",
+    "title": "档案馆起火",
+    "narrative": "国家档案馆深夜起火，烧掉一批旧审判记录。消防队说是电线老化，反对派说是历史自己喊疼。",
+    "options": [
+      {
+        "text": "认定意外，快速结案",
+        "effects": {
+          "history": "-mid",
+          "elite": "+small",
+          "intl": "-small"
+        },
+        "result": "结案报告很薄。灰烬却被人装进信封寄往国外。"
+      },
+      {
+        "text": "公开调查，保住剩余档案",
+        "effects": {
+          "history": "+mid",
+          "elite": "-small",
+          "loyalty": {
+            "reformer": "+small"
+          }
+        },
+        "result": "调查组进了档案馆。许多老名字重新学会发抖。"
+      }
+    ]
+  },
+  {
+    "id": "funeral_rehearsal",
+    "type": "normal",
+    "category": "court",
+    "theme": "funeral",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "requires": {
+      "healthMax": 65
+    },
+    "weight": 2,
+    "kicker": "礼制",
+    "title": "国葬预案",
+    "narrative": "礼宾处递来国葬预案，说只是制度建设。第一页写着您的全名，墨迹还很新。",
+    "options": [
+      {
+        "text": "批准预案，按最高规格",
+        "effects": {
+          "legacy": "+big",
+          "finance": "-small",
+          "health": "-small"
+        },
+        "result": "礼炮数量定下来了。您第一次觉得数字很吵。"
+      },
+      {
+        "text": "退回重写，谁说我快死了",
+        "effects": {
+          "elite": "-small",
+          "health": "-small",
+          "morale": "-small"
+        },
+        "result": "礼宾官连声道歉。预案没有消失，只是换了抽屉。"
+      }
+    ]
+  },
+  {
+    "id": "statue_cracks",
+    "type": "normal",
+    "category": "social",
+    "theme": "statue",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "雕像",
+    "title": "铜像裂缝",
+    "narrative": "总统大道尽头的铜像出现裂缝。工程队说只是热胀冷缩，街头的人却开始给裂缝起名字。",
+    "options": [
+      {
+        "text": "连夜修补，禁止拍照",
+        "effects": {
+          "legacy": "+small",
+          "finance": "-small",
+          "morale": "-small",
+          "deco": {
+            "capital": "+small"
+          }
+        },
+        "result": "裂缝被补上了，照片已经传开。"
+      },
+      {
+        "text": "公开维修，装作不在意",
+        "effects": {
+          "history": "+small",
+          "morale": "+small",
+          "legacy": "-small"
+        },
+        "result": "脚手架围住铜像。人们第一次近距离看见它并不完美。"
+      }
+    ]
+  },
+  {
+    "id": "generals_children",
+    "type": "normal",
+    "category": "military",
+    "theme": "dynastic_military",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "军中",
+    "title": "将军们的孩子",
+    "narrative": "几位将军请求把子女送入总统卫队镀金。说是培养下一代，其实每个孩子都是一枚押在未来的筹码。",
+    "options": [
+      {
+        "text": "准许入队，绑定家族",
+        "effects": {
+          "army": "+mid",
+          "elite": "+small",
+          "legacy": "-small"
+        },
+        "result": "年轻军官穿上新制服。忠诚看起来有了继承人。"
+      },
+      {
+        "text": "拒绝世袭，保住军纪",
+        "effects": {
+          "army": "+small",
+          "elite": "-mid",
+          "loyalty": {
+            "general": "-small"
+          }
+        },
+        "result": "军纪保住了一些，将军们的晚宴少了几张笑脸。"
+      }
+    ]
+  },
+  {
+    "id": "lifetime_congress",
+    "type": "normal",
+    "category": "court",
+    "theme": "lifetime_rule",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "minYear": 10,
+    "weight": 2,
+    "kicker": "党代会",
+    "title": "终身主席",
+    "narrative": "执政党建议授予您“终身主席”称号。有人说这只是荣誉，有人已经开始修改门牌。",
+    "options": [
+      {
+        "text": "接受称号，写入党章",
+        "effects": {
+          "legacy": "+big",
+          "elite": "+small",
+          "intl": "-small",
+          "history": "-small"
+        },
+        "result": "会场掌声经久不息。经久不息本身也需要人维持。"
+      },
+      {
+        "text": "暂缓称号，保留余地",
+        "effects": {
+          "intl": "+small",
+          "elite": "-small",
+          "legacy": "+small"
+        },
+        "result": "党内很意外。意外之后，是更小心的试探。"
+      }
+    ]
+  },
+  {
+    "id": "foreign_judge",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "tribunal",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "司法",
+    "title": "远方的法官",
+    "narrative": "国际法庭一名检察官公开提到恩加拉旧案。外交部说这只是噪音，安全局说噪音也能定位。",
+    "options": [
+      {
+        "text": "切断合作，驱逐相关人员",
+        "effects": {
+          "intl": "-big",
+          "elite": "+small",
+          "history": "-mid"
+        },
+        "result": "法庭离得更远，案卷却上了更多新闻。"
+      },
+      {
+        "text": "象征性配合，交出小人物",
+        "effects": {
+          "intl": "+mid",
+          "elite": "-small",
+          "history": "+small"
+        },
+        "result": "几名旧官员被推到台前。后台的人松了口气，也更怕了。"
+      }
+    ]
+  },
+  {
+    "id": "private_island",
+    "type": "normal",
+    "category": "corruption",
+    "theme": "exile_plan",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "退路",
+    "title": "海上的房产",
+    "narrative": "一名掮客带来海岛房产资料，附赠医疗团队、离岸账户和沉默的邻居。价格昂贵，但退路从来不便宜。",
+    "options": [
+      {
+        "text": "买下它，给未来留门",
+        "effects": {
+          "wealth": -0.8,
+          "health": "+small",
+          "legacy": "-small"
+        },
+        "result": "合同藏进保险柜。您忽然觉得地图很有安慰。"
+      },
+      {
+        "text": "拒绝示弱，把掮客赶走",
+        "effects": {
+          "legacy": "+small",
+          "elite": "+small",
+          "health": "-small"
+        },
+        "result": "掮客被请出官邸。秘书却悄悄记下了联系方式。"
+      }
+    ]
+  },
+  {
+    "id": "empty_barracks",
+    "type": "normal",
+    "category": "military",
+    "theme": "mutiny",
+    "stages": [
+      "late"
+    ],
+    "requires": {
+      "armyMax": 28
+    },
+    "weight": 2,
+    "kicker": "军营",
+    "title": "空了一半的营房",
+    "narrative": "卫队报告，北郊营房有士兵夜里离队。名单还在，床铺空了，枪库的账也对不上。",
+    "options": [
+      {
+        "text": "立刻清查，抓几个带头的",
+        "effects": {
+          "army": "+small",
+          "morale": "-small",
+          "elite": "-small"
+        },
+        "result": "几名士兵被押回。剩下的人站得更直，也看得更冷。"
+      },
+      {
+        "text": "补发欠饷，先把人叫回来",
+        "effects": {
+          "army": "+mid",
+          "finance": "-mid",
+          "morale": "+small"
+        },
+        "result": "士兵陆续回营。钱比训话更有说服力。"
+      }
+    ]
+  },
+  {
+    "id": "bread_lines",
+    "type": "normal",
+    "category": "social",
+    "theme": "bread_price",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "requires": {
+      "financeMax": 35
+    },
+    "weight": 2,
+    "kicker": "粮价",
+    "title": "面包队伍",
+    "narrative": "首都面包店门口排起长队。队伍太长，警察不得不从早晨维持到黄昏。",
+    "options": [
+      {
+        "text": "紧急补贴，先压住队伍",
+        "effects": {
+          "morale": "+mid",
+          "finance": "-big"
+        },
+        "result": "队伍短了，账本瘦了。明天还要不要补，没人敢问。"
+      },
+      {
+        "text": "抓几个囤货商示众",
+        "effects": {
+          "morale": "+small",
+          "elite": "-small",
+          "history": "-small"
+        },
+        "result": "商人被带上电视。面包没有变多，但怒气有了去处。"
+      }
+    ]
+  },
+  {
+    "id": "palace_doctors",
+    "type": "normal",
+    "category": "court",
+    "theme": "health_decline",
+    "stages": [
+      "late"
+    ],
+    "requires": {
+      "healthMax": 50
+    },
+    "weight": 2,
+    "kicker": "御医",
+    "title": "医生们的争吵",
+    "narrative": "您的私人医生分成两派，一派建议静养，一派建议继续公开露面。两派都说自己是在救您。",
+    "options": [
+      {
+        "text": "听静养派，减少露面",
+        "effects": {
+          "health": "+mid",
+          "elite": "-small",
+          "morale": "-small"
+        },
+        "result": "您的窗帘拉得更久。首都开始听脚步声猜病情。"
+      },
+      {
+        "text": "坚持露面，证明无恙",
+        "effects": {
+          "health": "-mid",
+          "morale": "+small",
+          "legacy": "+small"
+        },
+        "result": "镜头前您站得很稳。回到车里时，医生扶住了您的手肘。"
+      }
+    ]
+  },
+  {
+    "id": "radio_preachers",
+    "type": "normal",
+    "category": "social",
+    "theme": "church",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "requires": {
+      "moraleMax": 35
+    },
+    "weight": 2,
+    "kicker": "讲坛",
+    "title": "午夜布道",
+    "narrative": "几名牧师开始在午夜电台讲“苦难与审判”。他们不点您的名，听众却都知道他们在说谁。",
+    "options": [
+      {
+        "text": "封掉电台，禁止布道",
+        "effects": {
+          "morale": "-small",
+          "elite": "+small",
+          "intl": "-small",
+          "loyalty": {
+            "priest": "-mid"
+          }
+        },
+        "result": "电台安静了。教堂门口的人变多了。"
+      },
+      {
+        "text": "请教会领袖进宫谈判",
+        "effects": {
+          "morale": "+small",
+          "elite": "-small",
+          "loyalty": {
+            "priest": "+small"
+          }
+        },
+        "result": "茶端上来时，谁都没有先碰杯。"
+      }
+    ]
+  },
+  {
+    "id": "refugee_camps_border",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "refugees",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "requires": {
+      "borderMin": 55
+    },
+    "weight": 2,
+    "kicker": "边境",
+    "title": "帐篷越过国界",
+    "narrative": "边境难民营越搭越大，帐篷线已经压过国界。邻国说那是临时安置，您的军官说那是缓慢入侵。",
+    "options": [
+      {
+        "text": "推回帐篷，划清界线",
+        "effects": {
+          "army": "+small",
+          "intl": "-mid",
+          "morale": "+small",
+          "borderTension": "+mid"
+        },
+        "result": "帐篷被推回去，镜头留下来。边境线清楚了，火气也清楚了。"
+      },
+      {
+        "text": "开设联合救济点",
+        "effects": {
+          "intl": "+mid",
+          "finance": "-small",
+          "borderTension": "-small",
+          "morale": "+small"
+        },
+        "result": "救济点升起两面旗。将军不喜欢，难民喜欢。"
+      }
+    ]
+  },
+  {
+    "id": "currency_queue",
+    "type": "normal",
+    "category": "economy",
+    "theme": "currency",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "requires": {
+      "financeMax": 38
+    },
+    "weight": 2,
+    "kicker": "货币",
+    "title": "银行门口的队伍",
+    "narrative": "银行门口排起兑换外币的队伍。央行说是谣言，柜员说柜台里的美元确实少了。",
+    "options": [
+      {
+        "text": "限制兑换，抓传播者",
+        "effects": {
+          "finance": "+small",
+          "morale": "-mid",
+          "elite": "+small"
+        },
+        "result": "队伍被驱散，恐慌进了家门。"
+      },
+      {
+        "text": "动用储备，稳住汇率",
+        "effects": {
+          "finance": "-big",
+          "morale": "+mid",
+          "intl": "+small"
+        },
+        "result": "汇率暂时稳住。储备表上的数字让财政部长闭了闭眼。"
+      }
+    ]
+  },
+  {
+    "id": "elite_letters",
+    "type": "normal",
+    "category": "court",
+    "theme": "palace_report",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "requires": {
+      "eliteMax": 35
+    },
+    "weight": 2,
+    "kicker": "密信",
+    "title": "三封辞呈",
+    "narrative": "三位资深部长同一天递交辞呈，措辞恭顺，语气决绝。他们没有结党，只是同时想起了身体不好。",
+    "options": [
+      {
+        "text": "全部驳回，逼他们留任",
+        "effects": {
+          "elite": "-small",
+          "finance": "+small",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "辞呈退回去了，人也留住了。忠诚没有回来。"
+      },
+      {
+        "text": "准辞并查他们的账",
+        "effects": {
+          "elite": "-mid",
+          "wealthDomestic": 0.4,
+          "history": "-small"
+        },
+        "result": "账本翻开后，辞呈看起来像自首。"
+      }
+    ]
+  },
+  {
+    "id": "unmarked_graves",
+    "type": "normal",
+    "category": "diplomacy",
+    "theme": "human_rights",
+    "stages": [
+      "late"
+    ],
+    "minYear": 12,
+    "weight": 2,
+    "kicker": "旧案",
+    "title": "无名墓地",
+    "narrative": "一组无名墓地照片在国外媒体出现，据说来自多年前的清剿行动。照片模糊，年份却很清楚。",
+    "options": [
+      {
+        "text": "宣布伪造，追查泄密者",
+        "effects": {
+          "intl": "-mid",
+          "elite": "+small",
+          "history": "-mid",
+          "loyalty": {
+            "spy": "+small"
+          }
+        },
+        "result": "声明很硬。照片也更多了。"
+      },
+      {
+        "text": "成立真相委员会，限定范围",
+        "effects": {
+          "intl": "+mid",
+          "elite": "-mid",
+          "history": "+mid"
+        },
+        "result": "委员会有了办公室，也有了边界。边界之外，仍是沉默。"
+      }
+    ]
+  },
+  {
+    "id": "memory_law",
+    "type": "normal",
+    "category": "social",
+    "theme": "legacy_history",
+    "stages": [
+      "late"
+    ],
+    "minYear": 15,
+    "weight": 2,
+    "kicker": "记忆",
+    "title": "国家记忆法",
+    "narrative": "文化部起草“国家记忆法”，规定学校、媒体和博物馆如何讲述您的时代。草案像法律，也像遗嘱。",
+    "options": [
+      {
+        "text": "通过草案，统一记忆",
+        "effects": {
+          "legacy": "+big",
+          "history": "-mid",
+          "deco": {
+            "education": "-small"
+          }
+        },
+        "result": "记忆被装订成册。孩子们会背，老人们会闭嘴。"
+      },
+      {
+        "text": "只建档案，不写结论",
+        "effects": {
+          "history": "+mid",
+          "legacy": "-small",
+          "elite": "-small"
+        },
+        "result": "档案柜安静地立着。它们不称颂，也不遗忘。"
+      }
+    ]
+  },
+  {
+    "id": "notify_football_parade",
+    "type": "notify",
+    "category": "social",
+    "theme": "football",
+    "stages": [
+      "mid"
+    ],
+    "kicker": "简讯",
+    "title": "球队游行",
+    "narrative": "国家队大巴绕城一周，球员举着奖杯，车身上贴着您的头像。体育台说这是民族团结的一天。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "press": "+small"
+          },
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_media_ranking",
+    "type": "notify",
+    "category": "social",
+    "theme": "media_ranking",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "媒体自由排名",
+    "narrative": "一份海外排名把恩加拉列在很靠后的位置。国家电视台没有播这条新闻，但播了三遍“新闻工作者幸福座谈会”。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_statue_cleaning",
+    "type": "notify",
+    "category": "social",
+    "theme": "statue",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "清洗铜像",
+    "narrative": "市政工人给总统大道尽头的铜像重新抛光。阳光很好，铜像很亮，路过的人都走得很快。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "capital": "+small"
+          },
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_hospital_ribbon",
+    "type": "notify",
+    "category": "social",
+    "theme": "health_show",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "医院剪彩",
+    "narrative": "新诊疗楼剪彩时，礼仪小姐把剪刀递错了人。新闻稿后来写成“体现团队精神”。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "health_care": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_school_slogan",
+    "type": "notify",
+    "category": "social",
+    "theme": "education_slogan",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "kicker": "简讯",
+    "title": "教室里的标语",
+    "narrative": "全国小学换上新标语：“今天好好学习，明天报答领袖。”孩子们念得很齐，老师念得更齐。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "education": "+small"
+          },
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_airport_portrait",
+    "type": "notify",
+    "category": "economy",
+    "theme": "leader_image",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "机场肖像",
+    "narrative": "新机场大厅挂起您的巨幅肖像。外宾下飞机后，先看见您，再看见入境柜台。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "capital": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_capital_lights",
+    "type": "notify",
+    "category": "economy",
+    "theme": "capital_project",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "首都亮灯",
+    "narrative": "首都主干道换了新路灯，夜里像一条发亮的丝带。背街小巷仍旧黑着，只是不在航拍镜头里。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "capital": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_first_lady_magazine",
+    "type": "notify",
+    "category": "court",
+    "theme": "first_lady_image",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "夫人的封面",
+    "narrative": "第一夫人登上慈善杂志封面，标题叫“温柔的国家之母”。封底广告是一家新开的珠宝店。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "loyalty": {
+            "firstlady": "+small"
+          },
+          "history": "-small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_ministry_poem",
+    "type": "notify",
+    "category": "social",
+    "theme": "leader_cult",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "部委诗歌",
+    "narrative": "交通部职工合写了一首颂诗，押韵并不稳定，忠诚非常稳定。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_children_song",
+    "type": "notify",
+    "category": "social",
+    "theme": "education_slogan",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "kicker": "简讯",
+    "title": "儿童合唱",
+    "narrative": "儿童合唱团录制新歌，副歌里反复出现您的名字。录音棚外，家长们排队签授权书。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "education": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_foreign_index",
+    "type": "notify",
+    "category": "diplomacy",
+    "theme": "foreign_index",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "投资环境指数",
+    "narrative": "一份商业指数称恩加拉“审批迅速但规则神秘”。商务部认为这句话至少有一半是在表扬。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_sports_loss",
+    "type": "notify",
+    "category": "social",
+    "theme": "football",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "一场失利",
+    "narrative": "国家队客场惨败。体育台剪掉了最后几个进球，只留下开场奏国歌时队员们严肃的脸。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {},
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_parade_rehearsal",
+    "type": "notify",
+    "category": "military",
+    "theme": "parade",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "阅兵彩排",
+    "narrative": "阅兵彩排堵住半座首都。通勤者在车里听完了整套军乐。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "capital": "+small"
+          },
+          "loyalty": {
+            "general": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_weather_report",
+    "type": "notify",
+    "category": "social",
+    "theme": "official_weather",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "天气预报",
+    "narrative": "电视台天气预报说，国庆当天“预计晴朗”。气象局内部预报写着另一种云。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "press": "-small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_university_mural",
+    "type": "notify",
+    "category": "social",
+    "theme": "campus_mural",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "大学壁画",
+    "narrative": "大学新壁画把您画在独立英雄之间。学生们路过时不议论，只拍墙角那处没干的油漆。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "education": "+small"
+          },
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_new_calendar",
+    "type": "notify",
+    "category": "court",
+    "theme": "leader_calendar",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "新纪念日",
+    "narrative": "国务院新增一个纪念日，纪念您“历史性视察”某座水库。水库办公室说，他们已经记不清那天下没下雨。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_bridge_name",
+    "type": "notify",
+    "category": "economy",
+    "theme": "capital_project",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "大桥命名",
+    "narrative": "首都新桥以您的母亲命名。揭牌时，桥下仍有施工船没有离开镜头。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "capital": "+small"
+          },
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_museum_gift",
+    "type": "notify",
+    "category": "social",
+    "theme": "museum",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "博物馆赠品",
+    "narrative": "国家博物馆出售您的半身像冰箱贴。游客买得不多，机关单位买得很多。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_tv_drama",
+    "type": "notify",
+    "category": "social",
+    "theme": "tv_drama",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "黄金档电视剧",
+    "narrative": "黄金档新剧讲述一位虚构总统力挽狂澜。观众不难猜出谁是原型，编剧也没打算让人猜错。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "press": "+small"
+          },
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_coin_issue",
+    "type": "notify",
+    "category": "economy",
+    "theme": "leader_image",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "纪念硬币",
+    "narrative": "央行发行您的纪念硬币。银行职员说，大家都想收藏，没人真的想花出去。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "legacy": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_hotel_ranking",
+    "type": "notify",
+    "category": "diplomacy",
+    "theme": "foreign_index",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "酒店榜单",
+    "narrative": "一家旅游杂志把首都酒店列入“最令人难忘目的地”。配图里，安检门比泳池更清楚。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "deco": {
+            "press": "+small"
+          }
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
+      }
+    ]
+  },
+  {
+    "id": "notify_old_speech",
+    "type": "notify",
+    "category": "court",
+    "theme": "legacy_history",
+    "stages": [
+      "late"
+    ],
+    "kicker": "简讯",
+    "title": "旧演讲重播",
+    "narrative": "电视台重播您年轻时的演讲。声音洪亮，画面发黄，弹幕功能按惯例关闭。",
+    "options": [
+      {
+        "text": "让它按通稿播出",
+        "effects": {
+          "legacy": "+small",
+          "history": "+small"
+        },
+        "result": "通稿顺利播出。没有人需要知道它改了几遍。"
+      },
+      {
+        "text": "压低声量，别太用力",
+        "effects": {},
+        "result": "这条消息被放到不显眼的位置。懂的人仍然懂。"
       }
     ]
   }

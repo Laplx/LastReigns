@@ -3,6 +3,9 @@
 import { rngChance, rngPick } from './state.js';
 import { applyEffects, adjustLoyalty } from './engine.js';
 
+const STAGES = new Set(['early', 'mid', 'late']);
+const THEME_COOLDOWN = { notify: 2, chain: 6, special: 4, normal: 5 };
+
 // 预处理：标注每张卡"涉及哪些具名人物"（_feat），用人名别名扫描。
 export function prepareContent(content) {
   const canon = {}; // 人名别名 → roleId
@@ -39,10 +42,58 @@ export function substCard(state, card) {
   return c;
 }
 
+function latePressure(state) {
+  const i = state.ind || {};
+  return i.health <= 60 || i.morale <= 25 || i.elite <= 25 || i.army <= 25 ||
+    i.finance <= 25 || i.intl <= 18 || i.intl >= 82 || (state.hidden?.borderTension || 0) >= 70;
+}
+function currentStages(state) {
+  const y = state.year || 1;
+  const stages = [];
+  if (y <= 7) stages.push('early');
+  if (y >= 4 && y <= 24) stages.push('mid');
+  if (y >= 15 || latePressure(state)) stages.push('late');
+  return stages;
+}
+function cardStages(card) {
+  const raw = Array.isArray(card.stages) ? card.stages : (card.stage ? [card.stage] : []);
+  return raw.filter((s) => STAGES.has(s));
+}
+function stageMatches(state, card) {
+  const stages = cardStages(card);
+  if (!stages.length) return true;
+  const now = new Set(currentStages(state));
+  return stages.some((s) => now.has(s));
+}
+function stagePool(state, cards) {
+  const preferred = cards.filter((c) => stageMatches(state, c));
+  const offStage = cards.filter((c) => !stageMatches(state, c));
+  if (!preferred.length) return cards;
+  if (offStage.length && rngChance(state, 0.12)) return offStage;
+  return preferred;
+}
+function cardTheme(card) { return card?.theme || null; }
+function isThemeCooling(state, card) {
+  const theme = cardTheme(card);
+  return !!(theme && state.themeCooldowns && state.themeCooldowns[theme] >= state.year);
+}
+function themeReadyPool(state, cards) {
+  const ready = cards.filter((c) => !isThemeCooling(state, c));
+  return ready.length ? ready : cards;
+}
+function markThemeCooldown(state, card) {
+  const theme = cardTheme(card);
+  if (!theme) return;
+  if (!state.themeCooldowns) state.themeCooldowns = {};
+  const span = card.themeCooldown ?? THEME_COOLDOWN[card.type] ?? 4;
+  state.themeCooldowns[theme] = Math.max(state.themeCooldowns[theme] || 0, state.year + span);
+}
+
 // ---- 资格 ----------------------------------------------------------------
 export function isEligible(state, card) {
   if (card.unique && state.uniqueSeen.includes(card.id)) return false;
   if (card.minYear && state.year < card.minYear) return false;
+  if (card.maxYear && state.year > card.maxYear) return false;
   if (card._feat && card._feat.length) { const present = new Set(state.people.filter((p) => p.alive).map((p) => p.id)); if (!card._feat.every((id) => present.has(id))) return false; }
   const r = card.requires; if (!r) return true;
   const i = state.ind;
@@ -96,33 +147,39 @@ export function rememberShown(state, card) {
   if (!state.seenEventKeys) state.seenEventKeys = [];
   appendRecent(state.seenEventIds, card.id, 220);
   appendRecent(state.seenEventKeys, cardKey(card), 220);
+  markThemeCooldown(state, card);
 }
-function freshNormals(state, content) {
-  const all = allNormals(state, content).filter((c) => isEligible(state, c));
+function freshByMemory(state, all, primaryWindow, fallbackWindow) {
   const archived = archiveKeys(state);
   const seenIds = new Set(state.seenEventIds || []);
   const seenKeys = new Set(state.seenEventKeys || []);
   let fresh = all.filter((c) => !seenIds.has(c.id) && !seenKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
   if (!fresh.length) {
-    const recent = new Set((state.seenEventIds || []).slice(-24));
-    const recentKeys = new Set((state.seenEventKeys || []).slice(-24));
+    const recent = new Set((state.seenEventIds || []).slice(-primaryWindow));
+    const recentKeys = new Set((state.seenEventKeys || []).slice(-primaryWindow));
     fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
   }
-  if (!fresh.length) { const recent = new Set((state.seenEventIds || []).slice(-18)); const recentKeys = new Set((state.seenEventKeys || []).slice(-18)); fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c))); }
+  if (!fresh.length) {
+    const recent = new Set((state.seenEventIds || []).slice(-fallbackWindow));
+    const recentKeys = new Set((state.seenEventKeys || []).slice(-fallbackWindow));
+    fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c)));
+  }
+  return fresh;
+}
+function freshNormals(state, content) {
+  const all = allNormals(state, content).filter((c) => isEligible(state, c));
+  const staged = stagePool(state, all);
+  let fresh = freshByMemory(state, themeReadyPool(state, staged), 24, 18);
+  if (!fresh.length) fresh = freshByMemory(state, staged, 24, 18);
+  if (!fresh.length && staged.length !== all.length) fresh = freshByMemory(state, themeReadyPool(state, all), 24, 18);
   return fresh;
 }
 function freshNotifies(state, content) {
   const all = content.events.filter((c) => c.type === 'notify' && isEligible(state, c));
-  const archived = archiveKeys(state);
-  const seenIds = new Set(state.seenEventIds || []);
-  const seenKeys = new Set(state.seenEventKeys || []);
-  let fresh = all.filter((c) => !seenIds.has(c.id) && !seenKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
-  if (!fresh.length) {
-    const recent = new Set((state.seenEventIds || []).slice(-10));
-    const recentKeys = new Set((state.seenEventKeys || []).slice(-10));
-    fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c)) && !archived.has(cardKey(c)));
-  }
-  if (!fresh.length) { const recent = new Set((state.seenEventIds || []).slice(-8)); const recentKeys = new Set((state.seenEventKeys || []).slice(-8)); fresh = all.filter((c) => !recent.has(c.id) && !recentKeys.has(cardKey(c))); }
+  const staged = stagePool(state, all);
+  let fresh = freshByMemory(state, themeReadyPool(state, staged), 10, 8);
+  if (!fresh.length) fresh = freshByMemory(state, staged, 10, 8);
+  if (!fresh.length && staged.length !== all.length) fresh = freshByMemory(state, themeReadyPool(state, all), 10, 8);
   return fresh;
 }
 
@@ -157,6 +214,37 @@ function maybeTwist(state, card, option) {
   return { clue: `（几周后您才发现，您的对手似乎早就知道了这件事——是从谁那里？）` };
 }
 
+function effectSign(value) {
+  if (typeof value === 'number') return Math.sign(value);
+  const t = String(value || '').trim();
+  if (t.startsWith('+')) return 1;
+  if (t.startsWith('-')) return -1;
+  return 0;
+}
+function firstLiving(state, ids) {
+  return (ids || []).map((id) => state.people.find((p) => p.id === id && p.alive)).filter(Boolean)[0] || null;
+}
+function relationEcho(state, effects) {
+  if (!effects?.loyalty) return '';
+  const lines = [];
+  for (const [pid, token] of Object.entries(effects.loyalty)) {
+    const p = state.people.find((x) => x.id === pid && x.alive);
+    const sign = effectSign(token);
+    if (!p || !sign) continue;
+    const ally = firstLiving(state, p.allies);
+    const rival = firstLiving(state, p.rivals);
+    if (sign < 0) {
+      if (ally) lines.push(`与${p.name}走得近的${ally.name}也安静了许多。`);
+      if (rival) lines.push(`与${p.name}素来不和的${rival.name}，很快递来几页新材料。`);
+    } else {
+      if (ally) lines.push(`${ally.name}把您对${p.name}的示好看成了新的风向。`);
+      if (rival) lines.push(`${rival.name}在会后沉默很久，像是重新盘算了位置。`);
+    }
+    if (lines.length >= 2) break;
+  }
+  return lines.slice(0, 2).join('\n');
+}
+
 // ---- 解析玩家选择 --------------------------------------------------------
 export function resolveOption(state, card, optionIndex) {
   const option = card.options[optionIndex];
@@ -170,6 +258,8 @@ export function resolveOption(state, card, optionIndex) {
 
   let resultText = subst(state, option.result || '');
   if (twist) resultText += `\n\n${twist.clue}`;
+  const relation = relationEcho(state, option.effects);
+  if (relation) resultText += `\n\n${relation}`;
   state.archive.push({ year: state.year, title: subst(state, card.title), result: subst(state, option.text), eventId: card.id, eventKey: cardKey(card) });
   return { resultText, changed, deltas, summary, twist };
 }

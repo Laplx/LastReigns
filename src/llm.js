@@ -86,11 +86,20 @@ function summarize(state, content) {
 当前氛围——${moods}。表面：${deco}。${state.sanctioned ? '因孤立与失认承受制裁。' : ''}
 身边重臣：${people || '已无人可用'}。正在发酵：${chains || '暂无'}。最近：${recent || '无'}。`;
 }
+function recentThemeHint(state) {
+  const themes = Object.entries(state.themeCooldowns || {})
+    .filter(([, until]) => until >= state.year)
+    .map(([theme]) => theme)
+    .slice(-10);
+  return themes.length ? `近期已出现或正在冷却的主题：${themes.join('、')}。不要主动复用这些主题。` : '近期无明确主题冷却。';
+}
 
 function toCard(state, o, idx, tag) {
   if (!o || !o.title || !Array.isArray(o.options) || o.options.length < 2) return null;
   return {
     id: `${tag}_${state.year}_${idx}_${Math.floor(state.rng() * 1e6)}`, type: 'normal', weight: 2,
+    theme: typeof o.theme === 'string' ? o.theme.trim().slice(0, 40) : 'llm_local',
+    stages: Array.isArray(o.stages) ? o.stages.filter((s) => ['early', 'mid', 'late'].includes(s)) : undefined,
     kicker: String(o.kicker || '政务').slice(0, 6), title: String(o.title).slice(0, 30),
     speaker: o.speaker ? String(o.speaker).slice(0, 12) : undefined,
     narrative: String(o.narrative || '').slice(0, 400),
@@ -107,9 +116,10 @@ export async function pregenEvents(state, content, n) {
       { role: 'system', content: SYS },
       { role: 'user', content: `${summarize(state, content)}
 
-为本局生成 ${n} 个"互不相同"的事件卡，尽量围绕本局这四位重臣展开：${names}；也可涉及国名"${state.nationShort}"、课税/财政、边境、外交、民生、腐败、宫廷阴谋等。情节各异、不要雷同、不要与最近发生的重复。每卡≤180字叙事 + 2~3 个有取舍的选项(选项文字不得出现数字)。
+${recentThemeHint(state)}
+为本局生成 ${n} 个"互不相同"的事件卡，尽量围绕本局这四位重臣展开：${names}；也可涉及国名"${state.nationShort}"、课税/财政、边境、外交、民生、腐败、宫廷阴谋等。情节各异、不要雷同、不要与最近发生的重复。每卡≤180字叙事 + 2~3 个有取舍的选项(选项文字不得出现数字)。每卡必须给 theme(英文短标签) 与 stages(early/mid/late 数组，可多选)。
 ${EFFECT_SPEC}
-每个选项给出 result(≤80字)。严格输出 JSON：{"events":[{"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}]}` },
+每个选项给出 result(≤80字)。严格输出 JSON：{"events":[{"theme":"tax","stages":["early","mid"],"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}]}` },
     ], { temperature: 1.05, max_tokens: 520 + n * 300, timeoutMs: 10000 + n * 3500 });
     const arr = Array.isArray(obj.events) ? obj.events : [];
     return arr.map((o, i) => toCard(state, o, i, 'pre')).filter(Boolean);
@@ -121,7 +131,7 @@ export async function generateSpecialEvent(state, content) {
   try {
     const obj = await callJSON([
       { role: 'system', content: SYS },
-      { role: 'user', content: `${summarize(state, content)}\n\n基于当前局势生成一个特殊事件卡：≤200字叙事 + 2~3 个选项。\n${EFFECT_SPEC}\n每选项给 result(≤80字)。严格输出 JSON：{"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}` },
+      { role: 'user', content: `${summarize(state, content)}\n\n${recentThemeHint(state)}\n基于当前局势生成一个特殊事件卡：≤200字叙事 + 2~3 个选项。必须给 theme(英文短标签) 与 stages(early/mid/late 数组，可多选)。\n${EFFECT_SPEC}\n每选项给 result(≤80字)。严格输出 JSON：{"theme":"palace_intrigue","stages":["mid"],"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}` },
     ], { temperature: 1.0, max_tokens: 900, timeoutMs: 16000 });
     const c = toCard(state, obj, 0, 'special'); if (c) c.type = 'special'; return c;
   } catch { return null; }
@@ -183,7 +193,7 @@ export async function reskinChainStep(state, content, def, stepIndex) {
   try {
     const text = await call([
       { role: 'system', content: SYS },
-      { role: 'user', content: `${summarize(state, content)}\n\n正在发酵的事态「${def.title}」走到一个节点，原始情境是：\n「${step.narrative}」\n请结合${state.nation}当前局势与这四位重臣，把它改写成≤160字的新叙事——同一件事、同样的抉择压力，可点名相关重臣，让它读起来不像预制文本。只输出改写后的叙事正文，别的都不要。` },
+      { role: 'user', content: `${summarize(state, content)}\n\n${recentThemeHint(state)}\n正在发酵的事态「${def.title}」走到一个节点，原始情境是：\n「${step.narrative}」\n只允许改写当前节点 narrative：保持同一件事、同样抉择压力和同一主题，不得改标题、kicker、speaker、选项文字、效果、goto、escalateTo，也不得新增会改变判断的信息。可以点名相关重臣，但不要主动复用近期冷却主题。只输出≤160字的叙事正文，别的都不要。` },
     ], { temperature: 1.0, max_tokens: 460, timeoutMs: 13000 });
     const t = (text || '').trim();
     return t.length > 8 ? t.slice(0, 340) : null;

@@ -2,100 +2,282 @@
   {
     "id": "heir",
     "title": "继承人问题",
+    "theme": "succession",
+    "stages": [
+      "late"
+    ],
     "trigger": {
-      "minYear": 4,
-      "healthMax": 75
+      "minYear": 10,
+      "healthMax": 78
     },
     "steps": [
       {
         "kicker": "家国",
         "title": "谁来接班？",
-        "narrative": "您的健康不再如初，子女们也各自结了党。长子掌着电视台与一帮少壮派，幼子则得了几位将领的青眼。宫里的人开始悄悄站队——这个问题，躲不过去了。",
-        "escalateTo": 2,
+        "narrative": "您的健康不再如初，子女们也各自结了党。宫里的人开始悄悄站队，这个问题躲不过去了。",
+        "escalateTo": 1,
         "options": [
           {
             "text": "立长子，正式昭告天下",
-            "hint": "名分既定，幼子一系不满",
-            "setHeir": "eldest",
             "effects": {
               "legacy": "+big",
               "elite": "-small"
             },
-            "result": "您在党代会上宣布了决定。长子志得意满，幼子的脸色，您选择不去看。",
+            "result": "您在党代会上宣布决定。长子志得意满，另一边的人连夜开会。",
+            "setHeir": "eldest",
             "goto": 1
           },
           {
             "text": "立幼子，他更得军心",
-            "hint": "将军们高兴，长子的人不服",
-            "setHeir": "youngest",
             "effects": {
               "legacy": "+mid",
               "army": "+small",
               "elite": "-small"
             },
-            "result": "幼子接过了象征权力的权杖。长子那帮人，连夜开了个很长的会。",
+            "result": "幼子接过象征权力的权杖。军中的笑容，比宫里的更明显。",
+            "setHeir": "youngest",
             "goto": 1
           },
           {
-            "text": "再等等，时机未到",
+            "text": "先拖着，等它自己降温",
             "defer": true,
             "effects": {},
-            "result": "您含糊地把话题岔开。两个儿子都以为父亲属意自己——这恐怕不是好事。",
+            "result": "您含糊地岔开话题。两个继承人都以为父亲属意自己。",
             "goto": 0
           }
         ]
       },
       {
         "kicker": "家国",
-        "title": "把名分坐实",
-        "narrative": "继承人已定，但纸面上的名分还需坐实。是大张旗鼓修宪确立，还是低调安排、以免刺激另一方？",
+        "title": "名分与班底",
+        "narrative": "继承人需要自己的班底。旧臣担心被清算，新人急着进门，连走廊里的脚步都分成两派。",
+        "escalateTo": 2,
         "options": [
           {
-            "text": "修宪确立继承制",
+            "text": "让继承人插手人事",
             "effects": {
-              "legacy": "+big",
-              "history": "+small",
-              "intl": "+small"
+              "legacy": "+mid",
+              "elite": "-mid",
+              "loyalty": {
+                "uncle": "-small"
+              }
             },
-            "result": "宪法白纸黑字写明了继承顺位。王朝的雏形，就此立住。",
-            "goto": -1
+            "result": "几名年轻面孔进入核心会议。老臣们开始称病。",
+            "goto": 2
           },
           {
-            "text": "低调安排，私下托付",
+            "text": "只给虚衔，不给实权",
             "effects": {
-              "legacy": "+small"
+              "elite": "+small",
+              "legacy": "-small",
+              "loyalty": {
+                "firstlady": "-small"
+              }
             },
-            "result": "您把信得过的人叫到床前，做了交代。能不能算数，要看您闭眼之后。",
-            "goto": -1
+            "result": "继承人笑着接受任命。那笑容停在门口。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
           }
         ]
       },
       {
         "kicker": "家国",
         "title": "兄弟阋墙",
-        "narrative": "您迟迟不表态，两个儿子终于撕破了脸。电视台和军营各执一词，首都的空气里都是火药味。再不出手，您还没咽气，家就要散了。",
+        "narrative": "电视台和军营各执一词，首都空气里都是火药味。再不出手，家事就会变成国事。",
+        "escalateTo": 3,
         "options": [
           {
-            "text": "强压幼子一系，扶长子上位",
-            "setHeir": "eldest",
+            "text": "强压一方，扶继承人上位",
             "effects": {
               "army": "-mid",
               "elite": "-mid",
+              "legacy": "+small"
+            },
+            "result": "您动用最后的威权压下纷争。裂痕没有合上，只是被按住。",
+            "goto": 3
+          },
+          {
+            "text": "召集家族会议，重新分赃",
+            "effects": {
+              "wealthDomestic": -0.4,
+              "elite": "+small",
               "legacy": "-small"
             },
-            "result": "您动用了最后的威权压下纷争。代价是军中的裂痕，和幼子眼里的恨。",
+            "result": "亲族们坐到一张桌上。每个人都说为了国家。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "王朝的印章",
+        "narrative": "继承安排终于要写进制度。签字之后，它将不再只是家宴上的低语。",
+        "options": [
+          {
+            "text": "修宪确立继承制",
+            "effects": {
+              "legacy": "+big",
+              "history": "-small",
+              "intl": "+small"
+            },
+            "result": "宪法白纸黑字写明顺位。王朝的雏形就此立住。",
+            "goto": 4
+          },
+          {
+            "text": "留下密令，身后再说",
+            "effects": {
+              "legacy": "+small",
+              "elite": "-small",
+              "history": "+small"
+            },
+            "result": "密令封进保险柜。它能不能算数，要看您闭眼之后谁先拿到钥匙。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "继承人的第一次露面",
+        "narrative": "继承人第一次单独主持公开仪式。掌声很响，却不全是给他的；镜头扫过老臣的脸，每个人都像在评估一件未来的家具。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "让他单独讲话，承担风险",
+            "effects": {
+              "legacy": "+mid",
+              "elite": "-small",
+              "morale": "+small"
+            },
+            "result": "继承人的声音传遍广场。说得好不好已经不重要，重要的是他开始被单独衡量。",
+            "goto": 5
+          },
+          {
+            "text": "您亲自坐镇，把话接回来",
+            "effects": {
+              "elite": "+small",
+              "legacy": "-small",
+              "health": "-small"
+            },
+            "result": "仪式很稳。继承人也明白，稳的原因不是他。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "老臣的保证书",
+        "narrative": "几位老臣递来保证书，承诺在您身后继续拥戴继承人。字迹工整，承诺昂贵。",
+        "escalateTo": 6,
+        "options": [
+          {
+            "text": "让他们公开宣誓",
+            "effects": {
+              "legacy": "+mid",
+              "elite": "-mid",
+              "loyalty": {
+                "uncle": "-small"
+              }
+            },
+            "result": "宣誓上了电视。被迫站在镜头前的人，最知道誓言有多轻。",
+            "goto": 6
+          },
+          {
+            "text": "私下分配保障，换取签名",
+            "effects": {
+              "wealthDomestic": -0.5,
+              "elite": "+small",
+              "legacy": "+small"
+            },
+            "result": "签名变多了，保险柜里的东西变少了。",
+            "goto": 6
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 5
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "军方的条件",
+        "narrative": "将军们承认继承安排，但要求保留军中若干任命权。他们说这是稳定需要，听起来像提前谈判。",
+        "escalateTo": 7,
+        "options": [
+          {
+            "text": "答应军方条件",
+            "effects": {
+              "army": "+mid",
+              "legacy": "+small",
+              "elite": "-small"
+            },
+            "result": "军方点头了。继承人得到王座，也得到一副沉重的扶手。",
+            "goto": 7
+          },
+          {
+            "text": "拒绝军方插手继承",
+            "effects": {
+              "army": "-mid",
+              "legacy": "+mid",
+              "elite": "+small"
+            },
+            "result": "将军们没有反驳，只是把茶杯放得很轻。",
+            "goto": 7
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 6
+          }
+        ]
+      },
+      {
+        "kicker": "家国",
+        "title": "身后安排",
+        "narrative": "最后的安排需要封存：遗嘱、军令、党章解释，以及谁能在第一时间打开官邸大门。",
+        "options": [
+          {
+            "text": "把钥匙交给继承人亲信",
+            "effects": {
+              "legacy": "+big",
+              "elite": "-small",
+              "army": "-small"
+            },
+            "result": "钥匙交出去了。未来第一次有了具体形状。",
             "goto": -1
           },
           {
-            "text": "放任他们斗，胜者为王",
+            "text": "设置多人共管，防止一家独大",
             "effects": {
-              "elite": "-big",
-              "flags": {
-                "civilWar": true
-              },
-              "history": "-mid"
+              "elite": "+mid",
+              "legacy": "-small",
+              "history": "+small"
             },
-            "result": "您疲惫地闭上眼，由他们去。您身后的恩加拉，怕是要血流成河。",
+            "result": "权力被分成几把钥匙。每把钥匙都觉得自己才是真的。",
             "goto": -1
           }
         ]
@@ -105,41 +287,44 @@
   {
     "id": "north",
     "title": "北方矿区叛乱",
+    "theme": "mine_rebellion",
+    "stages": [
+      "early",
+      "mid"
+    ],
     "trigger": {
-      "moraleMax": 42
+      "moraleMax": 40
     },
     "steps": [
       {
         "kicker": "北方",
         "title": "矿区罢工",
-        "narrative": "北方铜矿的工人放下了工具，要求涨薪与安全保障。罢工像野火一样蔓延，国际媒体的镜头开始往那边凑。",
+        "narrative": "北方铜矿工人放下工具，要求涨薪与安全保障。国际媒体的镜头开始往那边凑。",
         "escalateTo": 1,
         "options": [
           {
             "text": "派军队进驻，强行复工",
-            "hint": "快，但会出事",
             "effects": {
               "army": "+small",
               "intl": "-mid",
               "history": "-mid",
               "morale": "-mid"
             },
-            "result": "军队开进了矿区。机器重新转动，代价是几条没上报的人命。",
+            "result": "机器重新转动，代价是几条没上报的人命。",
             "goto": 1
           },
           {
             "text": "坐下来谈，让点利益",
-            "hint": "丢面子，保平安",
             "effects": {
               "legacy": "-small",
               "wealthDomestic": -0.3,
               "morale": "+big"
             },
-            "result": "您派人谈判并涨了薪。罢工平息了，权贵们却笑话您“被几个矿工拿捏”。",
-            "goto": -1
+            "result": "罢工暂时平息，矿区也学会了开价。",
+            "goto": 1
           },
           {
-            "text": "拖着，看它自己冷下来",
+            "text": "先拖着，等它自己降温",
             "defer": true,
             "effects": {
               "morale": "-small"
@@ -151,31 +336,173 @@
       },
       {
         "kicker": "北方",
-        "title": "枪声响起",
-        "narrative": "罢工演变成了武装对峙，北方几个矿镇升起了不属于政府的旗帜。这已经不是劳资纠纷，而是叛乱。",
+        "title": "枪支流入",
+        "narrative": "矿镇夜里出现不属于政府的步枪。长老们说只是自保，军方说这是叛乱前奏。",
+        "escalateTo": 2,
         "options": [
           {
-            "text": "血腥镇压，杀一儆百",
-            "hint": "立威，举世侧目",
+            "text": "封锁道路，搜缴武器",
             "effects": {
-              "intl": "-big",
-              "history": "-big",
-              "army": "+small",
-              "morale": "+big"
+              "army": "+mid",
+              "morale": "-small",
+              "intl": "-small"
             },
-            "result": "三天后，北方安静了。安静得像一片墓地。海外的制裁清单上，多了您的名字。",
+            "result": "道路设卡后，矿镇的沉默变硬了。",
+            "goto": 2
+          },
+          {
+            "text": "收买长老，切断枪源",
+            "effects": {
+              "wealthDomestic": -0.4,
+              "elite": "+small",
+              "morale": "+small",
+              "loyalty": {
+                "chief": "+small"
+              }
+            },
+            "result": "几名长老收下礼物，也收起一部分枪。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "北方",
+        "title": "矿镇旗帜",
+        "narrative": "几个矿镇升起不属于政府的旗帜。这已经不是劳资纠纷，而是对中央的公开挑战。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "发动清剿，夺回矿镇",
+            "effects": {
+              "army": "+small",
+              "morale": "-mid",
+              "intl": "-big",
+              "history": "-big"
+            },
+            "result": "北方安静了，安静得像一片墓地。",
+            "goto": 3
+          },
+          {
+            "text": "承认自治委员会",
+            "effects": {
+              "legacy": "-big",
+              "morale": "+big",
+              "army": "-small",
+              "history": "+small"
+            },
+            "result": "枪声停了。所有人也看清，中央其实会后退。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "北方",
+        "title": "矿权重写",
+        "narrative": "无论镇压还是妥协，矿权都必须重写。谁掌握铜矿，谁就掌握下一轮忠诚。",
+        "options": [
+          {
+            "text": "交给军方托管",
+            "effects": {
+              "army": "+mid",
+              "elite": "-small",
+              "finance": "+small",
+              "history": "-small"
+            },
+            "result": "军方接管矿区。矿石重新上路，怨气也跟着上路。",
+            "goto": 4
+          },
+          {
+            "text": "成立国家矿业公司",
+            "effects": {
+              "finance": "+mid",
+              "elite": "-mid",
+              "morale": "+small",
+              "loyalty": {
+                "finance": "+small"
+              }
+            },
+            "result": "新公司挂牌。旧买办失了笑脸，工人暂时保住饭碗。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "北方",
+        "title": "战后赔偿",
+        "narrative": "矿区平息后，死者家属要求赔偿。军方说不能承认过错，财政部说沉默也很贵。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "设立赔偿基金",
+            "effects": {
+              "morale": "+mid",
+              "finance": "-mid",
+              "army": "-small",
+              "history": "+small"
+            },
+            "result": "钱发下去后，哭声没有停止，但少了一些。",
+            "goto": 5
+          },
+          {
+            "text": "只补偿忠诚家庭",
+            "effects": {
+              "army": "+small",
+              "elite": "+small",
+              "morale": "-mid",
+              "history": "-small"
+            },
+            "result": "名单分成两种颜色。北方也分成两种记忆。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "北方",
+        "title": "矿区新秩序",
+        "narrative": "矿区需要新的治理结构。军方、工会和地方长老都想在门口挂自己的牌子。",
+        "options": [
+          {
+            "text": "建立军管委员会",
+            "effects": {
+              "army": "+mid",
+              "finance": "+small",
+              "morale": "-small"
+            },
+            "result": "矿区纪律变好，笑声变少。",
             "goto": -1
           },
           {
-            "text": "割让自治权换和平",
-            "hint": "保命，失地失威",
+            "text": "让工会进入董事会",
             "effects": {
-              "legacy": "-big",
-              "army": "-small",
-              "history": "+small",
-              "morale": "+big"
+              "morale": "+mid",
+              "elite": "-small",
+              "finance": "-small",
+              "loyalty": {
+                "reformer": "+small"
+              }
             },
-            "result": "您签字给了北方自治。枪声停了，但所有人都看清了：中央，其实没那么硬。",
+            "result": "工会坐进会议室，第一次发现椅子也会改变人。",
             "goto": -1
           }
         ]
@@ -185,59 +512,96 @@
   {
     "id": "border",
     "title": "邻国边境危机",
+    "theme": "border_war",
+    "stages": [
+      "mid"
+    ],
     "trigger": {
-      "minYear": 3,
-      "borderMin": 25
+      "minYear": 4,
+      "borderMin": 35
     },
     "steps": [
       {
         "kicker": "边境",
         "title": "摩擦升级",
-        "narrative": "与南方邻国的边境摩擦越来越频繁。民族主义情绪在国内高涨，将军主战，外交官主和。一场危机，正在地图的边缘酝酿。",
+        "narrative": "与南方邻国的边境摩擦越来越频繁。将军主战，外交官主和。",
         "escalateTo": 1,
         "options": [
           {
             "text": "陈兵边境，强硬施压",
-            "hint": "扬威，火上浇油",
             "effects": {
               "army": "+mid",
               "intl": "-mid",
               "borderTension": "+big",
               "morale": "+small"
             },
-            "result": "大军压境。国内一片“扬我国威”的欢呼，邻国也调来了坦克。",
+            "result": "大军压境。国内欢呼，邻国也调来了坦克。",
             "goto": 1
           },
           {
             "text": "通过斡旋和平解决",
-            "hint": "稳，但显得软",
             "effects": {
               "borderTension": "-big",
-              "intl": "-small",
+              "intl": "+small",
               "morale": "-small"
             },
-            "result": "在第三国斡旋下，双方各退一步。报纸骂您懦弱，但没人因此送命。",
-            "goto": -1
+            "result": "双方各退一步。报纸骂您软弱，将军们觉得自己还没输。",
+            "goto": 1
           },
           {
-            "text": "拖着，先观望",
+            "text": "先拖着，等它自己降温",
             "defer": true,
             "effects": {
               "borderTension": "+small"
             },
-            "result": "您选择观望。边境的火星，没等到您下决心就烧了起来。",
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
             "goto": 0
           }
         ]
       },
       {
         "kicker": "边境",
-        "title": "战与和",
-        "narrative": "边境已经擦枪走火，士兵开始流血。将军请战，说一举拿下争议矿带就能名垂青史；外交官则警告，一场战争可能拖垮一切。",
+        "title": "地图上的矿带",
+        "narrative": "争议矿带突然被地质报告写得很值钱。地图边缘从此不再只是地图。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "公开宣称历史主权",
+            "effects": {
+              "morale": "+mid",
+              "intl": "-small",
+              "borderTension": "+mid"
+            },
+            "result": "群众学会了那片矿带的名字。邻国也学会了。",
+            "goto": 2
+          },
+          {
+            "text": "提出共同开发",
+            "effects": {
+              "finance": "+small",
+              "intl": "+mid",
+              "borderTension": "-small"
+            },
+            "result": "共同开发听起来体面，分账表却很难看。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "边境",
+        "title": "擦枪走火",
+        "narrative": "边境已经开始流血。将军请战，外交官警告，一场战争可能拖垮一切。",
+        "escalateTo": 3,
         "options": [
           {
             "text": "开战，赌一把领土",
-            "hint": "赢了扩张，输了崩盘",
             "effects": {
               "intl": "-big",
               "army": "+small",
@@ -246,18 +610,152 @@
               "borderTension": "+big",
               "morale": "+mid"
             },
-            "result": "炮火连天。几个月后，您拿下了那片矿带——代价是国库、人命，和满世界的谴责。",
-            "goto": -1
+            "result": "炮火连天。几个月后，您拿下矿带，也失去许多别的东西。",
+            "goto": 3
           },
           {
             "text": "见好就收，签署停火",
-            "hint": "止损",
             "effects": {
-              "intl": "-small",
+              "intl": "+small",
               "borderTension": "-mid",
               "army": "-small"
             },
-            "result": "您在伤亡扩大前叫停。将军憋了一肚子气，老百姓却松了口气。",
+            "result": "您在伤亡扩大前叫停。将军憋气，百姓松气。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "边境",
+        "title": "停火线",
+        "narrative": "停火线画下来了，但每个哨所都觉得自己离胜利只差一步。",
+        "options": [
+          {
+            "text": "修筑边防公路，长期压制",
+            "effects": {
+              "army": "+mid",
+              "finance": "-mid",
+              "borderTension": "-small"
+            },
+            "result": "公路沿边境延伸。它既是防线，也是提醒。",
+            "goto": 4
+          },
+          {
+            "text": "撤回部分部队，换取援助",
+            "effects": {
+              "intl": "+mid",
+              "army": "-small",
+              "finance": "+small",
+              "morale": "-small"
+            },
+            "result": "援助车队开进来，军车开回去。将军们没有鼓掌。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "边境",
+        "title": "战俘名单",
+        "narrative": "停火后，双方交换战俘名单。名单里有几个不该出现在那里的名字，也有几个应该出现却消失的人。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "公开名单，塑造胜利姿态",
+            "effects": {
+              "morale": "+mid",
+              "intl": "-small",
+              "history": "-small"
+            },
+            "result": "报纸刊出名单，英雄和疑问一起回到家门口。",
+            "goto": 5
+          },
+          {
+            "text": "私下交换，避免追问",
+            "effects": {
+              "intl": "+small",
+              "army": "-small",
+              "morale": "-small"
+            },
+            "result": "交换很安静。安静得像没有发生过战争。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "边境",
+        "title": "边境委员会",
+        "narrative": "第三方要求成立边境委员会，重新勘定界线。将军认为这是拖延，外交官认为这是台阶。",
+        "escalateTo": 6,
+        "options": [
+          {
+            "text": "加入委员会，争取法理",
+            "effects": {
+              "intl": "+mid",
+              "borderTension": "-small",
+              "morale": "-small"
+            },
+            "result": "地图摊在会议桌上。枪声远了，尺子近了。",
+            "goto": 6
+          },
+          {
+            "text": "拒绝委员会，维持事实控制",
+            "effects": {
+              "army": "+small",
+              "intl": "-mid",
+              "borderTension": "+small"
+            },
+            "result": "哨所继续升旗。世界继续记账。",
+            "goto": 6
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 5
+          }
+        ]
+      },
+      {
+        "kicker": "边境",
+        "title": "边境新城",
+        "narrative": "政府计划在争议地区修建新城，学校、医院和兵营一起动工。居住就是声明，预算也是声明。",
+        "options": [
+          {
+            "text": "大建新城，坐实控制",
+            "effects": {
+              "legacy": "+mid",
+              "finance": "-big",
+              "borderTension": "+small",
+              "deco": {
+                "capital": "+small"
+              }
+            },
+            "result": "新城在尘土里立起来。每栋楼都像一枚钉子。",
+            "goto": -1
+          },
+          {
+            "text": "只修补给站，保留退路",
+            "effects": {
+              "finance": "-small",
+              "army": "+small",
+              "intl": "+small"
+            },
+            "result": "补给站不显眼，却足够让士兵留下。",
             "goto": -1
           }
         ]
@@ -267,55 +765,95 @@
   {
     "id": "democracy",
     "title": "西方民主压力",
+    "theme": "ngo",
+    "stages": [
+      "mid"
+    ],
     "trigger": {
-      "intlMin": 50
+      "minYear": 5,
+      "intlMin": 60
     },
     "steps": [
       {
         "kicker": "国际",
         "title": "NGO 进驻",
-        "narrative": "几家西方 NGO 以“人道”与“观察选举”之名进驻首都，反对派人士开始频繁出现在它们的酒会上。一张以民主为名的网，正在收紧。",
+        "narrative": "几家西方 NGO 以人道与观察选举之名进驻首都，反对派开始频繁出现在它们的酒会上。",
         "escalateTo": 1,
         "options": [
           {
             "text": "以间谍罪驱逐它们",
-            "hint": "干脆，国际震怒",
             "effects": {
               "intl": "-big",
               "history": "-mid",
               "morale": "-small"
             },
-            "result": "NGO 被连夜请上飞机。西方的门关上了不少，但起码，眼前清静了。",
+            "result": "NGO 被连夜请上飞机。眼前清静了，门也关上了。",
             "goto": 1
           },
           {
             "text": "容忍它们，做做姿态",
-            "hint": "缓和，养虎为患",
             "effects": {
               "intl": "+big",
               "elite": "-small",
               "morale": "+small"
             },
-            "result": "您笑脸相迎，还给它们颁了“合作奖”。反对派的声音，却也跟着大了起来。",
-            "goto": -1
+            "result": "您笑脸相迎。外国记者开始等下一场戏。",
+            "goto": 1
           },
           {
-            "text": "拖着，让安全局慢慢办",
+            "text": "先拖着，等它自己降温",
             "defer": true,
             "effects": {},
-            "result": "您把球踢给了安全局。事情没解决，反对党却趁机搭起了台子。",
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
             "goto": 0
           }
         ]
       },
       {
         "kicker": "国际",
+        "title": "观察团名单",
+        "narrative": "观察团要求进入计票中心，还要求见反对派候选人。名单上的名字，个个都懂规矩。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "限制行程，只看样板站",
+            "effects": {
+              "intl": "-small",
+              "elite": "+small",
+              "deco": {
+                "press": "-small"
+              }
+            },
+            "result": "观察团看到了干净的投票站，也看到了太干净的街道。",
+            "goto": 2
+          },
+          {
+            "text": "开放行程，赌他们看不懂",
+            "effects": {
+              "intl": "+mid",
+              "elite": "-small",
+              "morale": "+small"
+            },
+            "result": "他们看得很细。您的官员笑得很累。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "国际",
         "title": "选举的诱惑",
-        "narrative": "内外压力下，“举行一次选举”的呼声压不住了。怎么选，决定您是名垂青史还是声名扫地。",
+        "narrative": "内外压力下，举行一次选举的呼声压不住了。怎么选，决定您是体面还是危险。",
+        "escalateTo": 3,
         "options": [
           {
             "text": "操控一场必胜的选举",
-            "hint": "好看，破绽难免",
             "effects": {
               "intl": "+mid",
               "elite": "-small",
@@ -326,34 +864,156 @@
                 "press": "+small"
               }
             },
-            "result": "您以压倒性优势“当选”。国际观察员的报告措辞微妙，下一轮要求也更具体了。",
-            "goto": -1
+            "result": "您以压倒性优势当选。观察员的报告措辞微妙。",
+            "goto": 3
           },
           {
             "text": "宣布取消选举，强力维稳",
-            "hint": "硬",
             "effects": {
               "intl": "-big",
               "army": "+mid",
               "history": "-mid"
             },
-            "result": "您宣布“国情特殊，暂缓选举”。坦克上了街，世界关上了援助的门。",
-            "goto": -1
+            "result": "坦克上街，援助停摆。秩序很稳，空气很硬。",
+            "goto": 3
           },
           {
-            "text": "真的举行一场自由选举",
-            "hint": "没人料到",
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "国际",
+        "title": "最后通牒",
+        "narrative": "外部盟友提出最后条件：释放囚犯、修改选法、允许监督。每一条都像一把小刀。",
+        "options": [
+          {
+            "text": "签下改革路线图",
             "effects": {
               "intl": "+big",
               "elite": "-big",
-              "army": "-mid",
+              "morale": "+mid",
               "history": "+big",
               "flags": {
                 "realElection": true
-              },
-              "morale": "+mid"
+              }
             },
-            "result": "投票箱是真的，计票也是真的。观察团和反对派一起住进了新秩序里，您的权力也变了。",
+            "result": "路线图公开后，权力开始有了日期。",
+            "goto": 4
+          },
+          {
+            "text": "转向强硬盟友，拒绝条件",
+            "effects": {
+              "intl": "-mid",
+              "army": "+small",
+              "finance": "+small",
+              "history": "-small"
+            },
+            "result": "新的朋友不问选票，只问港口和矿山。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "国际",
+        "title": "反对派圆桌",
+        "narrative": "外部基金会邀请反对派、商会和教会参加圆桌会。会议地点在酒店，安保名单比议程还长。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "允许参加，全程监听",
+            "effects": {
+              "intl": "+small",
+              "elite": "-small",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "圆桌会开得很文明。每个文明句子都被录了下来。",
+            "goto": 5
+          },
+          {
+            "text": "阻止会议，吊销许可",
+            "effects": {
+              "intl": "-mid",
+              "elite": "+small",
+              "morale": "-small"
+            },
+            "result": "酒店会议室空了，海外新闻版面满了。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "国际",
+        "title": "制裁草案",
+        "narrative": "几国议员提出定向制裁草案，名单暂时空着，所有人都在猜谁会先被填进去。",
+        "escalateTo": 6,
+        "options": [
+          {
+            "text": "雇佣游说公司灭火",
+            "effects": {
+              "intl": "+small",
+              "finance": "-mid",
+              "wealth": -0.3
+            },
+            "result": "游说公司说情况可控。他们的账单也很可控地准时抵达。",
+            "goto": 6
+          },
+          {
+            "text": "威胁收回外资特许权",
+            "effects": {
+              "intl": "-mid",
+              "finance": "-small",
+              "elite": "+small"
+            },
+            "result": "外资代表开始找大使馆，大使馆开始找更高层。",
+            "goto": 6
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 5
+          }
+        ]
+      },
+      {
+        "kicker": "国际",
+        "title": "权力分享方案",
+        "narrative": "调停方提出权力分享方案：释放囚犯、开放媒体、让反对派进入过渡委员会。每一项都像一扇门。",
+        "options": [
+          {
+            "text": "接受有限分享，拖长过渡期",
+            "effects": {
+              "intl": "+big",
+              "elite": "-mid",
+              "morale": "+small",
+              "history": "+mid"
+            },
+            "result": "过渡委员会成立了。它叫过渡，但没人知道会过渡到哪里。",
+            "goto": -1
+          },
+          {
+            "text": "拒绝方案，宣布主权不容交易",
+            "effects": {
+              "intl": "-big",
+              "army": "+mid",
+              "history": "-mid"
+            },
+            "result": "掌声在国内响起，航班在国外取消。",
             "goto": -1
           }
         ]
@@ -363,68 +1023,3155 @@
   {
     "id": "court",
     "title": "宫廷内斗",
+    "theme": "palace_report",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "forceSeed": true,
     "trigger": {
-      "minYear": 3
+      "minYear": 4,
+      "loyaltyGapMin": 14
     },
     "steps": [
       {
         "kicker": "密报",
         "title": "匿名举报信",
-        "narrative": "一封匿名信摆上了您的案头，举报您的两位心腹正在暗中较劲、各结私党。信里有名有姓，证据却真假难辨。这是真相，还是有人想借您的手除掉对手？",
+        "narrative": "一封匿名信摆上案头，举报两位心腹各结私党。证据真假难辨。",
         "escalateTo": 1,
         "options": [
           {
             "text": "宁可错杀，清洗一方",
-            "hint": "立威，可能误伤忠良",
             "effects": {
               "elite": "-mid",
               "army": "-small",
               "history": "-small"
             },
-            "result": "您动了手。被清洗的人或许真有异心，或许只是挡了别人的路——您永远不会知道。",
-            "goto": -1
-          },
-          {
-            "text": "各打五十大板，敲山震虎",
-            "effects": {
-              "elite": "-small"
-            },
-            "result": "您把两人都训了一顿。表面消停了，暗流却没停。",
+            "result": "您动了手。被清洗的人也许有罪，也许只是挡路。",
             "goto": 1
           },
           {
-            "text": "撕了信，假装没看见",
+            "text": "各打五十大板",
+            "effects": {
+              "elite": "-small"
+            },
+            "result": "表面消停了，暗流却没停。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
             "defer": true,
             "effects": {},
-            "result": "您把信丢进了碎纸机。可有些东西，一旦写下来，就回不去了。",
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
             "goto": 0
           }
         ]
       },
       {
         "kicker": "密报",
-        "title": "暗斗升级",
-        "narrative": "您的隐忍被当成了软弱，两派的争斗摆上了台面，连内阁会议都开成了战场。再不了断，整个朝廷都要被拖下水。",
+        "title": "账本外流",
+        "narrative": "举报信之后，一本小账开始在部长之间传阅。每个人都说没看见，每个人都知道内容。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "收缴账本，追查源头",
+            "effects": {
+              "elite": "-small",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "账本收回来了，副本没有。",
+            "goto": 2
+          },
+          {
+            "text": "顺水推舟，借账本换忠诚",
+            "effects": {
+              "elite": "+small",
+              "history": "-small",
+              "wealthDomestic": 0.3
+            },
+            "result": "几个人当场表忠。忠诚闻起来像墨水。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "密报",
+        "title": "会议变战场",
+        "narrative": "两派争斗摆上台面，连内阁会议都开成审判庭。再不了断，整个朝廷都要被拖下水。",
+        "escalateTo": 3,
         "options": [
           {
             "text": "果断站队，借一方除另一方",
-            "hint": "稳住强者",
             "effects": {
               "elite": "-mid",
               "army": "+small"
             },
-            "result": "您选了边。胜的一方对您感激涕零，败的一方，从此成了隐患。",
-            "goto": -1
+            "result": "您选了边。胜者感激，败者记仇。",
+            "goto": 3
           },
           {
             "text": "两派一锅端，重组班子",
-            "hint": "玉石俱焚",
             "effects": {
               "elite": "-big",
               "army": "-small",
               "history": "-small"
             },
-            "result": "您把两派的头面人物一起清了。朝堂干净了，也空了——能用的人，没剩几个。",
+            "result": "朝堂干净了，也空了。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "密报",
+        "title": "新秩序",
+        "narrative": "旧派系被打散，新派系正在成形。宫廷永远不会没有圈子，只会换一批称呼。",
+        "options": [
+          {
+            "text": "扶植年轻技术官僚",
+            "effects": {
+              "finance": "+small",
+              "elite": "-small",
+              "loyalty": {
+                "reformer": "+small"
+              }
+            },
+            "result": "年轻人带来表格，也带来新的野心。",
+            "goto": 4
+          },
+          {
+            "text": "召回元老压阵",
+            "effects": {
+              "elite": "+mid",
+              "history": "-small",
+              "loyalty": {
+                "uncle": "+small"
+              }
+            },
+            "result": "元老们回到桌边。桌子立刻显得更旧。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "密报",
+        "title": "空出来的椅子",
+        "narrative": "清洗之后，几把椅子空了出来。每个候选人都说自己只是来帮忙，没有野心。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "提拔年轻亲信",
+            "effects": {
+              "elite": "-small",
+              "legacy": "+small",
+              "loyalty": {
+                "firstlady": "+small"
+              }
+            },
+            "result": "年轻亲信坐下时，老臣们同时低头喝茶。",
+            "goto": 5
+          },
+          {
+            "text": "让旧派互相制衡",
+            "effects": {
+              "elite": "+mid",
+              "finance": "-small",
+              "history": "-small"
+            },
+            "result": "旧派重新坐回桌边。桌下的脚没有停。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "密报",
+        "title": "忠诚名单",
+        "narrative": "安全局要求建立重臣忠诚名单，每月更新。名单能保您，也能让所有人活在名单里。",
+        "options": [
+          {
+            "text": "批准名单，交给安全局",
+            "effects": {
+              "elite": "+small",
+              "morale": "-small",
+              "loyalty": {
+                "spy": "+mid"
+              }
+            },
+            "result": "名单开始流转。没有人知道自己排在哪里。",
+            "goto": -1
+          },
+          {
+            "text": "拒绝制度化，只保留口头汇报",
+            "effects": {
+              "elite": "+small",
+              "loyalty": {
+                "spy": "-small"
+              },
+              "history": "+small"
+            },
+            "result": "口头汇报少了证据，也少了一个未来的审判材料。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tax_census",
+    "title": "税籍与人口册",
+    "theme": "tax",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "forceSeed": true,
+    "trigger": {
+      "minYear": 4,
+      "financeMax": 65
+    },
+    "steps": [
+      {
+        "kicker": "税籍",
+        "title": "缺失的人口",
+        "narrative": "财政部发现许多地方人口从税籍里消失。省长说是迁徙，税官说是保护伞。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "启动全国清册",
+            "effects": {
+              "finance": "+mid",
+              "elite": "-small",
+              "loyalty": {
+                "finance": "+small"
+              }
+            },
+            "result": "税官带着表格下乡。地方头人开始头痛。",
+            "goto": 1
+          },
+          {
+            "text": "只查几个富省",
+            "effects": {
+              "finance": "+small",
+              "elite": "+small"
+            },
+            "result": "富省交了钱，穷省学会了继续消失。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "税籍",
+        "title": "地方抵制",
+        "narrative": "清册队在几个省被拦下，理由从道路损坏到祖灵不悦，听起来都很认真。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "派警察护送清册队",
+            "effects": {
+              "finance": "+mid",
+              "morale": "-small",
+              "elite": "-small"
+            },
+            "result": "表格进了村，怨气也进了村。",
+            "goto": 2
+          },
+          {
+            "text": "让省长自行上报",
+            "effects": {
+              "elite": "+small",
+              "finance": "-small"
+            },
+            "result": "数字很快变漂亮，也变得没什么用。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "税籍",
+        "title": "新增税种",
+        "narrative": "财政部长建议按新人口册征收“国家建设附加费”。名字温和，收法不温和。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "立刻开征，补上国库",
+            "effects": {
+              "finance": "+big",
+              "morale": "-mid",
+              "elite": "+small"
+            },
+            "result": "国库有了进项，市场有了骂声。",
+            "goto": 3
+          },
+          {
+            "text": "分阶段征收，先稳住城市",
+            "effects": {
+              "finance": "+small",
+              "morale": "+small",
+              "elite": "-small"
+            },
+            "result": "城市暂时安静，乡下先替城市付钱。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "税籍",
+        "title": "账本归宫",
+        "narrative": "新税制终于成形。谁掌握账本，谁就掌握国家的呼吸。",
+        "options": [
+          {
+            "text": "把税务并入总统府直管",
+            "effects": {
+              "finance": "+mid",
+              "elite": "-mid",
+              "legacy": "+small"
+            },
+            "result": "所有收入先经过宫门。部长们开始学会等待。",
+            "goto": 4
+          },
+          {
+            "text": "保留财政部权限，换取专业",
+            "effects": {
+              "finance": "+small",
+              "elite": "+small",
+              "loyalty": {
+                "finance": "+small"
+              }
+            },
+            "result": "财政部保住账本，也保住了讨价还价的资格。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "税籍",
+        "title": "反税联盟",
+        "narrative": "商会、部族头人和几名省议员罕见地站到同一边，要求暂停新税。共同敌人让他们显得很团结。",
+        "options": [
+          {
+            "text": "分化商会和地方头人",
+            "effects": {
+              "finance": "+small",
+              "elite": "-small",
+              "wealthDomestic": -0.2
+            },
+            "result": "联盟被拆开了，税单继续寄出。",
+            "goto": -1
+          },
+          {
+            "text": "减免一轮，换取登记",
+            "effects": {
+              "finance": "-small",
+              "morale": "+small",
+              "elite": "+small"
+            },
+            "result": "少收了一些钱，多拿到一些名字。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "debt_mission",
+    "title": "债务代表团",
+    "theme": "foreign_loan",
+    "stages": [
+      "mid"
+    ],
+    "trigger": {
+      "minYear": 6,
+      "financeMax": 45
+    },
+    "steps": [
+      {
+        "kicker": "债务",
+        "title": "还款日",
+        "narrative": "一笔旧债到期，国库现金吃紧。债权代表团已经订好飞往首都的机票。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "先付利息，拖住本金",
+            "effects": {
+              "finance": "-mid",
+              "intl": "+small"
+            },
+            "result": "债权人暂时坐回椅子。账单仍在桌上。",
+            "goto": 1
+          },
+          {
+            "text": "宣布重谈，摆出强硬",
+            "effects": {
+              "finance": "+small",
+              "intl": "-mid",
+              "elite": "+small"
+            },
+            "result": "您赢得了几周时间，也赢得了更冷的眼神。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "债务",
+        "title": "附加条件",
+        "narrative": "代表团提出削减补贴、开放港口、审计国企。每一项都像借钱的利息。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "接受部分条件",
+            "effects": {
+              "intl": "+mid",
+              "finance": "+small",
+              "morale": "-mid"
+            },
+            "result": "贷款继续流入，街上的面包变贵。",
+            "goto": 2
+          },
+          {
+            "text": "把条件拿给电视台批判",
+            "effects": {
+              "morale": "+small",
+              "intl": "-mid",
+              "finance": "-small"
+            },
+            "result": "电视台赢得掌声，财政部失去睡眠。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "债务",
+        "title": "抵押港口",
+        "narrative": "债权人暗示，可以用港口经营权换宽限期。港口不是土地，却像土地一样敏感。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "抵押部分经营权",
+            "effects": {
+              "finance": "+big",
+              "intl": "+small",
+              "legacy": "-mid"
+            },
+            "result": "港口还在地图上，收费亭换了语言。",
+            "goto": 3
+          },
+          {
+            "text": "拒绝抵押，转借高息短债",
+            "effects": {
+              "finance": "+small",
+              "intl": "-small",
+              "health": "-small"
+            },
+            "result": "短债像止痛药，起效快，后劲重。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "债务",
+        "title": "债务重组",
+        "narrative": "重组协议到了最后一页。签下去，国家能喘气；不签，国家也许能装作还站着。",
+        "options": [
+          {
+            "text": "签署重组协议",
+            "effects": {
+              "finance": "+mid",
+              "intl": "+mid",
+              "elite": "-small",
+              "history": "+small"
+            },
+            "result": "国家喘过一口气。代价写在许多附件里。",
+            "goto": 4
+          },
+          {
+            "text": "违约，转向影子融资",
+            "effects": {
+              "finance": "-mid",
+              "intl": "-big",
+              "wealthDomestic": 0.6,
+              "history": "-mid"
+            },
+            "result": "债权人离席，影子商人入场。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "债务",
+        "title": "紧缩抗议",
+        "narrative": "削减补贴后，城市交通工人率先罢工。债权人说这是改革阵痛，市民说这是生活。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "镇压罢工，保住协议",
+            "effects": {
+              "finance": "+small",
+              "intl": "+small",
+              "morale": "-mid",
+              "army": "+small"
+            },
+            "result": "公交重新上路，站台上的脸没有。",
+            "goto": 5
+          },
+          {
+            "text": "恢复部分补贴，重谈节奏",
+            "effects": {
+              "morale": "+mid",
+              "finance": "-mid",
+              "intl": "-small"
+            },
+            "result": "城市松了口气，债权人重新皱眉。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "债务",
+        "title": "影子附录",
+        "narrative": "协议最后出现一份影子附录，要求港口、通信和矿权优先给指定公司。它不叫主权让渡，只叫商业安排。",
+        "options": [
+          {
+            "text": "签下附录，换取宽限",
+            "effects": {
+              "finance": "+big",
+              "intl": "+small",
+              "legacy": "-big",
+              "history": "-small"
+            },
+            "result": "宽限期到手，国家少了几扇门。",
+            "goto": -1
+          },
+          {
+            "text": "拒绝附录，公开债权压力",
+            "effects": {
+              "intl": "-small",
+              "morale": "+small",
+              "finance": "-mid",
+              "history": "+small"
+            },
+            "result": "民众第一次看见协议背面。背面也会咬人。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "football_state",
+    "title": "国家队神话",
+    "theme": "football",
+    "stages": [
+      "mid"
+    ],
+    "trigger": {
+      "minYear": 6,
+      "moraleMin": 55
+    },
+    "steps": [
+      {
+        "kicker": "足球",
+        "title": "胜利之夜",
+        "narrative": "国家队连胜，球迷把您的名字唱进队歌。体育忽然变成了政治。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "亲自接见球队",
+            "effects": {
+              "morale": "+mid",
+              "legacy": "+small",
+              "finance": "-small"
+            },
+            "result": "球员们举起球衣。镜头很懂该拍谁。",
+            "goto": 1
+          },
+          {
+            "text": "保持距离，别过度绑定",
+            "effects": {
+              "morale": "-small",
+              "history": "+small"
+            },
+            "result": "体育部不理解您的谨慎，直到他们看到赔率。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "足球",
+        "title": "奖金与归化",
+        "narrative": "足协要求巨额奖金和几名归化球员。财政部长说球不会替国库还债。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "拨款冲击冠军",
+            "effects": {
+              "morale": "+big",
+              "finance": "-mid"
+            },
+            "result": "训练营灯火通明。每一脚射门都很贵。",
+            "goto": 2
+          },
+          {
+            "text": "压缩预算，重用本土球员",
+            "effects": {
+              "finance": "+small",
+              "morale": "-small",
+              "history": "+small"
+            },
+            "result": "球迷骂得很响，本土球员跑得很拼。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "足球",
+        "title": "决赛失控",
+        "narrative": "决赛前夜，球迷聚集在广场，庆祝还没开始，警察已经紧张。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "开放广场，借势造节",
+            "effects": {
+              "morale": "+mid",
+              "elite": "-small",
+              "deco": {
+                "capital": "+small"
+              }
+            },
+            "result": "广场沸腾起来。沸腾的东西不总听指挥。",
+            "goto": 3
+          },
+          {
+            "text": "限制聚集，只准室内转播",
+            "effects": {
+              "morale": "-mid",
+              "army": "+small"
+            },
+            "result": "城市安静了，客厅不安静。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "足球",
+        "title": "神话归档",
+        "narrative": "赛事结束后，宣传部想把它写成您时代的象征。胜负已经不重要，解释才重要。",
+        "options": [
+          {
+            "text": "拍成官方纪录片",
+            "effects": {
+              "legacy": "+mid",
+              "deco": {
+                "press": "+small"
+              },
+              "finance": "-small"
+            },
+            "result": "纪录片剪掉了失误，留下了您鼓掌的特写。",
+            "goto": 4
+          },
+          {
+            "text": "让体育回到体育",
+            "effects": {
+              "history": "+small",
+              "morale": "+small",
+              "legacy": "-small"
+            },
+            "result": "球员松了口气。宣传部少了一部片子。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "足球",
+        "title": "足协黑账",
+        "narrative": "审计发现足协奖金流向几家空壳公司。球迷只想赢球，财政部只想追回钱。",
+        "options": [
+          {
+            "text": "公开查账，保住民意",
+            "effects": {
+              "finance": "+small",
+              "morale": "+small",
+              "elite": "-small"
+            },
+            "result": "球迷骂足协，没有骂球队。您暂时躲过一脚。",
+            "goto": -1
+          },
+          {
+            "text": "压下黑账，别毁掉神话",
+            "effects": {
+              "morale": "+small",
+              "history": "-small",
+              "wealthDomestic": 0.2
+            },
+            "result": "神话保住了，账本也继续神秘。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "media_rank",
+    "title": "媒体排名风波",
+    "theme": "media_ranking",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "forceSeed": true,
+    "trigger": {
+      "minYear": 4
+    },
+    "steps": [
+      {
+        "kicker": "舆论",
+        "title": "难看的名次",
+        "narrative": "海外机构发布媒体自由排名，恩加拉的位置很靠后。宣传部说排名不重要，又要求立刻回应。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "痛斥排名偏见",
+            "effects": {
+              "intl": "-small",
+              "elite": "+small",
+              "deco": {
+                "press": "-small"
+              }
+            },
+            "result": "声明很长，排名没变。",
+            "goto": 1
+          },
+          {
+            "text": "邀请几名记者参观样板间",
+            "effects": {
+              "intl": "+small",
+              "finance": "-small",
+              "deco": {
+                "press": "+small"
+              }
+            },
+            "result": "记者看到了开放，也看到了开放的路线图。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "舆论",
+        "title": "记者协会",
+        "narrative": "国内记者协会提出自律章程，措辞温和，却第一次把权利写在了纸上。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "改组协会，换上可靠主席",
+            "effects": {
+              "elite": "+small",
+              "deco": {
+                "press": "-small"
+              },
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "新主席讲话很稳。记者们鼓掌很轻。",
+            "goto": 2
+          },
+          {
+            "text": "接受章程，换取外部好感",
+            "effects": {
+              "intl": "+mid",
+              "elite": "-small",
+              "deco": {
+                "press": "+small"
+              }
+            },
+            "result": "章程通过后，编辑部第一次把门关上开会。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "舆论",
+        "title": "直播事故",
+        "narrative": "一场直播采访中，主持人问了不该问的问题。片段被剪掉前，已经传得到处都是。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "停播节目，追究责任",
+            "effects": {
+              "morale": "-small",
+              "elite": "+small",
+              "deco": {
+                "press": "-small"
+              }
+            },
+            "result": "节目停了。问题没有。",
+            "goto": 3
+          },
+          {
+            "text": "装作大度，换掉幕后团队",
+            "effects": {
+              "intl": "+small",
+              "elite": "-small",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "主持人还在镜头前，真正消失的是导播。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "舆论",
+        "title": "新的口径",
+        "narrative": "风波之后，新闻系统需要新规矩：更紧，还是更会表演。",
+        "options": [
+          {
+            "text": "建立中央审稿室",
+            "effects": {
+              "elite": "+mid",
+              "deco": {
+                "press": "-small"
+              },
+              "history": "-small"
+            },
+            "result": "每篇稿子都有了归宿，也有了主人。",
+            "goto": 4
+          },
+          {
+            "text": "放松小事，守住大事",
+            "effects": {
+              "intl": "+small",
+              "morale": "+small",
+              "elite": "-small",
+              "deco": {
+                "press": "+small"
+              }
+            },
+            "result": "媒体获得一点空气。所有人都知道空气有边界。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "舆论",
+        "title": "外媒驻站",
+        "narrative": "几家外媒要求在首都设常驻站。宣传部说可以展示开放，安全局说可以展示监控。",
+        "options": [
+          {
+            "text": "允许驻站，划定采访红线",
+            "effects": {
+              "intl": "+mid",
+              "elite": "-small",
+              "deco": {
+                "press": "+small"
+              }
+            },
+            "result": "记者拿到证件，也拿到一张无形地图。",
+            "goto": -1
+          },
+          {
+            "text": "拒绝驻站，只发短期签证",
+            "effects": {
+              "intl": "-small",
+              "elite": "+small",
+              "deco": {
+                "press": "-small"
+              }
+            },
+            "result": "签证变短，问题变长。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "statue_capital",
+    "title": "首都雕像工程",
+    "theme": "statue",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 8
+    },
+    "steps": [
+      {
+        "kicker": "雕像",
+        "title": "设计方案",
+        "narrative": "文化部提交巨型雕像方案，底座比市政厅还高。设计师说高度象征历史地位。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "批准最高方案",
+            "effects": {
+              "legacy": "+big",
+              "finance": "-mid",
+              "deco": {
+                "capital": "+small"
+              }
+            },
+            "result": "高度定下来了。预算也跟着长高。",
+            "goto": 1
+          },
+          {
+            "text": "改成普通纪念碑",
+            "effects": {
+              "history": "+small",
+              "legacy": "+small",
+              "finance": "-small"
+            },
+            "result": "文化部说朴素也是伟大，语气不太相信。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "雕像",
+        "title": "拆迁线",
+        "narrative": "雕像广场需要拆掉一片旧社区。居民说那里破旧，但仍是家。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "强制搬迁，限期清场",
+            "effects": {
+              "morale": "-mid",
+              "elite": "+small",
+              "finance": "-small"
+            },
+            "result": "广场空了出来，怨气搬进别处。",
+            "goto": 2
+          },
+          {
+            "text": "提高补偿，延后工期",
+            "effects": {
+              "morale": "+small",
+              "finance": "-mid",
+              "legacy": "-small"
+            },
+            "result": "居民拿到补偿，承包商拿到借口。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "雕像",
+        "title": "落成典礼",
+        "narrative": "典礼当天，海外媒体把镜头对准雕像背后的棚户区。宣传部请求临时搭一面墙。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "搭墙遮挡，保证画面",
+            "effects": {
+              "deco": {
+                "capital": "+small",
+                "press": "-small"
+              },
+              "history": "-small"
+            },
+            "result": "画面干净了。墙后的人听见了礼炮。",
+            "goto": 3
+          },
+          {
+            "text": "允许拍摄，显得自信",
+            "effects": {
+              "intl": "+small",
+              "morale": "+small",
+              "legacy": "-small"
+            },
+            "result": "照片很真实，真实得让人不舒服。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "雕像",
+        "title": "谁来维护",
+        "narrative": "雕像建成后，维护经费成了长期账目。没有一座铜像会自己发亮。",
+        "options": [
+          {
+            "text": "设专门基金维护",
+            "effects": {
+              "legacy": "+mid",
+              "finance": "-small",
+              "wealthDomestic": 0.2
+            },
+            "result": "基金成立了。铜像亮了，账目暗了。",
+            "goto": 4
+          },
+          {
+            "text": "交给市政普通维护",
+            "effects": {
+              "finance": "+small",
+              "legacy": "-small",
+              "deco": {
+                "capital": "-small"
+              }
+            },
+            "result": "铜像慢慢失去光泽，像很多承诺。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "雕像",
+        "title": "夜间涂鸦",
+        "narrative": "铜像底座被人喷上讽刺标语。清洁工凌晨洗掉了字，照片却没有被洗掉。",
+        "options": [
+          {
+            "text": "追查涂鸦者，公开惩戒",
+            "effects": {
+              "morale": "-small",
+              "elite": "+small",
+              "history": "-small"
+            },
+            "result": "涂鸦者被抓，标语被更多人记住。",
+            "goto": -1
+          },
+          {
+            "text": "装作普通破坏，低调修复",
+            "effects": {
+              "morale": "+small",
+              "legacy": "-small",
+              "deco": {
+                "capital": "+small"
+              }
+            },
+            "result": "底座恢复干净，笑话继续流传。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hospital_model",
+    "title": "样板医院",
+    "theme": "health_show",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 7
+    },
+    "steps": [
+      {
+        "kicker": "医疗",
+        "title": "样板名单",
+        "narrative": "卫生部要打造一所样板医院，用来接待外宾和拍摄纪录片。基层诊所请求先给药。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "集中资源打造样板",
+            "effects": {
+              "deco": {
+                "health_care": "+small"
+              },
+              "intl": "+small",
+              "finance": "-mid"
+            },
+            "result": "样板医院很快亮起来，乡镇诊所继续等车。",
+            "goto": 1
+          },
+          {
+            "text": "分散资源补基层",
+            "effects": {
+              "morale": "+mid",
+              "finance": "-mid",
+              "legacy": "-small"
+            },
+            "result": "基层拿到药箱，镜头少了一个好地方。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "医疗",
+        "title": "外宾参观",
+        "narrative": "外宾要看医院真实运行。院长问，是否要提前把走廊病床搬走。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "整理现场，留下最好一面",
+            "effects": {
+              "intl": "+small",
+              "deco": {
+                "health_care": "+small"
+              },
+              "history": "-small"
+            },
+            "result": "外宾看到秩序。病人暂时看不到走廊。",
+            "goto": 2
+          },
+          {
+            "text": "让他们看真实情况",
+            "effects": {
+              "intl": "+mid",
+              "morale": "+small",
+              "elite": "-small"
+            },
+            "result": "外宾沉默很久。援助申请上多了几行字。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "医疗",
+        "title": "医生请愿",
+        "narrative": "样板医院医生要求涨薪，否则拒绝配合宣传。白大褂也会谈条件。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "涨薪封口",
+            "effects": {
+              "morale": "+small",
+              "finance": "-small",
+              "deco": {
+                "health_care": "+small"
+              }
+            },
+            "result": "医生继续微笑，工资单也好看了一点。",
+            "goto": 3
+          },
+          {
+            "text": "换一批听话医生",
+            "effects": {
+              "elite": "+small",
+              "deco": {
+                "health_care": "-small"
+              },
+              "morale": "-small"
+            },
+            "result": "镜头前仍有人穿白大褂，只是病人认不出他们。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "医疗",
+        "title": "模式推广",
+        "narrative": "样板工程成功后，部委建议全国推广。财政部说，成功通常比失败更贵。",
+        "options": [
+          {
+            "text": "全国推广，赌口碑",
+            "effects": {
+              "morale": "+big",
+              "finance": "-big",
+              "history": "+small"
+            },
+            "result": "医院牌匾一块块挂起，国库一格格空下去。",
+            "goto": 4
+          },
+          {
+            "text": "只保留首都样板",
+            "effects": {
+              "finance": "+small",
+              "morale": "-small",
+              "legacy": "+small"
+            },
+            "result": "首都继续体面，地方继续忍耐。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "医疗",
+        "title": "药品短缺",
+        "narrative": "样板医院运行几个月后，药房开始短缺。院长说镜头需要秩序，医生说病人需要药。",
+        "options": [
+          {
+            "text": "优先保障样板医院",
+            "effects": {
+              "deco": {
+                "health_care": "+small"
+              },
+              "morale": "-small",
+              "finance": "-small"
+            },
+            "result": "样板仍然体面，其他医院学会等待。",
+            "goto": -1
+          },
+          {
+            "text": "拆分库存支援基层",
+            "effects": {
+              "morale": "+small",
+              "deco": {
+                "health_care": "-small"
+              },
+              "history": "+small"
+            },
+            "result": "基层拿到药，样板少了光。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "education_slogan",
+    "title": "教育口号运动",
+    "theme": "education_slogan",
+    "stages": [
+      "early",
+      "mid"
+    ],
+    "trigger": {
+      "minYear": 3
+    },
+    "steps": [
+      {
+        "kicker": "教育",
+        "title": "新校训",
+        "narrative": "教育部要求全国学校更换校训，把忠诚放在知识前面。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "统一更换，月底完成",
+            "effects": {
+              "legacy": "+mid",
+              "deco": {
+                "education": "-small"
+              },
+              "morale": "+small"
+            },
+            "result": "校门口的字换得很快，课堂里的问题换得更快。",
+            "goto": 1
+          },
+          {
+            "text": "只做试点，观察反应",
+            "effects": {
+              "finance": "+small",
+              "deco": {
+                "education": "+small"
+              }
+            },
+            "result": "试点学校学会表态，非试点学校学会观望。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "教育",
+        "title": "教师培训",
+        "narrative": "教师被要求参加忠诚培训。许多人带着红笔来，离开时少说了几句话。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "扩大培训，纳入考核",
+            "effects": {
+              "elite": "+small",
+              "morale": "-small",
+              "deco": {
+                "education": "-small"
+              }
+            },
+            "result": "教师们通过考试，也学会少提问。",
+            "goto": 2
+          },
+          {
+            "text": "改成普通师训",
+            "effects": {
+              "morale": "+small",
+              "legacy": "-small",
+              "loyalty": {
+                "reformer": "+small"
+              }
+            },
+            "result": "课堂少了口号，多了粉笔灰。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "教育",
+        "title": "学生竞赛",
+        "narrative": "全国作文比赛题目定为“我心中的领袖”。优秀作文将刊登在报纸头版。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "办成全国活动",
+            "effects": {
+              "legacy": "+mid",
+              "deco": {
+                "press": "+small",
+                "education": "-small"
+              }
+            },
+            "result": "作文写得很像，孩子们的字迹还不太会撒谎。",
+            "goto": 3
+          },
+          {
+            "text": "换成国家建设主题",
+            "effects": {
+              "history": "+small",
+              "legacy": "-small",
+              "deco": {
+                "education": "+small"
+              }
+            },
+            "result": "宣传部觉得题目变淡了，老师们觉得好教了。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "教育",
+        "title": "毕业的一代",
+        "narrative": "第一批在新口号下长大的学生毕业了。他们会背很多话，也学会分辨哪些话不能说。",
+        "options": [
+          {
+            "text": "吸纳进青年团",
+            "effects": {
+              "morale": "+mid",
+              "elite": "+small",
+              "finance": "-small"
+            },
+            "result": "青年团壮大了。年轻人有了制服，也有了期待。",
+            "goto": 4
+          },
+          {
+            "text": "鼓励技术就业",
+            "effects": {
+              "finance": "+small",
+              "morale": "+small",
+              "legacy": "-small"
+            },
+            "result": "工厂多了学徒，广场少了旗帜。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "教育",
+        "title": "考试标准",
+        "narrative": "新教材进入考试，学生开始背诵忠诚答案。大学教授提醒，背诵不能造工程师。",
+        "options": [
+          {
+            "text": "把忠诚题纳入升学",
+            "effects": {
+              "legacy": "+mid",
+              "deco": {
+                "education": "-small"
+              },
+              "morale": "-small"
+            },
+            "result": "学生学会了标准答案，也学会了标准沉默。",
+            "goto": -1
+          },
+          {
+            "text": "只在政治课考核",
+            "effects": {
+              "deco": {
+                "education": "+small"
+              },
+              "legacy": "-small",
+              "loyalty": {
+                "reformer": "+small"
+              }
+            },
+            "result": "政治课承担了全部热情，数学课暂时逃过一劫。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "security_files",
+    "title": "安全局档案",
+    "theme": "security_files",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 6,
+      "loyaltyGapMin": 12
+    },
+    "steps": [
+      {
+        "kicker": "档案",
+        "title": "旧监听带",
+        "narrative": "安全局局长送来一批旧监听带，里面有部长、将军和亲戚的声音。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "逐一归档，作为筹码",
+            "effects": {
+              "elite": "+small",
+              "loyalty": {
+                "spy": "+mid"
+              },
+              "history": "-small"
+            },
+            "result": "磁带被编号。每个编号都像一根细绳。",
+            "goto": 1
+          },
+          {
+            "text": "销毁一部分，换取安稳",
+            "effects": {
+              "elite": "+small",
+              "history": "+small",
+              "loyalty": {
+                "spy": "-small"
+              }
+            },
+            "result": "火光里有许多秘密。局长看得很安静。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "档案",
+        "title": "泄露片段",
+        "narrative": "一段监听内容流到外面，正好伤到财政部长。没人承认自己碰过档案柜。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "追查泄露，敲打安全局",
+            "effects": {
+              "elite": "-small",
+              "loyalty": {
+                "spy": "-mid",
+                "finance": "+small"
+              }
+            },
+            "result": "局长低头认错，眼睛没有。",
+            "goto": 2
+          },
+          {
+            "text": "借片段清理财政部",
+            "effects": {
+              "finance": "-small",
+              "elite": "+small",
+              "loyalty": {
+                "finance": "-mid"
+              }
+            },
+            "result": "财政部换了几把椅子，账本也换了脾气。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "档案",
+        "title": "档案争夺",
+        "narrative": "几名重臣开始打听自己档案的位置。恐惧让宫廷变得异常礼貌。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "集中到总统府保管",
+            "effects": {
+              "elite": "-small",
+              "legacy": "+small",
+              "loyalty": {
+                "spy": "-small"
+              }
+            },
+            "result": "档案搬进宫里。局长第一次显得像客人。",
+            "goto": 3
+          },
+          {
+            "text": "让安全局继续保管",
+            "effects": {
+              "elite": "+small",
+              "loyalty": {
+                "spy": "+small"
+              },
+              "history": "-small"
+            },
+            "result": "局长保住钥匙，也保住了过多的自信。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "档案",
+        "title": "最后一柜",
+        "narrative": "档案系统终于要定规矩。它可以保护您，也可以在某天证明您。",
+        "options": [
+          {
+            "text": "建立双钥匙制度",
+            "effects": {
+              "elite": "+small",
+              "history": "+small",
+              "loyalty": {
+                "spy": "-small"
+              }
+            },
+            "result": "钥匙分成两把，怀疑也分成两份。",
+            "goto": 4
+          },
+          {
+            "text": "保留黑箱，谁也别问",
+            "effects": {
+              "elite": "+mid",
+              "history": "-mid",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "黑箱继续运行。所有人都绕着它走。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "档案",
+        "title": "备份密钥",
+        "narrative": "技术员承认，安全局档案有一套备份密钥。局长说那只是技术需要，您知道技术从来不只是技术。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "收回备份密钥",
+            "effects": {
+              "elite": "-small",
+              "loyalty": {
+                "spy": "-mid"
+              },
+              "legacy": "+small"
+            },
+            "result": "密钥交上来时，局长的手慢了一下。",
+            "goto": 5
+          },
+          {
+            "text": "允许保留，换取情报效率",
+            "effects": {
+              "elite": "+small",
+              "loyalty": {
+                "spy": "+small"
+              },
+              "history": "-small"
+            },
+            "result": "效率保住了。您的不安也保住了。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "档案",
+        "title": "档案继承",
+        "narrative": "如果您不在了，档案该归谁？这个问题让所有听见的人都坐直了。",
+        "options": [
+          {
+            "text": "写入继承密令",
+            "effects": {
+              "legacy": "+mid",
+              "elite": "-small",
+              "history": "-small"
+            },
+            "result": "档案有了继承人，恐惧也有了继承人。",
+            "goto": -1
+          },
+          {
+            "text": "设立销毁机制",
+            "effects": {
+              "history": "+mid",
+              "elite": "+small",
+              "loyalty": {
+                "spy": "-small"
+              }
+            },
+            "result": "销毁按钮存在本身，就是另一份档案。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "oil_split",
+    "title": "油田分账",
+    "theme": "oil_contract",
+    "stages": [
+      "mid"
+    ],
+    "trigger": {
+      "minYear": 8
+    },
+    "steps": [
+      {
+        "kicker": "油田",
+        "title": "第一口井",
+        "narrative": "新油井出油，财政部、军方、外商和家族基金都递来分账方案。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "成立总统特别账户",
+            "effects": {
+              "wealth": 1,
+              "elite": "+small",
+              "history": "-small"
+            },
+            "result": "第一笔油钱没有进国库，先进了更安静的地方。",
+            "goto": 1
+          },
+          {
+            "text": "全部纳入国家预算",
+            "effects": {
+              "finance": "+big",
+              "elite": "-mid",
+              "loyalty": {
+                "finance": "+small"
+              }
+            },
+            "result": "国库充实了，等分红的人开始不满。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "油田",
+        "title": "地方索份",
+        "narrative": "油田所在省要求地方分成。省长说，地底下的东西不能只向首都说话。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "给地方固定分成",
+            "effects": {
+              "morale": "+small",
+              "finance": "-small",
+              "elite": "+small"
+            },
+            "result": "省长笑着回去，其他省长开始翻地质图。",
+            "goto": 2
+          },
+          {
+            "text": "拒绝分成，派军保护油区",
+            "effects": {
+              "finance": "+mid",
+              "army": "+small",
+              "morale": "-small"
+            },
+            "result": "油区安全了，地方的笑脸消失了。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "油田",
+        "title": "外商仲裁",
+        "narrative": "外商指责政府更改合同，准备把恩加拉告上仲裁庭。合同细则忽然比油井更深。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "和解，保住长期合作",
+            "effects": {
+              "intl": "+mid",
+              "finance": "-mid",
+              "history": "+small"
+            },
+            "result": "和解书签下去，油井继续抽。",
+            "goto": 3
+          },
+          {
+            "text": "强行接管资产",
+            "effects": {
+              "finance": "+big",
+              "intl": "-big",
+              "army": "+small",
+              "history": "-mid"
+            },
+            "result": "资产到手了，保险公司和律师也到手了。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "油田",
+        "title": "油钱时代",
+        "narrative": "油田收入改变了宫廷重力。每个人都离油钱更近，也离您更近。",
+        "options": [
+          {
+            "text": "设立主权基金",
+            "effects": {
+              "finance": "+mid",
+              "history": "+small",
+              "elite": "-small"
+            },
+            "result": "基金章程写得很好。执行它的人需要同样好。",
+            "goto": 4
+          },
+          {
+            "text": "扩大恩赏，买下忠诚",
+            "effects": {
+              "elite": "+big",
+              "wealthDomestic": 0.6,
+              "finance": "-small"
+            },
+            "result": "忠诚来得很快，习惯也来得很快。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "油田",
+        "title": "污染赔偿",
+        "narrative": "油田周边河水变黑，村民带着死鱼来到省政府。公司说那不是油，是误会。",
+        "options": [
+          {
+            "text": "压下报道，补偿地方头人",
+            "effects": {
+              "finance": "+small",
+              "morale": "-mid",
+              "elite": "+small",
+              "history": "-small"
+            },
+            "result": "头人收下钱，河水没有。",
+            "goto": -1
+          },
+          {
+            "text": "责令停产整治",
+            "effects": {
+              "morale": "+small",
+              "finance": "-big",
+              "intl": "+small",
+              "history": "+small"
+            },
+            "result": "油井安静下来，财政部也安静下来。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "provincial_barons",
+    "title": "地方诸侯",
+    "theme": "provincial_barons",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 9,
+      "eliteMax": 55
+    },
+    "steps": [
+      {
+        "kicker": "地方",
+        "title": "省长联盟",
+        "narrative": "几位省长在地方会议上互称兄弟，闭口不提总统府。秘书说，这种亲热不正常。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "召他们进京述职",
+            "effects": {
+              "elite": "-small",
+              "finance": "-small"
+            },
+            "result": "省长们来了，笑容带着地方口音。",
+            "goto": 1
+          },
+          {
+            "text": "先送拨款，换取表态",
+            "effects": {
+              "elite": "+small",
+              "finance": "-mid"
+            },
+            "result": "表态很快送到，拨款更快离开。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "地方",
+        "title": "地方武装",
+        "narrative": "省长们以治安为名扩充地方警备队。制服不同，口令也不同。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "收编警备队",
+            "effects": {
+              "army": "+small",
+              "elite": "-mid",
+              "finance": "-small"
+            },
+            "result": "警备队换了徽章，不一定换了主人。",
+            "goto": 2
+          },
+          {
+            "text": "承认地方治安权",
+            "effects": {
+              "elite": "+mid",
+              "army": "-small",
+              "legacy": "-small"
+            },
+            "result": "省长们得到了权力，也得到了胃口。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "地方",
+        "title": "税款截留",
+        "narrative": "几个省开始延迟上缴税款，理由是地方项目紧急。财政部说，这是试探。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "冻结省级账户",
+            "effects": {
+              "finance": "+mid",
+              "elite": "-mid",
+              "morale": "-small"
+            },
+            "result": "账户冻结后，地方项目停了，地方怨气动了。",
+            "goto": 3
+          },
+          {
+            "text": "谈判分成，换取补缴",
+            "effects": {
+              "finance": "+small",
+              "elite": "+small",
+              "legacy": "-small"
+            },
+            "result": "税款回来了，规矩少了一块。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "地方",
+        "title": "重新划省",
+        "narrative": "要打散地方诸侯，最后的办法是重画地图。地图可以救您，也会制造新仇人。",
+        "options": [
+          {
+            "text": "重划省界，拆散势力",
+            "effects": {
+              "elite": "-big",
+              "army": "+small",
+              "history": "-small"
+            },
+            "result": "地图换了颜色。地方人记住的是谁拿走了他们的县。",
+            "goto": 4
+          },
+          {
+            "text": "承认强省，换取效忠",
+            "effects": {
+              "elite": "+mid",
+              "legacy": "-mid",
+              "finance": "+small"
+            },
+            "result": "省长们宣誓效忠。誓词很响，期限很模糊。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "地方",
+        "title": "地方媒体",
+        "narrative": "几个强省开始办自己的电视台，报道省长比报道总统府更勤快。画面里的国旗还在，重心已经偏了。",
+        "options": [
+          {
+            "text": "统一地方媒体牌照",
+            "effects": {
+              "elite": "-small",
+              "deco": {
+                "press": "-small"
+              },
+              "legacy": "+small"
+            },
+            "result": "牌照收回来了，地方的不满没有。",
+            "goto": -1
+          },
+          {
+            "text": "允许试点，换取公开效忠",
+            "effects": {
+              "elite": "+small",
+              "legacy": "-small",
+              "intl": "+small"
+            },
+            "result": "省长们在镜头前效忠，镜头后继续扩张。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "church_pulpit",
+    "title": "讲坛与王座",
+    "theme": "church",
+    "stages": [
+      "early",
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 5,
+      "moraleMax": 55
+    },
+    "steps": [
+      {
+        "kicker": "教会",
+        "title": "牧函",
+        "narrative": "全国教会联合会发布牧函，呼吁政府倾听穷人。没有点名，却处处像在点名。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "邀请教会合作扶贫",
+            "effects": {
+              "morale": "+small",
+              "finance": "-small",
+              "loyalty": {
+                "priest": "+small"
+              }
+            },
+            "result": "教会接受合作，也保留了讲坛。",
+            "goto": 1
+          },
+          {
+            "text": "批评教会越界",
+            "effects": {
+              "elite": "+small",
+              "morale": "-small",
+              "loyalty": {
+                "priest": "-small"
+              }
+            },
+            "result": "讲坛没有低下去，只是更会拐弯。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "教会",
+        "title": "圣地集会",
+        "narrative": "成千上万人前往北方圣地祈祷，歌声里混着对物价和失踪者的抱怨。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "派警察控制路线",
+            "effects": {
+              "army": "+small",
+              "morale": "-mid",
+              "intl": "-small"
+            },
+            "result": "道路安静了，祈祷变得更小声也更硬。",
+            "goto": 2
+          },
+          {
+            "text": "派部长同行安抚",
+            "effects": {
+              "morale": "+small",
+              "elite": "-small",
+              "loyalty": {
+                "priest": "+small"
+              }
+            },
+            "result": "部长站在祭台旁，第一次听完了整场布道。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "教会",
+        "title": "教会电台",
+        "narrative": "教会电台开始播出失踪者家属访谈。每个故事都没有结论，却都有方向。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "关闭电台，查封设备",
+            "effects": {
+              "morale": "-mid",
+              "elite": "+small",
+              "intl": "-mid"
+            },
+            "result": "电台停播后，录音被带到更多地方。",
+            "goto": 3
+          },
+          {
+            "text": "给教会一个调查窗口",
+            "effects": {
+              "intl": "+small",
+              "morale": "+small",
+              "history": "+small",
+              "elite": "-small"
+            },
+            "result": "窗口很窄，但足够让一些声音钻进来。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "教会",
+        "title": "和解弥撒",
+        "narrative": "教会提出举行全国和解弥撒。它可以成为安抚，也可能成为审判。",
+        "options": [
+          {
+            "text": "亲自出席，拥抱主教",
+            "effects": {
+              "morale": "+mid",
+              "intl": "+small",
+              "legacy": "+small"
+            },
+            "result": "镜头拍到拥抱。没人拍到主教在您耳边说了什么。",
+            "goto": 4
+          },
+          {
+            "text": "派代表出席，保持距离",
+            "effects": {
+              "elite": "+small",
+              "morale": "-small",
+              "loyalty": {
+                "priest": "-small"
+              }
+            },
+            "result": "代表念完稿子，教堂里掌声稀薄。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "教会",
+        "title": "青年唱诗班",
+        "narrative": "教会青年唱诗班巡回各省，歌声很干净，歌词却越来越像控诉。年轻人跟着唱，也跟着记。",
+        "options": [
+          {
+            "text": "限制巡回，只准本地活动",
+            "effects": {
+              "morale": "-small",
+              "elite": "+small",
+              "loyalty": {
+                "priest": "-small"
+              }
+            },
+            "result": "巡回停了，歌却留在路上。",
+            "goto": -1
+          },
+          {
+            "text": "资助巡回，换取删改歌词",
+            "effects": {
+              "morale": "+small",
+              "finance": "-small",
+              "loyalty": {
+                "priest": "+small"
+              }
+            },
+            "result": "歌词温和了一些，听众仍然知道删掉了什么。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "exile_network",
+    "title": "流亡者电台",
+    "theme": "exile_network",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 8,
+      "intlMax": 55
+    },
+    "steps": [
+      {
+        "kicker": "流亡",
+        "title": "短波里的名字",
+        "narrative": "海外短波电台开始播出您的旧部访谈。主持人熟悉宫廷细节，熟悉得令人不安。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "干扰信号，追查听众",
+            "effects": {
+              "elite": "+small",
+              "morale": "-small",
+              "intl": "-small"
+            },
+            "result": "信号断断续续，传言完整无缺。",
+            "goto": 1
+          },
+          {
+            "text": "开设官方反击节目",
+            "effects": {
+              "deco": {
+                "press": "+small"
+              },
+              "finance": "-small",
+              "morale": "+small"
+            },
+            "result": "官方声音更响了，也让更多人知道短波存在。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "流亡",
+        "title": "内部爆料",
+        "narrative": "流亡电台播出一段宫内录音，真假难辨，却足够让几名部长改口。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "认定伪造，抓内部人",
+            "effects": {
+              "elite": "-small",
+              "loyalty": {
+                "spy": "+small"
+              },
+              "history": "-small"
+            },
+            "result": "几名秘书消失了。录音继续出现。",
+            "goto": 2
+          },
+          {
+            "text": "承认小错，切断大话题",
+            "effects": {
+              "intl": "+small",
+              "elite": "-small",
+              "history": "+small"
+            },
+            "result": "您承认了最便宜的错误，试图买下沉默。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "流亡",
+        "title": "海外筹款",
+        "narrative": "流亡者开始公开筹款，声称要资助国内民主运动。钱不多，象征很响。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "冻结相关家庭资产",
+            "effects": {
+              "intl": "-mid",
+              "elite": "+small",
+              "morale": "-small"
+            },
+            "result": "资产冻结后，海外捐款反而多了些。",
+            "goto": 3
+          },
+          {
+            "text": "派人接触分化他们",
+            "effects": {
+              "wealthDomestic": -0.3,
+              "intl": "+small",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "几名流亡者开始互相怀疑。怀疑比电台更省钱。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "流亡",
+        "title": "回国号召",
+        "narrative": "电台号召支持者回国参加纪念日集会。机场名单忽然变得很长。",
+        "options": [
+          {
+            "text": "拒绝入境，封住机场",
+            "effects": {
+              "army": "+small",
+              "intl": "-mid",
+              "morale": "-small"
+            },
+            "result": "机场安静了。国外镜头很忙。",
+            "goto": 4
+          },
+          {
+            "text": "放一部分人进来，全程盯住",
+            "effects": {
+              "intl": "+small",
+              "morale": "+small",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "他们走进国门，也走进监控。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "流亡",
+        "title": "赦免名单",
+        "narrative": "内政部提出一份可赦免流亡者名单，试图拆散海外联盟。名单上没有最响亮的名字。",
+        "options": [
+          {
+            "text": "公布赦免名单",
+            "effects": {
+              "intl": "+small",
+              "morale": "+small",
+              "elite": "-small"
+            },
+            "result": "几名流亡者开始犹豫，另一些人开始骂他们。",
+            "goto": -1
+          },
+          {
+            "text": "秘密接触，不公开让步",
+            "effects": {
+              "loyalty": {
+                "spy": "+small"
+              },
+              "wealthDomestic": -0.2,
+              "history": "-small"
+            },
+            "result": "接触很安静，价码很具体。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "succession_health",
+    "title": "健康公告危机",
+    "theme": "health_decline",
+    "stages": [
+      "late"
+    ],
+    "trigger": {
+      "minYear": 12,
+      "healthMax": 58
+    },
+    "steps": [
+      {
+        "kicker": "病情",
+        "title": "缺席仪式",
+        "narrative": "您缺席国庆仪式，主持人临时改稿。没有人说病情，但所有人都数着空椅子。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "发布健康照片",
+            "effects": {
+              "legacy": "+small",
+              "health": "-small",
+              "morale": "+small"
+            },
+            "result": "照片很清晰，手背上的针孔也很清晰。",
+            "goto": 1
+          },
+          {
+            "text": "让副手代读讲话",
+            "effects": {
+              "health": "+small",
+              "elite": "-small",
+              "legacy": "-small"
+            },
+            "result": "副手读得很稳。稳得让人不安。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "病情",
+        "title": "医生名单",
+        "narrative": "私人医生名单被外媒曝光，其中有几位肿瘤专家。宫里要求解释。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "否认报道，追查来源",
+            "effects": {
+              "elite": "-small",
+              "morale": "-small",
+              "loyalty": {
+                "spy": "+small"
+              }
+            },
+            "result": "否认很快发出，来源没有找到。",
+            "goto": 2
+          },
+          {
+            "text": "承认例行检查",
+            "effects": {
+              "intl": "+small",
+              "elite": "+small",
+              "legacy": "-small"
+            },
+            "result": "例行两个字用得很重，听起来反而不像例行。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "病情",
+        "title": "权力代签",
+        "narrative": "几份文件需要代签。谁拿起笔，谁就像提前摸到了权杖。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "授权家族成员代签",
+            "effects": {
+              "legacy": "+mid",
+              "elite": "-mid",
+              "loyalty": {
+                "firstlady": "+small"
+              }
+            },
+            "result": "笔落下时，部长们看见了未来的影子。",
+            "goto": 3
+          },
+          {
+            "text": "设集体签署机制",
+            "effects": {
+              "elite": "+small",
+              "legacy": "-small",
+              "history": "+small"
+            },
+            "result": "权力被分成几份。每一份都想变大。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "病情",
+        "title": "最后的露面",
+        "narrative": "医生不建议公开露面，礼宾处却说缺席会让传言坐实。镜头和身体，只能保一个。",
+        "options": [
+          {
+            "text": "坚持公开露面",
+            "effects": {
+              "legacy": "+big",
+              "health": "-big",
+              "morale": "+small"
+            },
+            "result": "您站上阳台。欢呼声很远，扶手很近。",
+            "goto": 4
+          },
+          {
+            "text": "取消露面，承认需要休养",
+            "effects": {
+              "health": "+mid",
+              "elite": "-small",
+              "morale": "-small",
+              "history": "+small"
+            },
+            "result": "公告第一次承认您会疲惫。国家也跟着疲惫了一下。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "病情",
+        "title": "摄政传言",
+        "narrative": "首都开始流传摄政名单。名单版本太多，说明每个人都在写自己的版本。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "公开否认摄政安排",
+            "effects": {
+              "legacy": "-small",
+              "elite": "-small",
+              "morale": "-small"
+            },
+            "result": "否认发出后，名单又多了一个版本。",
+            "goto": 5
+          },
+          {
+            "text": "设临时协调小组",
+            "effects": {
+              "elite": "+small",
+              "health": "+small",
+              "legacy": "+small"
+            },
+            "result": "协调小组成立了。临时两个字没有安慰任何人。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "病情",
+        "title": "床边会议",
+        "narrative": "几项重大任命被送到病床边签署。国家第一次显得像一摞文件。",
+        "options": [
+          {
+            "text": "全部亲签，证明权力仍在",
+            "effects": {
+              "legacy": "+mid",
+              "health": "-mid",
+              "elite": "+small"
+            },
+            "result": "签名有些颤，但仍然是您的签名。",
+            "goto": -1
+          },
+          {
+            "text": "授权内阁代办日常事务",
+            "effects": {
+              "health": "+small",
+              "elite": "+mid",
+              "legacy": "-mid"
+            },
+            "result": "国家继续运转。运转本身开始让人遐想。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tribunal_shadow",
+    "title": "国际法庭阴影",
+    "theme": "tribunal",
+    "stages": [
+      "late"
+    ],
+    "trigger": {
+      "minYear": 12,
+      "intlMin": 70
+    },
+    "steps": [
+      {
+        "kicker": "法庭",
+        "title": "检察官讲话",
+        "narrative": "国际检察官公开提及恩加拉旧案。外交部说那只是程序，安全局说程序会长腿。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "拒绝合作，批判殖民司法",
+            "effects": {
+              "intl": "-mid",
+              "elite": "+small",
+              "history": "-small"
+            },
+            "result": "批判很有力，传票也很有力。",
+            "goto": 1
+          },
+          {
+            "text": "提供有限材料",
+            "effects": {
+              "intl": "+mid",
+              "elite": "-small",
+              "history": "+small"
+            },
+            "result": "材料送出去后，旧同僚开始打听自己的名字。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "法庭",
+        "title": "证人名单",
+        "narrative": "一份潜在证人名单流出，里面有前军官、医生和宫廷司机。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "召回证人家属谈话",
+            "effects": {
+              "intl": "-mid",
+              "elite": "+small",
+              "morale": "-small"
+            },
+            "result": "谈话很客气，客气得让人睡不着。",
+            "goto": 2
+          },
+          {
+            "text": "安排律师团队应对",
+            "effects": {
+              "intl": "+small",
+              "finance": "-mid",
+              "history": "+small"
+            },
+            "result": "律师们说还有办法。律师总会这么说。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "法庭",
+        "title": "旅行限制",
+        "narrative": "几国讨论对您和亲信实施旅行限制。世界突然变小了。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "转移资产，准备绕路",
+            "effects": {
+              "wealth": -0.5,
+              "intl": "-small",
+              "elite": "+small"
+            },
+            "result": "护照仍在，路线少了。钱先走一步。",
+            "goto": 3
+          },
+          {
+            "text": "释放几名政治犯换缓和",
+            "effects": {
+              "intl": "+mid",
+              "elite": "-mid",
+              "morale": "+small"
+            },
+            "result": "几扇牢门打开。更多牢门被看见。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "法庭",
+        "title": "合作或决裂",
+        "narrative": "最后通牒摆在桌上：配合调查，或被列入正式追责名单。",
+        "options": [
+          {
+            "text": "交出替罪高官",
+            "effects": {
+              "intl": "+big",
+              "elite": "-big",
+              "history": "+small"
+            },
+            "result": "高官被带走时，没有回头看您。",
+            "goto": 4
+          },
+          {
+            "text": "彻底决裂，寻求庇护盟友",
+            "effects": {
+              "intl": "-big",
+              "army": "+small",
+              "finance": "+small",
+              "history": "-mid"
+            },
+            "result": "盟友伸出手，也摊开账单。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "法庭",
+        "title": "豁免法案",
+        "narrative": "议会提出领袖豁免法案，声称保护国家尊严。国外律师说，尊严很少能挡住传票。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "通过豁免法案",
+            "effects": {
+              "legacy": "+mid",
+              "intl": "-mid",
+              "history": "-small"
+            },
+            "result": "法案通过后，国内掌声很响，国外冷笑也很响。",
+            "goto": 5
+          },
+          {
+            "text": "搁置法案，避免刺激法庭",
+            "effects": {
+              "intl": "+small",
+              "elite": "-small",
+              "history": "+small"
+            },
+            "result": "法案留在抽屉里。抽屉第一次显得谨慎。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "法庭",
+        "title": "庇护谈判",
+        "narrative": "一位友好领袖暗示，可以在最坏情况下提供庇护。条件包括矿权、港口和沉默。",
+        "options": [
+          {
+            "text": "签下秘密庇护备忘录",
+            "effects": {
+              "wealth": -0.6,
+              "intl": "-small",
+              "legacy": "-mid"
+            },
+            "result": "备忘录没有国徽，却比国徽更现实。",
+            "goto": -1
+          },
+          {
+            "text": "拒绝谈判，继续强硬到底",
+            "effects": {
+              "legacy": "+small",
+              "army": "+small",
+              "health": "-small"
+            },
+            "result": "您拒绝了退路。退路没有因此消失。",
+            "goto": -1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "currency_collapse",
+    "title": "货币信任危机",
+    "theme": "currency",
+    "stages": [
+      "mid",
+      "late"
+    ],
+    "trigger": {
+      "minYear": 8,
+      "financeMax": 38
+    },
+    "steps": [
+      {
+        "kicker": "货币",
+        "title": "兑换队伍",
+        "narrative": "银行门口排起长队，市民想把本币换成任何别的东西。央行说只是季节性波动。",
+        "escalateTo": 1,
+        "options": [
+          {
+            "text": "动用储备稳汇率",
+            "effects": {
+              "finance": "-big",
+              "morale": "+small",
+              "intl": "+small"
+            },
+            "result": "汇率稳住了一天。储备少了一块。",
+            "goto": 1
+          },
+          {
+            "text": "限制兑换窗口",
+            "effects": {
+              "finance": "+small",
+              "morale": "-mid",
+              "elite": "+small"
+            },
+            "result": "队伍散了，恐慌进了黑市。",
+            "goto": 1
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 0
+          }
+        ]
+      },
+      {
+        "kicker": "货币",
+        "title": "黑市牌价",
+        "narrative": "黑市汇率每天变三次，变得比官方新闻更可信。",
+        "escalateTo": 2,
+        "options": [
+          {
+            "text": "严打黑市交易",
+            "effects": {
+              "army": "+small",
+              "morale": "-small",
+              "finance": "+small"
+            },
+            "result": "几名钱贩被抓，牌价换了巷子。",
+            "goto": 2
+          },
+          {
+            "text": "悄悄承认双轨价格",
+            "effects": {
+              "finance": "+mid",
+              "history": "-small",
+              "elite": "+small"
+            },
+            "result": "市场松了口气，官方脸上挂不住。",
+            "goto": 2
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 1
+          }
+        ]
+      },
+      {
+        "kicker": "货币",
+        "title": "工资风波",
+        "narrative": "公务员要求按新物价补发工资。财政部说，纸币可以印，信任不能。",
+        "escalateTo": 3,
+        "options": [
+          {
+            "text": "加印货币发工资",
+            "effects": {
+              "morale": "+small",
+              "finance": "-mid",
+              "history": "-small"
+            },
+            "result": "工资发了，价格追上来了。",
+            "goto": 3
+          },
+          {
+            "text": "延迟发放，保住币值",
+            "effects": {
+              "finance": "+small",
+              "morale": "-big",
+              "elite": "-small"
+            },
+            "result": "币值暂稳，办公室里没人笑。",
+            "goto": 3
+          },
+          {
+            "text": "先拖着，等它自己降温",
+            "defer": true,
+            "effects": {},
+            "result": "您把它压到案卷下面。纸没有声音，人却会。",
+            "goto": 2
+          }
+        ]
+      },
+      {
+        "kicker": "货币",
+        "title": "新钞或旧账",
+        "narrative": "央行提出发行新钞，删除几个零。删零容易，删记忆很难。",
+        "options": [
+          {
+            "text": "发行新钞，强制换币",
+            "effects": {
+              "finance": "+mid",
+              "morale": "-mid",
+              "legacy": "+small"
+            },
+            "result": "新钞很漂亮，排队很难看。",
+            "goto": 4
+          },
+          {
+            "text": "引入外币结算，承认现实",
+            "effects": {
+              "intl": "+mid",
+              "finance": "+small",
+              "legacy": "-mid"
+            },
+            "result": "商人松了口气。国家货币像被请到旁桌。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "货币",
+        "title": "商人闭店",
+        "narrative": "几条商业街同时闭店，老板们说没有货，其实是不知道该用什么价格卖。",
+        "escalateTo": 5,
+        "options": [
+          {
+            "text": "强制开门，按官价出售",
+            "effects": {
+              "morale": "+small",
+              "elite": "-small",
+              "finance": "-small"
+            },
+            "result": "货架重新摆满了一天。第二天，仓库先空了。",
+            "goto": 5
+          },
+          {
+            "text": "允许浮动价格，稳住供给",
+            "effects": {
+              "finance": "+small",
+              "morale": "-mid",
+              "history": "+small"
+            },
+            "result": "货物回来了，价格也回来了，而且回得更高。",
+            "goto": 5
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 4
+          }
+        ]
+      },
+      {
+        "kicker": "货币",
+        "title": "外币工资",
+        "narrative": "矿业公司提出用外币给核心员工发工资。央行认为这是羞辱，工人认为这是救命。",
+        "escalateTo": 6,
+        "options": [
+          {
+            "text": "禁止外币工资，维护主权",
+            "effects": {
+              "legacy": "+small",
+              "morale": "-mid",
+              "finance": "+small"
+            },
+            "result": "主权保住了，工人的耐心没有。",
+            "goto": 6
+          },
+          {
+            "text": "特许关键行业使用外币",
+            "effects": {
+              "finance": "+mid",
+              "legacy": "-mid",
+              "morale": "+small"
+            },
+            "result": "矿区稳定下来，本币像被排挤到门外。",
+            "goto": 6
+          },
+          {
+            "text": "先拖着，看看风向",
+            "defer": true,
+            "effects": {},
+            "result": "您把这件事暂时压下。它没有消失，只是换了地方发酵。",
+            "goto": 5
+          }
+        ]
+      },
+      {
+        "kicker": "货币",
+        "title": "最后的汇率",
+        "narrative": "央行只剩一次可信动作：彻底放开，或彻底管住。两种选择都不像胜利。",
+        "options": [
+          {
+            "text": "一次性放开汇率",
+            "effects": {
+              "finance": "+mid",
+              "intl": "+small",
+              "morale": "-big",
+              "history": "+small"
+            },
+            "result": "价格先是尖叫，随后学会呼吸。",
+            "goto": -1
+          },
+          {
+            "text": "全面管制，配给外汇",
+            "effects": {
+              "finance": "-small",
+              "elite": "+mid",
+              "morale": "-mid",
+              "history": "-small"
+            },
+            "result": "外汇成了批条。批条成了新的权力。",
             "goto": -1
           }
         ]

@@ -198,39 +198,29 @@ export function annualHealthDecay(state) {
 function roll(state, key, lowT, lowP, lowDeath, highT, highP, highDeath) {
   const v = state.ind[key];
   const warned = state.flags.crisisWarnings || {};
-  if (lowT != null && v < lowT && warned[`${key}:low:final`]) { const sev = (lowT - v) / Math.max(1, lowT); if (rngChance(state, lowP * (0.55 + sev * 0.9))) return lowDeath; }
-  if (highT != null && v > highT && warned[`${key}:high:final`]) { const sev = (v - highT) / Math.max(1, 100 - highT); if (rngChance(state, highP * (0.55 + sev * 0.9))) return highDeath; }
+  if (lowT != null && v < lowT && (warned[`${key}:low:final`] || warned[`${key}:low:warn`])) { const sev = (lowT - v) / Math.max(1, lowT); if (rngChance(state, lowP * (0.55 + sev * 0.9))) return lowDeath; }
+  if (highT != null && v > highT && (warned[`${key}:high:final`] || warned[`${key}:high:warn`])) { const sev = (v - highT) / Math.max(1, 100 - highT); if (rngChance(state, highP * (0.55 + sev * 0.9))) return highDeath; }
   return null;
 }
 export function dangerWarnings(state) {
   const out = [];
   const seen = state.flags.crisisWarnings || {};
-  const add = (key, side, level, title, text) => {
-    const token = `${key}:${side}:${level}`;
-    if (!seen[token]) out.push({ key, side, level, token, title, text });
-  };
-  const addFinal = (key, side, title, text) => {
-    if (seen[`${key}:${side}:warn`]) add(key, side, 'final', title, text);
+  const acknowledged = (key, side) => seen[`${key}:${side}:warn`] || seen[`${key}:${side}:final`];
+  const addDirectional = (key, side, warnActive, finalActive, warnTitle, warnText, finalTitle, finalText) => {
+    if (acknowledged(key, side)) return;
+    if (finalActive) out.push({ key, side, level: 'final', token: `${key}:${side}:final`, title: finalTitle, text: finalText });
+    else if (warnActive) out.push({ key, side, level: 'warn', token: `${key}:${side}:warn`, title: warnTitle, text: warnText });
   };
   const i = state.ind;
-  if (i.army < 20) add('army', 'low', 'warn', '军心异动', '总参谋部的门关得比往常更紧。再往下，枪口迟早会自己寻找方向。');
-  if (i.army < 8) addFinal('army', 'low', '兵变在即', '卫队换岗时不再看向官邸，参谋部的电话也接得越来越慢。再拖下去，命令会在枪栓声里失效。');
-  if (i.army > 84) add('army', 'high', 'warn', '军方坐大', '将军们开始替您决定什么叫国家利益。再放任下去，官邸会变成军营的附属建筑。');
-  if (i.army > 92) addFinal('army', 'high', '军权压顶', '军方已经不满足于接受赏赐，他们开始分配忠诚。再往前一步，您会被请去主持自己的退场。');
-  if (i.elite < 22) add('elite', 'low', 'warn', '内阁离心', '几位大人的笑容越来越短，家眷却越来越频繁地出国。再往下，酒杯和文件都会变得危险。');
-  if (i.elite < 8) addFinal('elite', 'low', '密谋成形', '宴会的座次开始绕开您，账本和护照在同一晚被取走。再拖下去，忠诚会被写成遗书。');
-  if (i.elite > 84) add('elite', 'high', 'warn', '寡头成势', '分赃的桌子还在官邸，菜单却已由别人拟好。再放任下去，您会只剩签字的权力。');
-  if (i.elite > 92) addFinal('elite', 'high', '傀儡边缘', '几位大人物已能决定媒体、银行和部长名单。您的命令还会被盖章，但先要经过他们的手。');
-  if (i.morale < 18) add('morale', 'low', 'warn', '街头起火', '街角的传单和菜市场的喊声连成一片。再往下，广场会比官邸更有号召力。');
-  if (i.morale < 8) addFinal('morale', 'low', '广场失控', '罢市、传单和人群开始彼此认出同一个口号。再拖下去，首都不会再等您的广播。');
-  if (i.morale > 85) add('morale', 'high', 'warn', '崇拜失控', '口号喊得太响，开始盖过命令本身。再往上，狂热会替您审判所有人。');
-  if (i.morale > 94) addFinal('morale', 'high', '狂热噬主', '拥戴者开始替您寻找敌人，也替您定义忠诚。再往前，连您本人都未必符合神像的要求。');
-  if (i.intl < 14) add('intl', 'low', 'warn', '承认流失', '使馆区的灯一盏盏熄灭，制裁名单却一页页加厚。再往下，连您的邻国都可能不再接电话。');
-  if (i.intl < 6) addFinal('intl', 'low', '孤立断线', '外交电报像石头一样沉下去，银行、码头和邻国边境同时变得冷淡。再拖下去，政权会被世界遗忘。');
-  if (i.intl > 84) add('intl', 'high', 'warn', '外部渗透', 'NGO、记者、基金会和观察团挤满首都，反对派突然学会了同一种话术。再往上，选票和街头都会有人替您安排。');
-  if (i.intl > 94) addFinal('intl', 'high', '干预临门', '观察团、基金会和外国记者已经能决定议程。再往前一步，您的主权会被写进别人的声明。');
-  if (i.finance < 15) add('finance', 'low', 'warn', '国库见底', '欠薪的名单已经排到军营门口。再往下，忠诚会按欠条折价。');
-  if (i.finance < 7) addFinal('finance', 'low', '欠饷逼宫', '军营、警局和部委同时在等钱。再拖下去，忠诚不再问您是谁，只问谁先付账。');
+  addDirectional('army', 'low', i.army < 20, i.army < 8, '军心异动', '总参谋部的门关得比往常更紧。再往下，枪口迟早会自己寻找方向。', '兵变在即', '卫队换岗时不再看向官邸，参谋部的电话也接得越来越慢。再拖下去，命令会在枪栓声里失效。');
+  addDirectional('army', 'high', i.army > 84, i.army > 92, '军方坐大', '将军们开始替您决定什么叫国家利益。再放任下去，官邸会变成军营的附属建筑。', '军权压顶', '军方已经不满足于接受赏赐，他们开始分配忠诚。再往前一步，您会被请去主持自己的退场。');
+  addDirectional('elite', 'low', i.elite < 22, i.elite < 8, '内阁离心', '几位大人的笑容越来越短，家眷却越来越频繁地出国。再往下，酒杯和文件都会变得危险。', '密谋成形', '宴会的座次开始绕开您，账本和护照在同一晚被取走。再拖下去，忠诚会被写成遗书。');
+  addDirectional('elite', 'high', i.elite > 84, i.elite > 92, '寡头成势', '分赃的桌子还在官邸，菜单却已由别人拟好。再放任下去，您会只剩签字的权力。', '傀儡边缘', '几位大人物已能决定媒体、银行和部长名单。您的命令还会被盖章，但先要经过他们的手。');
+  addDirectional('morale', 'low', i.morale < 18, i.morale < 8, '街头起火', '街角的传单和菜市场的喊声连成一片。再往下，广场会比官邸更有号召力。', '广场失控', '罢市、传单和人群开始彼此认出同一个口号。再拖下去，首都不会再等您的广播。');
+  addDirectional('morale', 'high', i.morale > 85, i.morale > 94, '崇拜失控', '口号喊得太响，开始盖过命令本身。再往上，狂热会替您审判所有人。', '狂热噬主', '拥戴者开始替您寻找敌人，也替您定义忠诚。再往前，连您本人都未必符合神像的要求。');
+  addDirectional('intl', 'low', i.intl < 14, i.intl < 6, '承认流失', '使馆区的灯一盏盏熄灭，制裁名单却一页页加厚。再往下，连您的邻国都可能不再接电话。', '孤立断线', '外交电报像石头一样沉下去，银行、码头和邻国边境同时变得冷淡。再拖下去，政权会被世界遗忘。');
+  addDirectional('intl', 'high', i.intl > 84, i.intl > 94, '外部渗透', 'NGO、记者、基金会和观察团挤满首都，反对派突然学会了同一种话术。再往上，选票和街头都会有人替您安排。', '干预临门', '观察团、基金会和外国记者已经能决定议程。再往前一步，您的主权会被写进别人的声明。');
+  addDirectional('finance', 'low', i.finance < 15, i.finance < 7, '国库见底', '欠薪的名单已经排到军营门口。再往下，忠诚会按欠条折价。', '欠饷逼宫', '军营、警局和部委同时在等钱。再拖下去，忠诚不再问您是谁，只问谁先付账。');
   return out;
 }
 

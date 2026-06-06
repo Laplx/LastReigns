@@ -25,7 +25,7 @@ function updateLlmStatusText() {
   const ready = llm.isAvailable();
   ui.setNetStatus(ready ? 'online' : 'offline', ready ? `叙事联网：${llm.modelName() || '已就绪'}` : '叙事联网未就绪');
   const foot = document.getElementById('boot-foot');
-  if (foot) foot.textContent = ready ? '叙事联网已就绪' : '叙事联网未就绪：预设叙事可玩，私下接触将使用规则兜底';
+  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：预设叙事可玩，私下接触将使用规则兜底'}<br><span class="version">v1.2.3</span>`;
 }
 
 async function boot() {
@@ -187,8 +187,8 @@ async function nextCard() {
   if (warnings.length) { await presentCard(crisisCard(warnings)); return afterCard(); }
 
   let card = null;
-  card = takePrioritySpecial();
-  if (!card && state.rng() < 0.55) card = chains.drawChainCard(state, content, chainNarr);
+  card = chains.drawChainCard(state, content, chainNarr);
+  if (!card) card = takePrioritySpecial();
   if (!card) card = events.drawOne(state, content);
   if (!card) { engine.makeEnding(state, 'natural'); return; }
   await presentCard(card);
@@ -209,7 +209,7 @@ function yearTick() {
   if (state.flags.somethingNoReturn) { ui.toast('有些事情，已经无法回头。'); state.flags.somethingNoReturn = false; }
   if (ending || state.over) return;
   if (state.year >= state.maxYears) { engine.makeEnding(state, 'natural'); return; }
-  state.year++; state.cardsThisYear = 0; state.yearLength = 3 + Math.floor(state.rng() * 3);
+  state.year++; state.cardsThisYear = 0; state.chainCardsThisYear = 0; state.yearLength = 3 + Math.floor(state.rng() * 3);
   refreshPanels();
 }
 
@@ -257,14 +257,17 @@ function crisisCard(warnings) {
     title: many ? (final ? '多线危机逼近' : '多处异样同时浮现') : list[0].title,
     narrative: list.map(crisisLine).join('\n') + (many
       ? `\n\n这些信号来自不同房间，却指向同一个结论：今年不能再把它们当作例行噪音。`
-      : `\n\n这不是结局，但已经不是普通波动。`),
+      : ''),
     options: [{
       text: final ? '让所有人立刻回报' : (many ? '让秘书处合并登记' : '让秘书处登记风险'),
       result: final ? '几份回报被锁进同一个抽屉。' : '风险被记入本年备忘。',
       effects: {},
     }],
     onResolve: (st) => {
-      for (const w of list) engine.markDangerWarning(st, w.token);
+      for (const w of list) {
+        engine.markDangerWarning(st, `${w.key}:${w.side}:warn`);
+        engine.markDangerWarning(st, `${w.key}:${w.side}:final`);
+      }
       st.crisisNoticeYear = st.year;
     },
   };

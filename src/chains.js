@@ -4,6 +4,9 @@
 
 import { rngChance, rngPick } from './state.js';
 
+const MAX_ACTIVE_CHAINS = 2;
+const MAX_CHAIN_CARDS_PER_YEAR = 2;
+
 function loyaltyGap(state) {
   const ls = state.people.filter((p) => p.alive).map((p) => p.loyalty);
   if (ls.length < 2) return 0;
@@ -23,36 +26,51 @@ function triggerMet(state, def) {
   return true;
 }
 function defById(content, id) { return content.chains.find((d) => d.id === id); }
+function chainThemeCooling(state, def) {
+  const theme = def?.theme;
+  return !!(theme && state.themeCooldowns && state.themeCooldowns[theme] >= state.year);
+}
+function chainDueScore(state, ac) {
+  if (!ac.shownYear) return 1000;
+  return (state.year - ac.shownYear) * 10 + (ac.defers || 0);
+}
 
 // 年度 tick：尝试激活一条新链（≤2 条），并记下"新的暗流"供通知
 // 保证每局早期至少明显出现一条链（force-seed）。
 export function tryActivateChain(state, content) {
-  if (state.activeChains.length >= 2) return null;
+  if (state.activeChains.length >= MAX_ACTIVE_CHAINS) return null;
   const defs = content.chains || [];
   const taken = (d) => state.activeChains.find((a) => a.id === d.id) || state.completedChains.includes(d.id);
-  let pool = defs.filter((d) => !taken(d) && triggerMet(state, d));
+  let pool = defs.filter((d) => !taken(d) && triggerMet(state, d) && !chainThemeCooling(state, d));
+  if (!pool.length) pool = defs.filter((d) => !taken(d) && triggerMet(state, d));
 
   const forceSeed = state.activeChains.length === 0 && state.completedChains.length === 0 && state.year >= 4;
   if (!pool.length && forceSeed) {
-    // 强制开局：放宽到只看 minYear 的链，保证至少一条登场
-    pool = defs.filter((d) => !taken(d) && ((d.trigger || {}).minYear == null || state.year >= d.trigger.minYear));
+    // 强制开局只允许低语境依赖的链兜底，避免无条件触发叛乱/边境/外部压力。
+    pool = defs.filter((d) => d.forceSeed && !taken(d) && ((d.trigger || {}).minYear == null || state.year >= d.trigger.minYear));
   }
   if (!pool.length) return null;
-  if (!forceSeed && !rngChance(state, 0.7)) return null;
+  if (!forceSeed && state.lastChainActivatedYear && state.year - state.lastChainActivatedYear < 2) return null;
+  if (!forceSeed && !rngChance(state, 0.58)) return null;
 
   const d = rngPick(state, pool);
-  state.activeChains.push({ id: d.id, step: 0, defers: 0, shownYear: 0 });
+  state.activeChains.push({ id: d.id, step: 0, defers: 0, shownYear: 0, activatedYear: state.year });
   state.chainJustActivated = { id: d.id, title: d.title };
+  state.lastChainActivatedYear = state.year;
   return d;
 }
 
 // 逐卡浮现：返回一张活跃链的事件卡（每条链一年至多浮现一次），否则 null
 export function drawChainCard(state, content, narrCache) {
-  const candidates = state.activeChains.filter((ac) => ac.shownYear < state.year && defById(content, ac.id)?.steps[ac.step]);
+  if ((state.chainCardsThisYear || 0) >= MAX_CHAIN_CARDS_PER_YEAR) return null;
+  const candidates = state.activeChains
+    .filter((ac) => ac.shownYear < state.year && defById(content, ac.id)?.steps[ac.step])
+    .sort((a, b) => chainDueScore(state, b) - chainDueScore(state, a));
   if (!candidates.length) return null;
   const ac = candidates[0];
   const def = defById(content, ac.id);
   ac.shownYear = state.year;
+  state.chainCardsThisYear = (state.chainCardsThisYear || 0) + 1;
   return buildChainCard(state, def, ac, narrCache);
 }
 
@@ -64,7 +82,8 @@ export function getActiveSteps(state, content) {
 function buildChainCard(state, def, ac, narrCache) {
   const step = def.steps[ac.step];
   const deferred = (ac.defers || 0) > 0;
-  const title = deferred ? `${step.title} · 续报` : step.title;
+  const stepTitle = deferred ? `${step.title} · 续报` : step.title;
+  const title = `${def.title} · ${stepTitle}`;
   const baseNarrative = (narrCache && narrCache[`${def.id}_${ac.step}`]) || step.narrative;
   const narrative = deferred
     ? `这件事被搁置后，并没有自行消失。相同的人、相同的账本、相同的外国记者，又以更糟的姿态回到桌上。\n\n${baseNarrative}`
@@ -72,6 +91,8 @@ function buildChainCard(state, def, ac, narrCache) {
   return {
     id: `chain_${def.id}_${ac.step}_${ac.defers || 0}`,
     type: 'chain', chain: true,
+    theme: step.theme || def.theme,
+    stages: def.stages,
     kicker: step.kicker || def.title,
     title,
     speaker: step.speaker,
