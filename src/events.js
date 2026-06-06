@@ -120,14 +120,14 @@ function weightedPick(state, pool) {
   for (const c of pool) { r -= c.weight || 1; if (r <= 0) return c; }
   return pool[pool.length - 1];
 }
-function allNormals(state, content) { return [...content.events.filter((c) => c.type !== 'notify'), ...(state.llmPool || [])]; }
+function allNormals(state) { return state.normalPool || []; }
 function normalizeKey(text) {
   return String(text || '')
     .replace(/[“”"‘’'「」『』（）()《》<>，。、“”！？!?：:；;·\s]/g, '')
     .trim()
     .slice(0, 180);
 }
-function cardKey(c) {
+export function cardKey(c) {
   const text = [c?.title || '', c?.narrative || ''].filter(Boolean).join('|');
   return normalizeKey(text || c?.id || '');
 }
@@ -149,6 +149,71 @@ export function rememberShown(state, card) {
   appendRecent(state.seenEventKeys, cardKey(card), 220);
   markThemeCooldown(state, card);
 }
+
+function bumpPoolStat(state, key, delta = 1) {
+  if (!state.poolStats) state.poolStats = {};
+  state.poolStats[key] = (state.poolStats[key] || 0) + delta;
+}
+function poolBatchKey(source, batch) {
+  if (batch === 'boot') return source === 'llm' ? 'bootLlm' : 'bootStatic';
+  if (batch === 'instant') return 'instantStatic';
+  return source === 'llm' ? 'topupLlm' : 'topupStatic';
+}
+function poolDedupSets(state) {
+  const pool = state.normalPool || [];
+  const ids = new Set([...(state.seenEventIds || []), ...pool.map((c) => c.id)].filter(Boolean));
+  const keys = new Set([
+    ...(state.seenEventKeys || []),
+    ...archiveKeys(state),
+    ...pool.map(cardKey),
+    ...(state.prioritySpecialQueue || []).map(cardKey),
+  ].filter(Boolean));
+  return { ids, keys };
+}
+function canEnterPool(state, card, source, opts = {}) {
+  if (!card || card.type !== 'normal') return false;
+  if (!isEligible(state, card) || (!opts.relaxStage && !stageMatches(state, card)) || (!opts.relaxTheme && isThemeCooling(state, card))) return false;
+  const { ids, keys } = poolDedupSets(state);
+  return source === 'static' ? !ids.has(card.id) && !keys.has(cardKey(card)) : !keys.has(cardKey(card));
+}
+function poolCard(card, source, batch) {
+  return { ...card, poolSource: source, poolBatch: batch };
+}
+function drawWeightedUnique(state, candidates, count) {
+  const pool = candidates.slice();
+  const out = [];
+  while (pool.length && out.length < count) {
+    const picked = weightedPick(state, pool);
+    out.push(picked);
+    pool.splice(pool.indexOf(picked), 1);
+  }
+  return out;
+}
+export function addNormalPoolCards(state, content, cards, source = 'llm', batch = 'topup', opts = {}) {
+  if (!state.normalPool) state.normalPool = [];
+  let added = 0;
+  for (const raw of cards || []) {
+    const card = poolCard({ ...raw, type: 'normal' }, source, batch);
+    if (!canEnterPool(state, card, source, opts)) continue;
+    state.normalPool.push(card);
+    added += 1;
+    bumpPoolStat(state, poolBatchKey(source, batch));
+  }
+  return added;
+}
+export function fillStaticNormalPool(state, content, count, batch = 'topup') {
+  if (!count || count < 1) return 0;
+  const all = (content.events || []).filter((c) => c.type === 'normal');
+  const staged = stagePool(state, all);
+  const ready = themeReadyPool(state, staged);
+  let relaxed = false;
+  let candidates = freshByMemory(state, ready, 24, 18).filter((c) => canEnterPool(state, c, 'static'));
+  if (!candidates.length) candidates = freshByMemory(state, staged, 24, 18).filter((c) => canEnterPool(state, c, 'static'));
+  if (!candidates.length && staged.length !== all.length) candidates = freshByMemory(state, all, 24, 18).filter((c) => canEnterPool(state, c, 'static'));
+  if (!candidates.length) { relaxed = true; candidates = freshByMemory(state, staged, 24, 18).filter((c) => canEnterPool(state, c, 'static', { relaxTheme: true })); }
+  if (!candidates.length) { relaxed = true; candidates = freshByMemory(state, all, 24, 18).filter((c) => canEnterPool(state, c, 'static', { relaxTheme: true, relaxStage: true })); }
+  return addNormalPoolCards(state, content, drawWeightedUnique(state, candidates, count), 'static', batch, relaxed ? { relaxTheme: true, relaxStage: true } : {});
+}
 function freshByMemory(state, all, primaryWindow, fallbackWindow) {
   const archived = archiveKeys(state);
   const seenIds = new Set(state.seenEventIds || []);
@@ -167,12 +232,23 @@ function freshByMemory(state, all, primaryWindow, fallbackWindow) {
   return fresh;
 }
 function freshNormals(state, content) {
-  const all = allNormals(state, content).filter((c) => isEligible(state, c));
+  const all = allNormals(state).filter((c) => isEligible(state, c));
   const staged = stagePool(state, all);
   let fresh = freshByMemory(state, themeReadyPool(state, staged), 24, 18);
   if (!fresh.length) fresh = freshByMemory(state, staged, 24, 18);
   if (!fresh.length && staged.length !== all.length) fresh = freshByMemory(state, themeReadyPool(state, all), 24, 18);
   return fresh;
+}
+export function availableNormalCount(state, content) {
+  return freshNormals(state, content).length;
+}
+function removeFromNormalPool(state, card) {
+  const pool = state.normalPool || [];
+  const key = cardKey(card);
+  const idx = pool.findIndex((c) => c === card || c.id === card.id || cardKey(c) === key);
+  if (idx >= 0) pool.splice(idx, 1);
+  if (card.poolSource === 'llm') bumpPoolStat(state, 'drawnLlm');
+  else if (card.poolSource === 'static') bumpPoolStat(state, 'drawnStatic');
 }
 function freshNotifies(state, content) {
   const all = content.events.filter((c) => c.type === 'notify' && isEligible(state, c));
@@ -188,7 +264,10 @@ export function drawOne(state, content) {
   const wantNotify = (notifies.length && rngChance(state, 0.22)) || normals.length === 0;
   let pool = wantNotify ? notifies : normals;
   if (!pool.length) pool = normals.length ? normals : notifies;
-  return pool.length ? weightedPick(state, pool) : null;
+  if (!pool.length) return null;
+  const card = weightedPick(state, pool);
+  if (card.type === 'normal') removeFromNormalPool(state, card);
+  return card;
 }
 
 // ---- 事与愿违 ------------------------------------------------------------
@@ -260,6 +339,6 @@ export function resolveOption(state, card, optionIndex) {
   if (twist) resultText += `\n\n${twist.clue}`;
   const relation = relationEcho(state, option.effects);
   if (relation) resultText += `\n\n${relation}`;
-  state.archive.push({ year: state.year, title: subst(state, card.title), result: subst(state, option.text), eventId: card.id, eventKey: cardKey(card) });
+  state.archive.push({ year: state.year, title: subst(state, card.title), result: subst(state, option.text), eventId: card.id, eventKey: cardKey(card), poolSource: card.poolSource, poolBatch: card.poolBatch });
   return { resultText, changed, deltas, summary, twist };
 }

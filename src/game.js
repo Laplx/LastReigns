@@ -9,8 +9,14 @@ import * as llm from './llm.js';
 import { resetAtmosphere } from './atmosphere.js';
 
 let content, state, selectedPersonId = null;
-let chainNarr = {}, _bgBusy = false, _specialBusy = false, _atmoBusy = false;
-function lvlCfg() { const l = llm.llmLevel(); return l === 'low' ? { specP: 0, topup: 0, batch: 0, pre: [0, 0], reskin: false } : l === 'high' ? { specP: 0.15, topup: 12, batch: 8, pre: [8, 4], reskin: true } : { specP: 0.08, topup: 8, batch: 4, pre: [5, 4], reskin: true }; }
+let chainNarr = {}, _poolBusy = false, _poolPromise = null, _specialBusy = false, _atmoBusy = false;
+function lvlCfg() {
+  const l = llm.llmLevel();
+  const base = { lowWater: 20, llmGroup: 2, llmConcurrency: 3 };
+  if (l === 'low') return { ...base, specP: 0, reskin: false, bootStatic: 40, bootLlm: 0, topupStatic: 20, topupLlm: 0 };
+  if (l === 'high') return { ...base, specP: 0.15, reskin: true, bootStatic: 20, bootLlm: 20, topupStatic: 10, topupLlm: 10 };
+  return { ...base, specP: 0.08, reskin: true, bootStatic: 28, bootLlm: 12, topupStatic: 12, topupLlm: 8 };
+}
 
 async function loadContent() {
   const j = (p) => fetch(p).then((r) => r.json());
@@ -25,7 +31,7 @@ function updateLlmStatusText() {
   const ready = llm.isAvailable();
   ui.setNetStatus(ready ? 'online' : 'offline', ready ? `叙事联网：${llm.modelName() || '已就绪'}` : '叙事联网未就绪');
   const foot = document.getElementById('boot-foot');
-  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：预设叙事可玩，私下接触将使用规则兜底'}<br><span class="version">v1.2.3</span>`;
+  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：预设叙事可玩，私下接触将使用规则兜底'}<br><span class="version">v1.2.4</span>`;
 }
 
 async function boot() {
@@ -66,25 +72,12 @@ function showBriefing() {
   ui.renderBriefing(state, startGame);
 }
 
-function addToPool(evs) {
-  const seen = new Set([
-    ...content.events.map((e) => e.title),
-    ...state.llmPool.map((e) => e.title),
-    ...(state.prioritySpecialQueue || []).map((e) => e.title),
-    ...state.archive.map((a) => a.title),
-  ].filter(Boolean).map((x) => String(x).trim()));
-  for (const e of evs) {
-    const title = e && e.title ? String(e.title).trim() : '';
-    if (title && !seen.has(title)) { state.llmPool.push(e); seen.add(title); }
-  }
-}
-
 function queuePrioritySpecial(card) {
   if (!card || !card.title) return;
   const title = String(card.title).trim();
   const seen = new Set([
     ...content.events.map((e) => e.title),
-    ...state.llmPool.map((e) => e.title),
+    ...(state.normalPool || []).map((e) => e.title),
     ...(state.prioritySpecialQueue || []).map((e) => e.title),
     ...state.archive.map((a) => a.title),
   ].filter(Boolean).map((x) => String(x).trim()));
@@ -92,33 +85,87 @@ function queuePrioritySpecial(card) {
   state.prioritySpecialQueue.push(card);
   if (state.prioritySpecialQueue.length > 2) state.prioritySpecialQueue.splice(0, state.prioritySpecialQueue.length - 2);
 }
+
+async function runLimited(tasks, limit, onDone) {
+  const results = [];
+  let next = 0, running = 0, done = 0;
+  return new Promise((resolve) => {
+    const pump = () => {
+      if (done >= tasks.length) return resolve(results);
+      while (running < limit && next < tasks.length) {
+        const index = next++;
+        running++;
+        tasks[index]().then((value) => { results[index] = value; }).catch(() => { results[index] = []; }).finally(() => {
+          running--; done++; if (onDone) onDone(done, tasks.length); pump();
+        });
+      }
+    };
+    pump();
+  });
+}
+async function generateLlmNormals(total, batch, onDone) {
+  if (!llm.isAvailable() || total <= 0) return 0;
+  const cfg = lvlCfg();
+  const tasks = [];
+  for (let left = total; left > 0; left -= cfg.llmGroup) {
+    const n = Math.min(cfg.llmGroup, left);
+    tasks.push(() => llm.pregenEvents(state, content, n).then((cards) => events.addNormalPoolCards(state, content, cards, 'llm', batch)));
+  }
+  const results = await runLimited(tasks, cfg.llmConcurrency, onDone);
+  return results.reduce((sum, n) => sum + (Number(n) || 0), 0);
+}
+async function buildNormalPool({ boot = false, progress = null } = {}) {
+  const cfg = lvlCfg();
+  const batch = boot ? 'boot' : 'topup';
+  const staticNeed = boot ? cfg.bootStatic : cfg.topupStatic;
+  const llmNeed = boot ? cfg.bootLlm : cfg.topupLlm;
+  events.fillStaticNormalPool(state, content, staticNeed, batch);
+  if (llmNeed > 0) {
+    const groups = Math.ceil(llmNeed / cfg.llmGroup);
+    let completed = 0;
+    const added = await generateLlmNormals(llmNeed, batch, (done) => {
+      completed = done;
+      if (progress) progress.set(Math.max(0.04, completed / groups));
+    });
+    if (added < llmNeed) events.fillStaticNormalPool(state, content, llmNeed - added, boot ? 'boot' : 'instant');
+  }
+}
+function maybeTopupNormalPool() {
+  const cfg = lvlCfg();
+  if (_poolBusy || events.availableNormalCount(state, content) >= cfg.lowWater) return;
+  if (state.poolStats) state.poolStats.lowWater = (state.poolStats.lowWater || 0) + 1;
+  _poolBusy = true;
+  _poolPromise = buildNormalPool({ boot: false }).catch(() => {}).finally(() => { _poolBusy = false; _poolPromise = null; });
+}
+async function ensureNormalCardReady() {
+  if (events.availableNormalCount(state, content) > 0) return;
+  const cfg = lvlCfg();
+  events.fillStaticNormalPool(state, content, Math.max(6, cfg.topupStatic), 'instant');
+  if (events.availableNormalCount(state, content) > 0 || !_poolPromise) return;
+  const stop = ui.showLoading(LOADING.budget);
+  await Promise.race([_poolPromise, new Promise((resolve) => setTimeout(resolve, 1200))]);
+  stop();
+}
 async function startGame() {
   ui.renderTopbar(state);
-  // 开局利用等待时间，并行预生成一批本局专属题入池（带进度条）；数量随 AI 参与度
-  const [chunks, per] = lvlCfg().pre;
-  if (llm.isAvailable() && chunks > 0) {
+  const cfg = lvlCfg();
+  if (llm.isAvailable() && cfg.bootLlm > 0) {
     const prog = ui.showLoadingProgress(LOADING.boot);
-    let done = 0; prog.set(0.04);
-    const results = await Promise.all(Array.from({ length: chunks }, () =>
-      llm.pregenEvents(state, content, per).then((r) => { done++; prog.set(done / chunks); return r; }).catch(() => [])
-    ));
-    addToPool(results.flat());
+    prog.set(0.04);
+    await buildNormalPool({ boot: true, progress: prog });
     prog.done();
+  } else {
+    await buildNormalPool({ boot: true });
   }
   refreshPanels();
   gameLoop();
 }
 
 // 后台并行准备（不阻塞）：D1a 题池补充（参考历史/状态）+ D1b 事件链节点叙事改写
-function countFreshNormals() {
-  const seen = new Set(state.seenEventIds); let c = 0;
-  for (const e of content.events) if (e.type !== 'notify' && !seen.has(e.id)) c++;
-  for (const e of state.llmPool) if (!seen.has(e.id)) c++;
-  return c;
-}
 function bgPrep() {
-  if (!llm.isAvailable()) return;
   const cfg = lvlCfg();
+  maybeTopupNormalPool();
+  if (!llm.isAvailable()) return;
   if (!_atmoBusy && state.atmosphereOverrideYear !== state.year) {
     _atmoBusy = true;
     llm.generateAtmosphereOverride(state, content).then((mood) => {
@@ -139,10 +186,6 @@ function bgPrep() {
   if (cfg.specP > 0 && !_specialBusy && state.prioritySpecialYear !== state.year && !(state.prioritySpecialQueue || []).length && state.rng() < cfg.specP) {
     _specialBusy = true;
     llm.generateSpecialEvent(state, content).then((card) => queuePrioritySpecial(card)).catch(() => {}).finally(() => { _specialBusy = false; });
-  }
-  if (cfg.topup > 0 && !_bgBusy && countFreshNormals() < cfg.topup) {
-    _bgBusy = true;
-    llm.pregenEvents(state, content, cfg.batch || 4).then((ev) => addToPool(ev)).catch(() => {}).finally(() => { _bgBusy = false; });
   }
 }
 
@@ -189,7 +232,7 @@ async function nextCard() {
   let card = null;
   card = chains.drawChainCard(state, content, chainNarr);
   if (!card) card = takePrioritySpecial();
-  if (!card) card = events.drawOne(state, content);
+  if (!card) { await ensureNormalCardReady(); card = events.drawOne(state, content); }
   if (!card) { engine.makeEnding(state, 'natural'); return; }
   await presentCard(card);
   afterCard();

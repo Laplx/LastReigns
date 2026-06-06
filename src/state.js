@@ -90,8 +90,10 @@ export function createInitialState(seed, content) {
     crisisNoticeYear: 0, prioritySpecialYear: 0,
     seenEventIds: [], seenEventKeys: [], uniqueSeen: [],
 
-    llmPool: [],   // 本局 LLM 预生成的事件池
+    normalPool: [], // 本局普通事件显式抽卡池
+    llmPool: [],   // 兼容旧存档/调试；普通抽卡不再直接读取
     prioritySpecialQueue: [],
+    poolStats: { bootStatic: 0, bootLlm: 0, topupStatic: 0, topupLlm: 0, instantStatic: 0, drawnStatic: 0, drawnLlm: 0, lowWater: 0 },
 
     archive: [], achievements: [],
   };
