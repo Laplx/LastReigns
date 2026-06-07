@@ -2,6 +2,7 @@
 
 import { rngChance, rngPick } from './state.js';
 import { applyEffects, adjustLoyalty } from './engine.js';
+import { resolveCardPortrait } from './portraits.js';
 
 const STAGES = new Set(['early', 'mid', 'late']);
 const THEME_COOLDOWN = { notify: 2, chain: 6, special: 4, normal: 5 };
@@ -34,8 +35,9 @@ function substPeople(state, text) {
 export function subst(state, text) {
   return typeof text === 'string' ? substPeople(state, text.replace(/恩加拉/g, state.nationShort)) : text;
 }
-export function substCard(state, card) {
+export function substCard(state, card, content = null) {
   const c = { ...card };
+  c.portrait = resolveCardPortrait(state, content, card);
   c.narrative = subst(state, card.narrative);
   c.speaker = subst(state, card.speaker);
   c.options = (card.options || []).map((o) => ({ ...o, text: subst(state, o.text), result: subst(state, o.result) }));

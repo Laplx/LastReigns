@@ -10,6 +10,7 @@ import { resetAtmosphere } from './atmosphere.js';
 
 let content, state, selectedPersonId = null;
 let chainNarr = {}, _poolBusy = false, _poolPromise = null, _specialBusy = false, _atmoBusy = false;
+let _bootPoolPromise = null, _bootPoolProgress = null, _bootPoolDone = false;
 let _situationChainBusy = false, _crisisChainBusy = {};
 let advisorPrefetchYear = 0, advisorPrefetch = {};
 const MAX_GENERATED_CHAINS_PER_RUN = 30;
@@ -25,11 +26,13 @@ function lvlCfg() {
 
 async function loadContent() {
   const j = (p) => fetch(p).then((r) => r.json());
-  const [eventsD, people, chainsD, atmosphere, decorative, world] = await Promise.all([
+  const [eventsD, people, chainsD, atmosphere, decorative, world, portraits, portraitArt] = await Promise.all([
     j('./data/events.json'), j('./data/people.json'), j('./data/chains.json'),
     j('./data/atmosphere.json'), j('./data/decorative.json'), j('./data/world.json'),
+    j('./data/portraits.json'),
+    j('./data/portraits-art.json').catch(() => null),
   ]);
-  return events.prepareContent({ events: eventsD, people, chains: chainsD, atmosphere, decorative, world });
+  return events.prepareContent({ events: eventsD, people, chains: chainsD, atmosphere, decorative, world, portraits, portraitArt });
 }
 
 function updateLlmStatusText() {
@@ -38,10 +41,16 @@ function updateLlmStatusText() {
   const foot = document.getElementById('boot-foot');
   if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：预设叙事可玩，私下接触将使用规则兜底'}<br><span class="version">v1.2.4</span>`;
 }
+function setLlmCheckingText() {
+  ui.setNetStatus('checking', '叙事联网检测中');
+  const foot = document.getElementById('boot-foot');
+  if (foot) foot.innerHTML = `叙事联网检测中……<br><span class="version">v1.2.4</span>`;
+}
 
 async function boot() {
   try { content = await loadContent(); }
   catch { document.getElementById('boot-foot').textContent = '资源加载失败，请用 npm start 启动后访问 http://localhost:5173'; return; }
+  ui.setPortraitContent(content);
   await llm.refreshAvailability();
   updateLlmStatusText();
   document.getElementById('btn-start').addEventListener('click', onStartClick);
@@ -62,8 +71,7 @@ function onStartClick() {
 function openSettingsFlow() {
   ui.openSettings(llm.getSettings(), async (s) => {
     llm.saveSettings(s);
-    const foot = document.getElementById('boot-foot');
-    if (foot) foot.textContent = '正在检查叙事联网配置……';
+    setLlmCheckingText();
     await llm.refreshAvailability();
     updateLlmStatusText();
   });
@@ -77,7 +85,20 @@ function showBriefing() {
   const seed = (Date.now() ^ Math.floor(performance.now() * 1000)) >>> 0;
   state = createInitialState(seed, content);
   document.getElementById('boot').classList.add('hidden');
-  ui.renderBriefing(state, startGame);
+  ui.renderBriefing(state, startGame, () => ui.openOverlay(ui.manualNode(state)));
+  startBootPrefetch();
+}
+
+// 读开局说明时即后台预取首批题池（仍只取 boot 批次 = 5×2），把等待藏进阅读时间。
+// 用进度代理：先无 UI 累计进度；若就任时仍未完成，再把进度接到加载条。
+function startBootPrefetch() {
+  const cfg = lvlCfg();
+  _bootPoolDone = false;
+  const mark = (p) => { _bootPoolPromise = p.then((v) => { _bootPoolDone = true; return v; }, () => { _bootPoolDone = true; }); };
+  if (!(llm.isAvailable() && cfg.bootLlm > 0)) { mark(buildNormalPool({ boot: true })); return; }
+  let frac = 0.04, bar = null;
+  _bootPoolProgress = { set: (v) => { frac = v; if (bar) bar.set(v); }, done: () => { if (bar) bar.done(); }, attach: (b) => { bar = b; b.set(frac); } };
+  mark(buildNormalPool({ boot: true, progress: _bootPoolProgress }));
 }
 
 function queuePrioritySpecial(card) {
@@ -156,16 +177,20 @@ async function ensureNormalCardReady() {
   stop();
 }
 async function startGame() {
-  ui.renderTopbar(state, simmeringSummary());
   const cfg = lvlCfg();
-  if (llm.isAvailable() && cfg.bootLlm > 0) {
+  // 题池在读开局说明时已开始预取；就任时若仍在跑，把进度接到加载条；已就绪则无需加载动画。
+  if (!_bootPoolPromise) startBootPrefetch();
+  if (llm.isAvailable() && cfg.bootLlm > 0 && _bootPoolProgress && !_bootPoolDone) {
     const prog = ui.showLoadingProgress(LOADING.boot);
-    prog.set(0.04);
-    await buildNormalPool({ boot: true, progress: prog });
+    _bootPoolProgress.attach(prog);
+    await _bootPoolPromise;
     prog.done();
   } else {
-    await buildNormalPool({ boot: true });
+    await _bootPoolPromise;
   }
+  _bootPoolPromise = null; _bootPoolProgress = null;
+  // 顶部栏等加载结束、主界面真正出现时再更新，避免预读期间突兀跳变。
+  ui.renderTopbar(state, simmeringSummary());
   refreshPanels();
   maybeTopupNormalPool(true);
   gameLoop();
@@ -424,7 +449,7 @@ function crisisCard(warnings) {
 function presentCard(card) {
   return new Promise((resolve) => {
     events.rememberShown(state, card);
-    const disp = events.substCard(state, card);
+    const disp = events.substCard(state, card, content);
     ui.renderCard(disp, {
       onChoose: (i) => {
         const willTick = nextYearAfterThisCard();

@@ -51,14 +51,26 @@ npm start
 
 ```
 index.html  styles.css  server.js  package.json  .env.local(gitignored)
-src/   game.js engine.js events.js chains.js llm.js ui.js atmosphere.js state.js
-data/  events.json people.json chains.json atmosphere.json decorative.json
+src/   game.js engine.js events.js chains.js llm.js ui.js atmosphere.js state.js portraits.js
+data/  events.json people.json portraits.json portraits-art.json chains.json atmosphere.json decorative.json
 scripts/validate-data.mjs
 ```
 
 - `engine.js` 是状态的**唯一真相来源**：所有数值变动都在此钳制。
 - `llm.js` **永不直接写状态**，只返回受约束结构，交给 engine 校验+钳制后落账。
 - `scripts/validate-data.mjs` 校验事件数量、主题、阶段、通知卡核心效果、事件链深度与跳转可达性。
+
+### 人物画像
+
+运行时只读 `data/portraits-art.json`（22 个 Open Peeps 半身像 + 22 个 Lucide 职业 icon 打包，离线可用）。要重建或更换画像/icon：
+
+```
+node scripts/fetch-peeps.mjs   # 按角色配置拉取 Open Peeps 半身像 → data/portraits-op/
+node scripts/fetch-icons.mjs   # 按角色映射拉取 Lucide 职业 icon → data/icons/
+node scripts/pack-art.mjs      # 打包上述源文件 → data/portraits-art.json
+```
+
+改角色的部件（发型/表情/胡子/眼镜）在 `fetch-peeps.mjs`、换职业 icon 在 `fetch-icons.mjs`，改后重新 `fetch` + `pack` 即可。素材许可：Open Peeps（CC0）、Lucide（ISC）。
 
 ---
 

@@ -172,6 +172,42 @@ function validatePeople(people) {
   });
 }
 
+function validatePortraits(portraits, people) {
+  if (!portraits || typeof portraits !== 'object') return at('data/portraits.json', '根节点必须是对象');
+  if (!Array.isArray(portraits.roles) || !portraits.roles.length) return at('data/portraits.json', 'roles 不能为空');
+  const ids = new Set();
+  let generic = 0;
+  portraits.roles.forEach((p, i) => {
+    const path = `data/portraits.json.roles[${i}]`;
+    if (!p || typeof p !== 'object') return at(path, '画像定义必须是对象');
+    if (!p.id) at(path, '缺少 id');
+    else if (ids.has(p.id)) at(path, `重复 id：${p.id}`);
+    else ids.add(p.id);
+    if (!p.label) at(path, '缺少 label');
+    if (!p.motif) at(path, '缺少 motif');
+    if (p.kind === 'generic') generic += 1;
+  });
+  if (portraits.fallback && !ids.has(portraits.fallback)) at('data/portraits.json', `fallback 不存在：${portraits.fallback}`);
+  if (generic < 12) at('data/portraits.json', `generic 画像不足：${generic} < 12`);
+  for (const p of people || []) {
+    const id = p.portraitId || p.id;
+    if (id && !ids.has(id)) at('data/portraits.json', `缺少关键人物画像：${id}`);
+  }
+  return ids;
+}
+
+function validatePortraitArt(art, ids) {
+  if (!art || typeof art !== 'object') return at('data/portraits-art.json', '根节点必须是对象');
+  for (const key of ['peeps', 'icons']) {
+    if (!art[key] || typeof art[key] !== 'object') { at('data/portraits-art.json', `缺少 ${key}`); continue; }
+    for (const id of ids || []) {
+      const v = art[key][id];
+      if (!v || typeof v !== 'string' || !v.trim()) at('data/portraits-art.json', `${key} 缺少角色：${id}`);
+      else if (key === 'peeps' && !v.includes('<svg')) at('data/portraits-art.json', `peeps.${id} 不是 SVG`);
+    }
+  }
+}
+
 function validateWorld(world) {
   if (!world || typeof world !== 'object') return at('data/world.json', '根节点必须是对象');
   for (const key of ['nations', 'leaders', 'regions']) {
@@ -179,16 +215,20 @@ function validateWorld(world) {
   }
 }
 
-const [events, chains, people, world] = await Promise.all([
+const [events, chains, people, world, portraits, portraitArt] = await Promise.all([
   json('data/events.json'),
   json('data/chains.json'),
   json('data/people.json'),
   json('data/world.json'),
+  json('data/portraits.json'),
+  json('data/portraits-art.json'),
 ]);
 
 const eventIds = events ? validateEvents(events) : new Set();
 const chainIds = chains ? validateChains(chains) : new Set();
 if (people) validatePeople(people);
+const portraitIds = portraits ? validatePortraits(portraits, people) : new Set();
+if (portraitArt) validatePortraitArt(portraitArt, portraitIds);
 if (world) validateWorld(world);
 for (const id of chainIds || []) if (eventIds?.has(id)) at('data/chains.json', `chain id 与 event id 冲突：${id}`);
 if (themes.size < 15) at('data', `theme 数量不足：${themes.size} < 15`);

@@ -179,6 +179,8 @@ function buildChainCard(state, def, ac, narrCache) {
     kicker: step.kicker || def.title,
     title,
     speaker: step.speaker,
+    speakerRole: step.speakerRole,
+    portraitId: step.portraitId,
     narrative,
     options: step.options.map((o) => ({ text: o.text, hint: o.hint, effects: o.effects, result: o.result })),
     onResolve: (st, i) => advanceChain(st, def, ac, i),

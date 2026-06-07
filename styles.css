@@ -59,6 +59,8 @@ body {
 .net.online { background: var(--green); box-shadow: 0 0 8px rgba(93,125,54,.6); }
 .net.offline { background: var(--ink-faint); }
 .net.error { background: var(--red); }
+.net.checking { background: var(--amber); box-shadow: 0 0 8px rgba(192,132,24,.55); animation: netPulse 1s ease-in-out infinite; }
+@keyframes netPulse { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
 
 /* ---------- 面板 ---------- */
 .panel { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
@@ -112,8 +114,19 @@ body {
 
 /* ---------- 舞台 / 卡片 ---------- */
 #stage { flex: 1; }
-.card { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; animation: cardIn .3s cubic-bezier(.19,1,.22,1); }
+.card { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; animation: cardIn .3s cubic-bezier(.19,1,.22,1); position: relative; overflow: hidden; }
 .card.chaincard { border-left: 4px solid var(--gold); }
+.card-copy { position: relative; z-index: 1; }
+.card.has-portrait { min-height: 250px; padding-right: clamp(26px, 26vw, 196px); }
+.card-portrait {
+  position: absolute; z-index: 0; pointer-events: none;
+  top: 6px; right: 4px; width: clamp(132px, 27%, 188px); aspect-ratio: 1 / 1;
+  opacity: .9; filter: drop-shadow(0 5px 12px rgba(80,60,20,.12));
+  -webkit-mask-image: linear-gradient(210deg, #000 52%, transparent 90%);
+  mask-image: linear-gradient(210deg, #000 52%, transparent 90%);
+}
+.card.chaincard .card-portrait { opacity: .88; }
+.card-portrait .portrait-svg { display: block; width: 100%; height: 100%; }
 @keyframes cardIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; } }
 .card .kicker { font-size: 0.72em; letter-spacing: 0.16em; color: var(--gold); text-transform: uppercase; }
 .card .title { font-family: var(--serif); font-size: 1.3em; margin: 4px 0 12px; }
@@ -199,6 +212,8 @@ button { font-family: var(--sans); }
 .briefing .bf-person .bb { font-family: var(--serif); font-style: italic; color: var(--ink-dim); font-size: 0.92em; }
 .briefing .bf-guide { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 14px 0; font-size: 0.92em; }
 .briefing .bf-guide li { margin: 4px 0; }
+.bf-manual-hint { margin-top: 12px; font-size: .82em; text-align: center; }
+.bf-manual-hint b { color: var(--gold); }
 .seed-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 18px; padding: 9px 12px; border: 1px solid var(--line-soft); border-radius: 8px; background: rgba(255,255,255,.45); font-size: .86em; }
 .seed-label { color: var(--ink-faint); }
 .seed-code { font-variant-numeric: tabular-nums; letter-spacing: .04em; color: var(--ink-dim); }
@@ -360,6 +375,39 @@ body { font-weight: 450; color: var(--ink); }
 .pt-dot.loy-uneasy { background: var(--amber); }
 .pt-dot.loy-danger { background: var(--red); }
 
+/* ---------- 人物画像：状态栏职业 icon / 召见小头像 / 详情半身像 ---------- */
+/* 状态栏：纯职业 icon 圆徽（暖金线条，公文纸底） */
+.pt-avatar {
+  width: 40px; height: 40px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(120% 120% at 50% 18%, #fffdf6, var(--paper-2));
+  border: 1.5px solid var(--line); color: var(--gold);
+}
+.pt-avatar .role-icon { width: 22px; height: 22px; display: block; }
+.ptab.active .pt-avatar { border-color: var(--gold-dim); box-shadow: 0 0 0 2px rgba(138,108,34,.18); }
+.ptab.gone .pt-avatar { filter: grayscale(.6); opacity: .7; }
+.pt-text { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
+
+/* 召见选人：open-peeps 圆形小头像（取景到头肩） */
+.sp-avatar {
+  width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex: none;
+  background: radial-gradient(120% 120% at 50% 22%, #fffdf6, var(--paper-2)); border: 1.5px solid var(--line);
+}
+.sp-avatar .portrait-svg { width: 150%; height: 150%; margin: -4% 0 0 -25%; display: block; }
+.summon-person.active .sp-avatar { border-color: var(--gold-dim); }
+
+/* 详情：open-peeps 半身像（含职业 icon 徽章），方形圆角 */
+.pd-top { display: flex; align-items: flex-start; gap: 14px; }
+.pd-top-text { min-width: 0; flex: 1; }
+.pd-avatar {
+  width: 96px; height: 96px; flex: none; border-radius: 10px; overflow: hidden;
+  background: linear-gradient(180deg, #fffdf6, var(--paper-2)); border: 1px solid var(--line);
+}
+.pd-avatar .portrait-svg { width: 118%; height: 118%; margin: 2% 0 0 -9%; display: block; }
+.pd.has-avatar .pd-tags { margin-bottom: 0; }
+
+
+
 /* 年终召见卡 */
 .advisor-card .narrative { margin-bottom: 14px; }
 .summon-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0; }
@@ -390,6 +438,8 @@ body { font-weight: 450; color: var(--ink); }
 .set-label { display: block; font-size: .78em; color: var(--ink-dim); margin-bottom: 4px; }
 .set-input { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--ink); border-radius: 7px; padding: 8px 10px; font-family: var(--sans); font-size: .92em; }
 .set-actions { margin-top: 16px; display: flex; gap: 10px; }
+.set-status { margin-top: 10px; font-size: .82em; min-height: 1.2em; }
+.set-actions button:disabled { opacity: .55; cursor: default; }
 .boot-actions { display: flex; flex-direction: column; gap: 10px; justify-content: center; align-items: center; }
 
 /* 刷新时随机挑一套底色，不改变布局与机制 */
@@ -461,6 +511,8 @@ body[data-theme="verdigris"] {
   .deco-grid { grid-template-columns: 1fr 1fr; }
   #topbar { align-items: flex-start; }
   .top-summary { max-width: 42vw; white-space: normal; }
+  .card.has-portrait { padding-right: 22px; min-height: 240px; }
+  .card-portrait { width: min(42vw, 150px); top: 8px; right: -8px; opacity: .42; }
   .people-head { align-items: flex-start; flex-direction: column; }
   .simmering-summary { justify-content: flex-start; text-align: left; }
   .simmering-summary span:last-child { white-space: normal; }

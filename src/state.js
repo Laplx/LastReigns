@@ -45,9 +45,12 @@ export function createInitialState(seed, content) {
     name: pick(p.namePool || [p.id]),
     canonicalName: (p.namePool || [p.id])[0],
     aliases: p.namePool || [p.id],
+    portraitId: p.portraitId || p.id,
     title: p.title, traits: p.traits || [], blurb: p.blurb || '', persona: p.persona || '',
     hiddenInterest: p.hiddenInterest || '',
-    loyalty: p.initLoyalty ?? 55, competence: p.competence ?? 55,
+    // 初始忠诚在设定值上叠加每局 ±7 抖动，使开局阵营更有差异、重开更耐玩
+    loyalty: Math.max(1, Math.min(99, (p.initLoyalty ?? 55) + Math.round((rng() * 2 - 1) * 7))),
+    competence: p.competence ?? 55,
     rivals: p.rivals || [], allies: p.allies || [],
     alive: true, defected: false, foreshadowCount: 0, contactedYear: 0, memory: [],
   }));

@@ -1,0 +1,225 @@
+{
+  "fallback": "citizen",
+  "roles": [
+    {
+      "id": "general",
+      "kind": "key",
+      "label": "武装力量总司令",
+      "motif": "military",
+      "accent": "var(--gold)",
+      "aliases": ["军队", "军方", "将军", "总司令", "general"],
+      "themes": ["barracks", "border_war", "army"],
+      "keywords": ["军营", "参谋", "卫队", "士兵", "枪"]
+    },
+    {
+      "id": "finance",
+      "kind": "key",
+      "label": "财政部长",
+      "motif": "ledger",
+      "accent": "var(--gold-dim)",
+      "aliases": ["财政部长", "财长", "博士", "finance"],
+      "themes": ["tax", "currency", "foreign_loan", "budget"],
+      "keywords": ["财政", "账本", "国库", "贷款", "汇率"]
+    },
+    {
+      "id": "chief",
+      "kind": "key",
+      "label": "北方部族长老",
+      "motif": "elder",
+      "accent": "var(--amber)",
+      "aliases": ["酋长", "部族", "长老", "chief"],
+      "themes": ["mine_rebellion", "provincial_barons", "local"],
+      "keywords": ["北方", "地方", "村镇", "习惯法", "土地"]
+    },
+    {
+      "id": "firstlady",
+      "kind": "key",
+      "label": "第一夫人",
+      "motif": "family",
+      "accent": "var(--red)",
+      "aliases": ["第一夫人", "夫人", "家族", "firstlady"],
+      "themes": ["succession", "palace_report", "family"],
+      "keywords": ["继承", "子女", "慈善基金", "家族", "宫廷"]
+    },
+    {
+      "id": "priest",
+      "kind": "key",
+      "label": "教会主席",
+      "motif": "cleric",
+      "accent": "var(--green)",
+      "aliases": ["神父", "主教", "教会", "priest"],
+      "themes": ["church", "education_slogan"],
+      "keywords": ["讲坛", "牧函", "弥撒", "唱诗班", "良知"]
+    },
+    {
+      "id": "chen",
+      "kind": "key",
+      "label": "远东矿业代表",
+      "motif": "mining",
+      "accent": "var(--green)",
+      "aliases": ["远东矿业", "矿业代表", "陈先生", "chen"],
+      "themes": ["mine_rebellion", "oil_contract", "mining"],
+      "keywords": ["矿权", "矿区", "采矿", "合同", "劳工"]
+    },
+    {
+      "id": "dupont",
+      "kind": "key",
+      "label": "前宗主国掮客",
+      "motif": "broker",
+      "accent": "var(--gold)",
+      "aliases": ["前宗主国", "商业掮客", "杜邦先生", "dupont"],
+      "themes": ["foreign_loan", "ngo", "contract"],
+      "keywords": ["巴黎", "军火", "基建", "回扣", "人脉"]
+    },
+    {
+      "id": "spy",
+      "kind": "key",
+      "label": "国家安全局局长",
+      "motif": "security",
+      "accent": "var(--red)",
+      "aliases": ["安全局", "上校", "情报", "spy"],
+      "themes": ["security_files", "palace_report", "surveillance"],
+      "keywords": ["档案", "监听", "密报", "审讯", "匿名"]
+    },
+    {
+      "id": "reformer",
+      "kind": "key",
+      "label": "改革司司长",
+      "motif": "reform",
+      "accent": "var(--green)",
+      "aliases": ["改革司", "司长", "改革派", "reformer"],
+      "themes": ["tax", "education_slogan", "reform"],
+      "keywords": ["改革", "数据", "审计", "长期", "标准"]
+    },
+    {
+      "id": "uncle",
+      "kind": "key",
+      "label": "执政党元老",
+      "motif": "oldguard",
+      "accent": "var(--amber)",
+      "aliases": ["叔父", "叔公", "元老", "老臣", "uncle"],
+      "themes": ["succession", "palace_report", "party"],
+      "keywords": ["旧党", "当年", "保证书", "座次", "提携"]
+    },
+    {
+      "id": "secretary",
+      "kind": "generic",
+      "label": "秘书处",
+      "motif": "secretary",
+      "accent": "var(--gold-dim)",
+      "aliases": ["秘书", "秘书处", "近侍", "办公厅", "secretary"],
+      "themes": ["palace_report", "statue", "succession"],
+      "keywords": ["会议纪要", "行程", "文件夹", "备忘", "登记"]
+    },
+    {
+      "id": "reporter",
+      "kind": "generic",
+      "label": "记者",
+      "motif": "reporter",
+      "accent": "var(--amber)",
+      "aliases": ["记者", "外媒", "媒体", "新闻", "reporter"],
+      "themes": ["media_ranking", "ngo", "press"],
+      "keywords": ["报道", "直播", "报纸", "镜头", "电台"]
+    },
+    {
+      "id": "doctor",
+      "kind": "generic",
+      "label": "医生",
+      "motif": "doctor",
+      "accent": "var(--green)",
+      "aliases": ["医生", "护士", "医疗顾问", "doctor"],
+      "themes": ["health_show", "health_decline"],
+      "keywords": ["医院", "病房", "药品", "手术", "体检"]
+    },
+    {
+      "id": "soldier",
+      "kind": "generic",
+      "label": "军官",
+      "motif": "soldier",
+      "accent": "var(--gold)",
+      "aliases": ["军官", "士兵", "卫队", "参谋", "soldier"],
+      "themes": ["border_war", "barracks"],
+      "keywords": ["军营", "枪栓", "换岗", "哨卡", "巡逻"]
+    },
+    {
+      "id": "diplomat",
+      "kind": "generic",
+      "label": "外交人员",
+      "motif": "diplomat",
+      "accent": "var(--gold-dim)",
+      "aliases": ["外交官", "使馆", "观察团", "代表团", "diplomat"],
+      "themes": ["ngo", "foreign_loan", "tribunal"],
+      "keywords": ["制裁", "声明", "承认", "谈判", "外宾"]
+    },
+    {
+      "id": "business",
+      "kind": "generic",
+      "label": "商人",
+      "motif": "business",
+      "accent": "var(--gold)",
+      "aliases": ["商人", "银行家", "外商", "公司代表", "business"],
+      "themes": ["oil_contract", "foreign_loan", "currency"],
+      "keywords": ["合同", "银行", "港口", "抵押", "公司"]
+    },
+    {
+      "id": "cleric_generic",
+      "kind": "generic",
+      "label": "教士",
+      "motif": "cleric",
+      "accent": "var(--green)",
+      "aliases": ["教士", "牧师", "修女", "cleric"],
+      "themes": ["church"],
+      "keywords": ["教会", "圣地", "讲坛", "弥撒", "唱诗班"]
+    },
+    {
+      "id": "judge",
+      "kind": "generic",
+      "label": "法务人员",
+      "motif": "judge",
+      "accent": "var(--red)",
+      "aliases": ["检察官", "法官", "律师", "法庭", "judge"],
+      "themes": ["tribunal"],
+      "keywords": ["证人", "豁免", "审判", "法案", "旅行限制"]
+    },
+    {
+      "id": "worker",
+      "kind": "generic",
+      "label": "工人",
+      "motif": "worker",
+      "accent": "var(--amber)",
+      "aliases": ["工人", "工会", "矿工", "工头", "worker"],
+      "themes": ["mine_rebellion", "oil_contract"],
+      "keywords": ["罢工", "矿镇", "赔偿", "污染", "工资"]
+    },
+    {
+      "id": "student",
+      "kind": "generic",
+      "label": "学生",
+      "motif": "student",
+      "accent": "var(--green)",
+      "aliases": ["学生", "教师", "校长", "学生代表", "student"],
+      "themes": ["education_slogan"],
+      "keywords": ["学校", "校训", "考试", "毕业", "教师"]
+    },
+    {
+      "id": "local_baron",
+      "kind": "generic",
+      "label": "地方官",
+      "motif": "local",
+      "accent": "var(--amber)",
+      "aliases": ["地方官", "省长", "镇长", "地方诸侯", "local_baron"],
+      "themes": ["provincial_barons", "tax"],
+      "keywords": ["地方", "省长", "税款", "划省", "截留"]
+    },
+    {
+      "id": "citizen",
+      "kind": "generic",
+      "label": "市民",
+      "motif": "citizen",
+      "accent": "var(--ink-faint)",
+      "aliases": ["市民", "群众", "居民", "匿名来信", "citizen"],
+      "themes": ["football", "currency", "capital"],
+      "keywords": ["广场", "队伍", "街头", "菜市场", "传单"]
+    }
+  ]
+}

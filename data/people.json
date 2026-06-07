@@ -73,7 +73,7 @@
     "blurb": "巴黎与首都之间的传声筒。恭维不要钱，倒戈也不要本钱。",
     "hiddenInterest": "军火与基建合同的回扣，以及巴黎的人脉",
     "persona": "法式做派，恭维不要钱，话里总留着随时倒向他人的活扣。",
-    "initLoyalty": 45, "competence": 65,
+    "initLoyalty": 40, "competence": 65,
     "rivals": ["chen"], "allies": ["firstlady"]
   },
   {
@@ -106,7 +106,7 @@
     "blurb": "把您扶上位的老人。提携之恩，他会一直挂在嘴边换好处。",
     "hiddenInterest": "维系旧党网络，确保家族里他这一支不被边缘化",
     "persona": "倚老卖老，张口就是当年，把对您的提携挂在嘴边换取好处。",
-    "initLoyalty": 64, "competence": 40,
+    "initLoyalty": 72, "competence": 40,
     "rivals": ["reformer", "firstlady"], "allies": ["general"]
   }
 ]

@@ -75,6 +75,7 @@ const SYS = '你在为一款基于《独裁者手册》的讽刺向政治模拟�
 const EFFECT_SPEC = `effects 键只能从下列中选，值为档位字符串("+small"/"-small"/"+mid"/"-mid"/"+big"/"-big"/"+huge"/"-huge")：
 army(军队) elite(精英) morale(民心) intl(国际) finance(财政) health(健康)；可选 wealth(数字,-1~1)、wealthDomestic(数字)、deco{health_care,education,capital,press}(档位)。
 注意：军队/精英/民心/国际四项"过高过低都危险"(中段才安全)——例如 morale 太高=狂热失控、太低=民怨；intl 太高=外部干预、颜色渗透、无法自主决策，太低=孤立、制裁、失去外部承认。finance 低=国库见底。多数选项应对 1~2 项产生较大影响(big/huge)，可再带小影响。`;
+const PORTRAIT_HINT = '如说话人不是本局四位重臣，可给 speakerRole/portraitId，取值优先使用：secretary, reporter, doctor, soldier, diplomat, business, cleric_generic, judge, worker, student, local_baron, citizen。';
 
 function summarize(state, content) {
   const moods = INDICATOR_META.map((m) => `${m.name}：${coreMood(state, content, m.key).text}`).join('；');
@@ -103,6 +104,8 @@ function toCard(state, o, idx, tag) {
     stages: Array.isArray(o.stages) ? o.stages.filter((s) => ['early', 'mid', 'late'].includes(s)) : undefined,
     kicker: String(o.kicker || '政务').slice(0, 6), title: String(o.title).slice(0, 30),
     speaker: o.speaker ? String(o.speaker).slice(0, 12) : undefined,
+    speakerRole: cleanPortraitTag(o.speakerRole),
+    portraitId: cleanPortraitTag(o.portraitId),
     narrative: String(o.narrative || '').slice(0, 400),
     options: o.options.slice(0, 3).map((x) => ({ text: String(x.text || '……').slice(0, 60), effects: sanitizeEffects(x.effects), result: String(x.result || '').slice(0, 160) })),
   };
@@ -161,6 +164,12 @@ function cleanTheme(s) {
   const t = String(s || 'llm_chain').trim().slice(0, 48).replace(/[^a-zA-Z0-9_:-]/g, '_');
   return t || 'llm_chain';
 }
+
+function cleanPortraitTag(s) {
+  if (!s) return undefined;
+  const t = String(s).trim().slice(0, 32).replace(/[<>{}"']/g, '');
+  return t || undefined;
+}
 function toGeneratedChain(state, obj, ctx) {
   const rawSteps = Array.isArray(obj?.steps) ? obj.steps : Array.isArray(obj?.chain?.steps) ? obj.chain.steps : [];
   if (!obj || !obj.title || rawSteps.length < 3) return null;
@@ -174,6 +183,9 @@ function toGeneratedChain(state, obj, ctx) {
     const step = {
       kicker: String(s.kicker || obj.kicker || '暗流').slice(0, 8),
       title: String(s.title || `节点${i + 1}`).replace(/[0-9０-９]/g, '').slice(0, 36),
+      speaker: s.speaker ? String(s.speaker).slice(0, 12) : undefined,
+      speakerRole: cleanPortraitTag(s.speakerRole),
+      portraitId: cleanPortraitTag(s.portraitId),
       narrative: String(s.narrative || '').slice(0, 360),
       options: rawOptions.slice(0, 3).map((o) => ({
         text: String(o.text || '暂且按下').replace(/[0-9０-９%％→←+\-]/g, '').slice(0, 64),
@@ -217,8 +229,9 @@ export async function pregenEvents(state, content, n) {
 
 ${recentThemeHint(state)}
 为本局生成 ${n} 个"互不相同"的事件卡，尽量围绕本局这四位重臣展开：${names}；也可涉及国名"${state.nationShort}"、课税/财政、边境、外交、民生、腐败、宫廷阴谋等。情节各异、不要雷同、不要与最近发生的重复。每卡≤180字叙事 + 2~3 个有取舍的选项(选项文字不得出现数字)。每卡必须给 theme(英文短标签) 与 stages(early/mid/late 数组，可多选)。
+${PORTRAIT_HINT}
 ${EFFECT_SPEC}
-每个选项给出 result(≤80字)。严格输出 JSON：{"events":[{"theme":"tax","stages":["early","mid"],"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}]}` },
+每个选项给出 result(≤80字)。严格输出 JSON：{"events":[{"theme":"tax","stages":["early","mid"],"kicker":"二字","title":"...","speaker":"可空","speakerRole":"可空","portraitId":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}]}` },
     ], { temperature: 1.05, max_tokens: 520 + n * 300, timeoutMs: 10000 + n * 3500 });
     const arr = Array.isArray(obj.events) ? obj.events : [];
     return arr.map((o, i) => toCard(state, o, i, 'pre')).filter(Boolean);
@@ -230,7 +243,7 @@ export async function generateSpecialEvent(state, content) {
   try {
     const obj = await callJSON([
       { role: 'system', content: SYS },
-      { role: 'user', content: `${summarize(state, content)}\n\n${recentThemeHint(state)}\n基于当前局势生成一个特殊事件卡：≤200字叙事 + 2~3 个选项。必须给 theme(英文短标签) 与 stages(early/mid/late 数组，可多选)。\n${EFFECT_SPEC}\n每选项给 result(≤80字)。严格输出 JSON：{"theme":"palace_intrigue","stages":["mid"],"kicker":"二字","title":"...","speaker":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}` },
+      { role: 'user', content: `${summarize(state, content)}\n\n${recentThemeHint(state)}\n基于当前局势生成一个特殊事件卡：≤200字叙事 + 2~3 个选项。必须给 theme(英文短标签) 与 stages(early/mid/late 数组，可多选)。\n${PORTRAIT_HINT}\n${EFFECT_SPEC}\n每选项给 result(≤80字)。严格输出 JSON：{"theme":"palace_intrigue","stages":["mid"],"kicker":"二字","title":"...","speaker":"可空","speakerRole":"可空","portraitId":"可空","narrative":"...","options":[{"text":"...","effects":{...},"result":"..."}]}` },
     ], { temperature: 1.0, max_tokens: 900, timeoutMs: 16000 });
     const c = toCard(state, obj, 0, 'special'); if (c) c.type = 'special'; return c;
   } catch { return null; }
@@ -256,8 +269,9 @@ ${crisis}
 请生成一条完整事件链，至少 3 个节点，最多 6 个节点。节点之间要有递进和后果，不要像互不相关的普通事件。
 trigger 只允许：minYear；army/elite/morale/intl/finance/health 的 Min/Max；borderMin/borderMax；loyaltyGapMin/Max；sanctioned；hasHeir。触发条件必须贴近当前状态，不能写遥远条件。
 每个节点 2~3 个选项；每个选项必须给 effects、result、goto。可少量使用 defer；使用 defer 的节点应给 escalateTo。goto 用节点序号，从 0 开始；-1 表示链结束。不得直接写结局、不得直接杀人、不得越权改状态。
+${PORTRAIT_HINT}
 ${EFFECT_SPEC}
-严格输出 JSON：{"title":"...","theme":"english_tag","stages":["early","mid"],"fit":1.2,"trigger":{"minYear":${state.year}},"steps":[{"kicker":"二字","title":"...","narrative":"...","escalateTo":1,"options":[{"text":"...","effects":{...},"result":"...","goto":1,"defer":false}]}]}` },
+严格输出 JSON：{"title":"...","theme":"english_tag","stages":["early","mid"],"fit":1.2,"trigger":{"minYear":${state.year}},"steps":[{"kicker":"二字","title":"...","speaker":"可空","speakerRole":"可空","portraitId":"可空","narrative":"...","escalateTo":1,"options":[{"text":"...","effects":{...},"result":"...","goto":1,"defer":false}]}]}` },
     ], { temperature: 1.02, max_tokens: 2600, timeoutMs: 38000 });
     return toGeneratedChain(state, obj, ctx);
   } catch { return null; }

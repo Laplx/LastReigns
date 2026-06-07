@@ -3,10 +3,34 @@
 import { INDICATOR_META, leaderAge } from './state.js';
 import { coreMood, decoLabel, decoColor } from './atmosphere.js';
 import { loyaltySignal, competenceSignal } from './engine.js';
+import { renderPortraitSvg, renderRoleIcon, portraitForPerson } from './portraits.js';
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+// 画像内容句柄：boot 时注入一次，供人物 tab / 详情 / 召见取画像
+let portraitContent = null;
+export function setPortraitContent(content) { portraitContent = content; }
+// 半身像（open-peeps + 可选职业 icon 徽章）。mode: 'icon' 时叠 icon，'plain' 不叠。
+function personAvatar(person, cls, { icon = false } = {}) {
+  const pt = portraitContent && portraitForPerson(portraitContent, person);
+  if (!pt) return null;
+  const box = el('div', cls);
+  box.setAttribute('aria-hidden', 'true');
+  box.innerHTML = renderPortraitSvg(pt, { icon });
+  return box;
+}
+// 纯职业 icon（状态栏迷你标识）。
+function personRoleIcon(person, cls) {
+  const pt = portraitContent && portraitForPerson(portraitContent, person);
+  const svg = pt && renderRoleIcon(pt);
+  if (!svg) return null;
+  const box = el('div', cls);
+  box.setAttribute('aria-hidden', 'true');
+  box.innerHTML = svg;
+  return box;
+}
 
 const I = (p) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const ICONS = {
@@ -79,7 +103,11 @@ export function renderPeople(state, opts) {
   for (const p of state.people) {
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
     const t = el('button', `ptab${p.id === opts.selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
-    t.innerHTML = `<span class="pt-line"><span class="pt-name">${esc(p.name)}</span></span><span class="pt-meter"><span class="pt-mark">忠</span><span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span></span>`;
+    const av = personRoleIcon(p, 'pt-avatar');
+    if (av) t.appendChild(av);
+    const txt = el('div', 'pt-text');
+    txt.innerHTML = `<span class="pt-line"><span class="pt-name">${esc(p.name)}</span></span><span class="pt-meter"><span class="pt-mark">忠</span><span class="pt-loy" title="忠诚"><span class="loyfill loy-${loy}" style="width:${p.alive ? p.loyalty : 0}%"></span></span></span>`;
+    t.appendChild(txt);
     t.addEventListener('click', () => opts.onSelect(p.id));
     tabs.appendChild(t);
   }
@@ -87,13 +115,19 @@ export function renderPeople(state, opts) {
 
 export function renderPersonProfile(person, statusLines = []) {
   const box = el('div', 'pd');
-  box.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(person.name)}</span><span class="pd-title">${esc(person.alive ? person.title : (person.defected ? '已叛离' : person.title))}</span></div>`;
+  const head = el('div', 'pd-top');
+  const av = personAvatar(person, 'pd-avatar', { icon: true });
+  if (av) { box.classList.add('has-avatar'); head.appendChild(av); }
+  const headText = el('div', 'pd-top-text');
+  headText.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(person.name)}</span><span class="pd-title">${esc(person.alive ? person.title : (person.defected ? '已叛离' : person.title))}</span></div>`;
   const tag = el('div', 'pd-tags');
   (person.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
   const loy = loyaltySignal(person.loyalty), comp = competenceSignal(person.competence);
   tag.appendChild(el('span', `pd-tag pd-loy-${loy}`, `忠诚·${LOY_TXT[loy]}`));
   tag.appendChild(el('span', `pd-tag pd-comp-${comp}`, `能力·${COMP_TXT[comp]}`));
-  box.appendChild(tag);
+  headText.appendChild(tag);
+  head.appendChild(headText);
+  box.appendChild(head);
   if (person.blurb) box.appendChild(el('div', 'pd-blurb', esc(person.blurb)));
   const st = el('div', 'pd-status');
   (statusLines || []).forEach((l) => st.appendChild(el('p', '', esc(l))));
@@ -105,13 +139,21 @@ export function renderPersonProfile(person, statusLines = []) {
 function stage() { return $('stage-content'); }
 export function renderCard(card, { onChoose }) {
   const s = stage(); s.innerHTML = '';
-  const c = el('div', `card${card.chain || card.type === 'chain' ? ' chaincard' : ''}`);
+  const c = el('div', `card${card.chain || card.type === 'chain' ? ' chaincard' : ''}${card.portrait ? ' has-portrait' : ''}`);
+  if (card.portrait) {
+    const art = el('div', 'card-portrait');
+    art.setAttribute('aria-hidden', 'true');
+    art.title = card.portrait.title || card.portrait.label || '';
+    art.innerHTML = renderPortraitSvg(card.portrait);
+    c.appendChild(art);
+  }
+  const body = el('div', 'card-copy');
   let narr = esc(card.narrative);
   if (card.speaker) narr = `<span class="speaker">${esc(card.speaker)}：</span>` + narr;
-  c.innerHTML = `<div class="kicker">${esc(card.kicker || '事件')}</div><div class="title">${esc(card.title)}</div><div class="narrative">${narr}</div>`;
+  body.innerHTML = `<div class="kicker">${esc(card.kicker || '事件')}</div><div class="title">${esc(card.title)}</div><div class="narrative">${narr}</div>`;
   const opts = el('div', 'options');
   card.options.forEach((opt, i) => { const b = el('button', 'option', esc(opt.text)); b.addEventListener('click', () => onChoose(i)); opts.appendChild(b); });
-  c.appendChild(opts); s.appendChild(c);
+  body.appendChild(opts); c.appendChild(body); s.appendChild(c);
 }
 
 // 红绿直接跟正负挂钩（+绿 −红）；比例条本身另按"位置"着色
@@ -143,7 +185,11 @@ export function renderAdvisorSummonCard(state, { selectedId, statusFor, onSelect
   for (const p of state.people) {
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
     const b = el('button', `summon-person${p.id === selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
-    b.innerHTML = `<span class="sp-main"><span class="sp-name">${esc(p.name)}</span><span class="sp-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span></span><span class="pt-dot loy-${loy}"></span>`;
+    const av = personAvatar(p, 'sp-avatar');
+    if (av) b.appendChild(av);
+    const main = el('span', 'sp-main', `<span class="sp-name">${esc(p.name)}</span><span class="sp-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span>`);
+    b.appendChild(main);
+    b.appendChild(el('span', `pt-dot loy-${loy}`));
     b.addEventListener('click', () => onSelect(p.id));
     row.appendChild(b);
   }
@@ -272,9 +318,18 @@ export function openSettings(cur, onSave) {
   box.appendChild(field('AI 参与程度', lvl));
   const row = el('div', 'set-actions');
   const save = el('button', 'primary', '保存'); const cancel = el('button', 'ghost', '取消');
-  save.addEventListener('click', () => { document.body.removeChild(ov); onSave({ format: fmt.value, apiKey: key.value.trim(), baseUrl: base.value.trim(), model: model.value.trim(), level: lvl.value }); });
+  const status = el('div', 'set-status muted');
+  save.addEventListener('click', async () => {
+    save.disabled = true; cancel.disabled = true;
+    status.textContent = '正在检测叙事联网……';
+    try {
+      await onSave({ format: fmt.value, apiKey: key.value.trim(), baseUrl: base.value.trim(), model: model.value.trim(), level: lvl.value });
+    } finally {
+      if (ov.parentNode) document.body.removeChild(ov);
+    }
+  });
   cancel.addEventListener('click', () => document.body.removeChild(ov));
-  row.append(save, cancel); box.appendChild(row); ov.appendChild(box);
+  row.append(save, cancel); box.appendChild(row); box.appendChild(status); ov.appendChild(box);
   ov.addEventListener('click', (e) => { if (e.target === ov) document.body.removeChild(ov); });
   document.body.appendChild(ov);
 }
@@ -325,7 +380,7 @@ export function showLoadingProgress(lines) {
   };
 }
 
-export function renderBriefing(state, onStart) {
+export function renderBriefing(state, onStart, onManual) {
   hidePanels();
   const s = stage(); s.innerHTML = '';
   const c = el('div', 'card');
@@ -333,7 +388,11 @@ export function renderBriefing(state, onStart) {
   c.appendChild(el('div', 'title', `您是${esc(state.leader.name)}，${esc(state.nation)}的新主人`));
   c.appendChild(briefingBody(state));
   const btn = el('button', 'primary', '入主官邸'); btn.addEventListener('click', onStart);
-  c.appendChild(btn); s.appendChild(c);
+  c.appendChild(btn);
+  const hint = el('div', 'bf-manual-hint muted', '以上内容随时可在右上角的<b>《独裁者手册》</b>中重温。');
+  if (onManual) { const link = hint.querySelector('b'); link.style.cursor = 'pointer'; link.addEventListener('click', onManual); }
+  c.appendChild(hint);
+  s.appendChild(c);
 }
 
 const ENDING_TITLE = {
