@@ -296,7 +296,7 @@ function nextYearAfterThisCard() {
 }
 
 function maybePrefetchAdvisorForYear() {
-  if (state.cardsThisYear + 1 >= state.yearLength && annualAdvisorDue()) {
+  if (state.cardsThisYear + 2 >= state.yearLength && annualAdvisorDue()) {
     prefetchAdvisorPacks();
     maybePrefetchSituationChain();
   }
