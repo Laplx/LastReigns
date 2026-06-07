@@ -117,22 +117,25 @@ body {
 .card { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; animation: cardIn .3s cubic-bezier(.19,1,.22,1); position: relative; overflow: hidden; }
 .card.chaincard { border-left: 4px solid var(--gold); }
 .card-copy { position: relative; z-index: 1; }
-.card.has-portrait { min-height: 268px; padding-right: clamp(132px, 32vw, 216px); }
+/* 有画像时：左文字 / 右画像 并排，卡片高度取两者较高者，画像列不会被截断 */
+.card.has-portrait { display: flex; align-items: stretch; gap: 10px; }
+.card.has-portrait .card-copy { flex: 1; min-width: 0; order: 1; }
 .card-portrait {
-  position: absolute; z-index: 0; pointer-events: none;
-  top: 8px; right: 6px; width: clamp(124px, 30%, 186px);
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  z-index: 0; pointer-events: none; align-self: stretch; order: 2;
+  flex: 0 0 clamp(128px, 30%, 196px);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 12px;
+  padding-top: 14px; padding-bottom: 8px;
 }
 .card-portrait .cp-fig {
   width: 100%; aspect-ratio: 1 / 1; opacity: .92;
-  -webkit-mask-image: radial-gradient(135% 110% at 50% 30%, #000 62%, transparent 88%);
-  mask-image: radial-gradient(135% 110% at 50% 30%, #000 62%, transparent 88%);
+  -webkit-mask-image: radial-gradient(142% 118% at 50% 34%, #000 48%, transparent 82%);
+  mask-image: radial-gradient(142% 118% at 50% 34%, #000 48%, transparent 82%);
 }
 .card-portrait .cp-fig .portrait-svg { display: block; width: 100%; height: 100%; }
-.card-portrait .cp-cap { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 2px; }
-.card-portrait .cp-title { font-size: .82em; color: var(--ink-dim); letter-spacing: .05em; }
-.card-portrait .cp-name { font-family: var(--serif); font-weight: 700; font-size: 1.02em; color: var(--ink); }
-.card-portrait .cp-icon { color: var(--gold); margin-top: 3px; }
+.card-portrait .cp-cap { display: flex; flex-direction: column; align-items: center; gap: 9px; margin-top: 4px; }
+.card-portrait .cp-title { font-size: .92em; color: var(--ink-dim); letter-spacing: .05em; }
+.card-portrait .cp-name { font-family: var(--sans); font-weight: 500; font-size: .92em; color: var(--ink); }
+.card-portrait .cp-icon { color: var(--gold); margin-top: 2px; }
 .card-portrait .cp-icon .role-icon { width: 22px; height: 22px; display: block; }
 .card.chaincard .card-portrait .cp-fig { opacity: .9; }
 @keyframes cardIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; } }
@@ -220,8 +223,9 @@ button { font-family: var(--sans); }
 .briefing .bf-person .bb { font-family: var(--serif); font-style: italic; color: var(--ink-dim); font-size: 0.92em; }
 .briefing .bf-guide { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 14px 0; font-size: 0.92em; }
 .briefing .bf-guide li { margin: 4px 0; }
-.bf-manual-hint { margin-top: 12px; font-size: .82em; text-align: center; }
-.bf-manual-hint b { color: var(--gold); }
+.bf-actions { margin-top: 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+.bf-manual-hint { font-size: .82em; }
+.bf-manual-hint b { color: var(--gold); font-weight: 600; }
 .seed-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 18px; padding: 9px 12px; border: 1px solid var(--line-soft); border-radius: 8px; background: rgba(255,255,255,.45); font-size: .86em; }
 .seed-label { color: var(--ink-faint); }
 .seed-code { font-variant-numeric: tabular-nums; letter-spacing: .04em; color: var(--ink-dim); }
@@ -320,10 +324,12 @@ body { font-weight: 450; color: var(--ink); }
 .pd .pd-title { color: var(--ink-faint); font-size: .8em; }
 .pd-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .pd-tag { font-size: .74em; background: var(--paper-2); border: 1px solid var(--line); border-radius: 14px; padding: 2px 10px; color: var(--ink-dim); }
+.pd-tag .tag-ic { display: inline-flex; vertical-align: -2px; margin-right: 4px; }
+.pd-tag .tag-ic svg { width: 13px; height: 13px; }
 .chip-loy.loy-loyal, .chip-comp.comp-high { border-color: #b9c48f; color: var(--green); }
 .chip-loy.loy-uneasy { border-color: #e3c98f; color: var(--amber); }
 .chip-loy.loy-danger { border-color: #e0b09f; color: var(--red); }
-.pd-blurb { font-family: var(--serif); color: var(--ink-dim); font-style: italic; font-size: .92em; margin: 4px 0 8px; }
+.pd-blurb { font-family: var(--serif); color: var(--ink-dim); font-style: italic; font-size: .92em; margin: 12px 0 8px; }
 .pd-status { font-family: var(--serif); }
 .pd-status p { margin: 4px 0; }
 .pd-actions { margin-top: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -525,8 +531,12 @@ body[data-theme="verdigris"] {
   .deco-grid { grid-template-columns: 1fr 1fr; }
   #topbar { align-items: flex-start; }
   .top-summary { max-width: 42vw; white-space: normal; }
-  .card.has-portrait { padding-right: clamp(96px, 32vw, 140px); min-height: 220px; }
-  .card-portrait { width: min(34vw, 132px); top: 10px; right: 6px; }
+  /* 事件卡：窄屏改为上下堆叠，画像在文字下方居中，避免侧栏过窄 */
+  .card.has-portrait { flex-direction: column; }
+  .card.has-portrait .card-copy { order: 1; }
+  .card-portrait { order: 2; flex-basis: auto; width: 100%; flex-direction: row; justify-content: center; gap: 14px; padding-top: 10px; }
+  .card-portrait .cp-fig { width: clamp(96px, 32vw, 140px); }
+  .card-portrait .cp-cap { margin-top: 0; align-items: flex-start; justify-content: center; }
   .people-head { align-items: flex-start; flex-direction: column; }
   .simmering-summary { justify-content: flex-start; text-align: left; }
   .simmering-summary span:last-child { white-space: normal; }

@@ -33,6 +33,11 @@ function personRoleIcon(person, cls) {
 }
 
 const I = (p) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+// 忠诚=握手、能力=靶心（Lucide，线性；与名字旁的职业 icon 区分语义）
+const TAG_ICON = {
+  loy: I('<path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/>'),
+  comp: I('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>'),
+};
 const ICONS = {
   army: I('<path d="M12 3l7 3v5c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>'),
   elite: I('<path d="M4 8l4 3 4-6 4 6 4-3-2 10H6z"/>'),
@@ -126,8 +131,8 @@ export function renderPersonProfile(person, statusLines = []) {
   const tag = el('div', 'pd-tags');
   (person.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
   const loy = loyaltySignal(person.loyalty), comp = competenceSignal(person.competence);
-  tag.appendChild(el('span', `pd-tag pd-loy-${loy}`, `忠诚·${LOY_TXT[loy]}`));
-  tag.appendChild(el('span', `pd-tag pd-comp-${comp}`, `能力·${COMP_TXT[comp]}`));
+  tag.appendChild(el('span', `pd-tag pd-loy-${loy}`, `<span class="tag-ic">${TAG_ICON.loy}</span>忠诚·${LOY_TXT[loy]}`));
+  tag.appendChild(el('span', `pd-tag pd-comp-${comp}`, `<span class="tag-ic">${TAG_ICON.comp}</span>能力·${COMP_TXT[comp]}`));
   headText.appendChild(tag);
   head.appendChild(headText);
   box.appendChild(head);
@@ -336,10 +341,10 @@ export function openSettings(cur, onSave) {
   const field = (label, node) => { const w = el('div', 'set-field'); w.appendChild(el('label', 'set-label', label)); w.appendChild(node); return w; };
   const inp = (val, type, ph) => { const i = el('input', 'set-input'); i.type = type || 'text'; i.value = val || ''; if (ph) i.placeholder = ph; return i; };
   const fmt = el('select', 'set-input'); fmt.innerHTML = `<option value="openai">OpenAI 格式</option><option value="anthropic">Anthropic 格式</option>`; fmt.value = cur.format || 'openai';
-  const key = inp(cur.apiKey, 'password', 'sk-...'); const base = inp(cur.baseUrl, 'text', '留空用默认'); const model = inp(cur.model, 'text', '留空用默认');
+  const key = inp(cur.apiKey, 'password', 'sk-...'); const base = inp(cur.baseUrl, 'text', '留空默认为 https://api.deepseek.com'); const model = inp(cur.model, 'text', '留空默认为 deepseek-chat');
   const lvl = el('select', 'set-input'); lvl.innerHTML = `<option value="low">低（少打扰、少等待）</option><option value="mid">中（推荐）</option><option value="high">高（叙事最丰富）</option>`; lvl.value = cur.level || 'mid';
   box.appendChild(el('h3', null, '设置 · 叙事 AI'));
-  box.appendChild(el('p', 'muted', '配置你自己的 LLM；留空则用服务端预置（若有）。无 AI 也能玩，但叙事与私信体验会大打折扣。'));
+  box.appendChild(el('p', 'muted', '本作不内置任何 API，请填写你自己的 LLM 接口。密钥只保存在本机浏览器，不会上传。不配置也能完整游玩，事件叙事会使用预设内容，体验略有不同。'));
   box.appendChild(field('接口格式', fmt));
   box.appendChild(field('API Key', key));
   box.appendChild(field('Base URL', base));
@@ -416,11 +421,13 @@ export function renderBriefing(state, onStart, onManual) {
   c.appendChild(el('div', 'kicker', '就任'));
   c.appendChild(el('div', 'title', `您是${esc(state.leader.name)}，${esc(state.nation)}的新主人`));
   c.appendChild(briefingBody(state));
+  const actions = el('div', 'bf-actions');
   const btn = el('button', 'primary', '入主官邸'); btn.addEventListener('click', onStart);
-  c.appendChild(btn);
-  const hint = el('div', 'bf-manual-hint muted', '以上内容随时可在右上角的<b>《独裁者手册》</b>中重温。');
+  actions.appendChild(btn);
+  const hint = el('div', 'bf-manual-hint muted', '以上内容随时可在右上角<b>手册</b>中重温。');
   if (onManual) { const link = hint.querySelector('b'); link.style.cursor = 'pointer'; link.addEventListener('click', onManual); }
-  c.appendChild(hint);
+  actions.appendChild(hint);
+  c.appendChild(actions);
   s.appendChild(c);
 }
 

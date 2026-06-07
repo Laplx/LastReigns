@@ -39,7 +39,7 @@ function updateLlmStatusText() {
   const ready = llm.isAvailable();
   ui.setNetStatus(ready ? 'online' : 'offline', ready ? `叙事联网：${llm.modelName() || '已就绪'}` : '叙事联网未就绪');
   const foot = document.getElementById('boot-foot');
-  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：预设叙事可玩，私下接触将使用规则兜底'}<br><span class="version">v1.2.4</span>`;
+  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：使用预设叙事，游戏完整可玩'}<br><span class="version">v1.2.4</span>`;
 }
 function setLlmCheckingText() {
   ui.setNetStatus('checking', '叙事联网检测中');
@@ -63,7 +63,7 @@ async function boot() {
 
 function onStartClick() {
   if (!llm.isAvailable()) {
-    ui.confirmDialog('您还没有配置叙事 AI。游戏仍可进行，但事件叙事、私下接触、结局词条都会退化为预设内容，体验会大打折扣。', {
+    ui.confirmDialog('您还没有配置叙事 AI。游戏仍可完整进行，事件叙事与结局词条会使用预设内容。', {
       yesLabel: '仍要开始', onYes: showBriefing, altLabel: '去配置', onAlt: openSettingsFlow,
     });
   } else showBriefing();

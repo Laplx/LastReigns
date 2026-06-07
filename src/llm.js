@@ -28,9 +28,8 @@ export async function checkHealth() {
   catch { _available = false; _model = ''; return { ok: false, llm: false }; }
 }
 export async function refreshAvailability() {
-  const health = await checkHealth();
   if (hasClientSettings()) return probeSettings();
-  return health;
+  return checkHealth();
 }
 export function isAvailable() { return hasClientSettings() ? _settingsAvailable : _available; }
 export function modelName() { return hasClientSettings() ? _settingsModel : _model; }
@@ -39,17 +38,44 @@ async function call(messages, { json = false, temperature = 0.9, max_tokens = 11
   const ctrl = new AbortController();
   const timer = timeoutMs ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
   try {
+    const e = effective();
+    // 有用户自带 key：前端直连服务商（GitHub Pages 等无后端环境也可用，key 仅在本机）。
+    // 无 key：走本地 server.js 的 /api/llm 代理（开发环境）。
+    if (e) return await callDirect(e, messages, { json, temperature, max_tokens, signal: ctrl.signal });
     const body = { messages, temperature, max_tokens };
     if (json) body.response_format = { type: 'json_object' };
-    const e = effective();
-    if (e) { body.apiKey = e.apiKey; body.baseUrl = e.baseUrl; body.format = e.format; body.model = e.model; }
     const r = await fetch('/api/llm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
-    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error || `http_${r.status}`); }
+    if (!r.ok) { const er = await r.json().catch(() => ({})); throw new Error(er.error || `http_${r.status}`); }
     const data = await r.json();
     const text = data?.choices?.[0]?.message?.content;
     if (!text) throw new Error('empty');
     return text;
   } finally { if (timer) clearTimeout(timer); }
+}
+// 浏览器直连服务商（OpenAI / Anthropic 两种格式）。
+async function callDirect(e, messages, { json, temperature, max_tokens, signal }) {
+  let url, headers, body;
+  if (e.format === 'anthropic') {
+    const sys = messages.filter((m) => m.role === 'system').map((m) => m.content).join('\n');
+    const msgs = messages.filter((m) => m.role !== 'system').map((m) => ({ role: m.role, content: m.content }));
+    url = `${e.baseUrl.replace(/\/$/, '')}/v1/messages`;
+    headers = { 'Content-Type': 'application/json', 'x-api-key': e.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+    body = { model: e.model, max_tokens, temperature, messages: msgs };
+    if (sys) body.system = sys;
+  } else {
+    url = `${e.baseUrl.replace(/\/$/, '')}/v1/chat/completions`;
+    headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${e.apiKey}` };
+    body = { model: e.model, messages, temperature, max_tokens };
+    if (json) body.response_format = { type: 'json_object' };
+  }
+  const r = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal });
+  if (!r.ok) { const er = await r.text().catch(() => ''); throw new Error(`http_${r.status}:${er.slice(0, 120)}`); }
+  const data = await r.json();
+  const text = e.format === 'anthropic'
+    ? (Array.isArray(data?.content) ? data.content.map((b) => b.text || '').join('') : '')
+    : data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error('empty');
+  return text;
 }
 async function callJSON(messages, opts) { const text = await call(messages, { ...opts, json: true }); const a = text.indexOf('{'), b = text.lastIndexOf('}'); return JSON.parse(a >= 0 && b > a ? text.slice(a, b + 1) : text); }
 
