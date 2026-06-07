@@ -12,13 +12,13 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '
 // 画像内容句柄：boot 时注入一次，供人物 tab / 详情 / 召见取画像
 let portraitContent = null;
 export function setPortraitContent(content) { portraitContent = content; }
-// 半身像（open-peeps + 可选职业 icon 徽章）。mode: 'icon' 时叠 icon，'plain' 不叠。
-function personAvatar(person, cls, { icon = false } = {}) {
+// 半身像（open-peeps）。fade=false 用于小圆头像（裁切到头肩，不需要底部渐隐）。
+function personAvatar(person, cls, { fade = true } = {}) {
   const pt = portraitContent && portraitForPerson(portraitContent, person);
   if (!pt) return null;
   const box = el('div', cls);
   box.setAttribute('aria-hidden', 'true');
-  box.innerHTML = renderPortraitSvg(pt, { icon });
+  box.innerHTML = renderPortraitSvg(pt, { fade });
   return box;
 }
 // 纯职业 icon（状态栏迷你标识）。
@@ -116,10 +116,13 @@ export function renderPeople(state, opts) {
 export function renderPersonProfile(person, statusLines = []) {
   const box = el('div', 'pd');
   const head = el('div', 'pd-top');
-  const av = personAvatar(person, 'pd-avatar', { icon: true });
+  const av = personAvatar(person, 'pd-avatar', { fade: false });
   if (av) { box.classList.add('has-avatar'); head.appendChild(av); }
   const headText = el('div', 'pd-top-text');
-  headText.innerHTML = `<div class="pd-head"><span class="pd-name">${esc(person.name)}</span><span class="pd-title">${esc(person.alive ? person.title : (person.defected ? '已叛离' : person.title))}</span></div>`;
+  const pt = portraitContent && portraitForPerson(portraitContent, person);
+  const icon = pt ? renderRoleIcon(pt) : '';
+  const nameRow = `<div class="pd-head">${icon ? `<span class="pd-role-icon">${icon}</span>` : ''}<span class="pd-name">${esc(person.name)}</span><span class="pd-title">${esc(person.alive ? person.title : (person.defected ? '已叛离' : person.title))}</span></div>`;
+  headText.innerHTML = nameRow;
   const tag = el('div', 'pd-tags');
   (person.traits || []).forEach((x) => tag.appendChild(el('span', 'pd-tag', esc(x))));
   const loy = loyaltySignal(person.loyalty), comp = competenceSignal(person.competence);
@@ -144,7 +147,15 @@ export function renderCard(card, { onChoose }) {
     const art = el('div', 'card-portrait');
     art.setAttribute('aria-hidden', 'true');
     art.title = card.portrait.title || card.portrait.label || '';
-    art.innerHTML = renderPortraitSvg(card.portrait);
+    const icon = renderRoleIcon(card.portrait);
+    // 职务（必）→ 名字（仅关键人物）→ icon
+    const isKey = card.portrait.kind === 'key' && card.portrait.personId;
+    const cap = `<div class="cp-fig">${renderPortraitSvg(card.portrait)}</div>`
+      + `<div class="cp-cap"><span class="cp-title">${esc(card.portrait.title || card.portrait.label || '')}</span>`
+      + (isKey ? `<span class="cp-name">${esc(card.portrait.name)}</span>` : '')
+      + (icon ? `<span class="cp-icon">${icon}</span>` : '')
+      + `</div>`;
+    art.innerHTML = cap;
     c.appendChild(art);
   }
   const body = el('div', 'card-copy');
@@ -181,11 +192,12 @@ export function renderAdvisorSummonCard(state, { selectedId, statusFor, onSelect
   const s = stage(); s.innerHTML = '';
   const c = el('div', 'card advisor-card');
   c.innerHTML = `<div class="kicker">密谈</div><div class="title">年终召见</div><div class="narrative">一年将尽，账本、军令和传闻都被压进同一只文件夹。您只能把一位重臣叫到灯下；他会给出答复，也会给自己留下余地。</div>`;
+  const split = el('div', 'summon-split');
   const row = el('div', 'summon-tabs');
   for (const p of state.people) {
     const loy = p.alive ? loyaltySignal(p.loyalty) : 'danger';
     const b = el('button', `summon-person${p.id === selectedId ? ' active' : ''}${p.alive ? '' : ' gone'}`);
-    const av = personAvatar(p, 'sp-avatar');
+    const av = personAvatar(p, 'sp-avatar', { fade: false });
     if (av) b.appendChild(av);
     const main = el('span', 'sp-main', `<span class="sp-name">${esc(p.name)}</span><span class="sp-title">${esc(p.alive ? p.title : (p.defected ? '已叛离' : p.title))}</span>`);
     b.appendChild(main);
@@ -193,24 +205,40 @@ export function renderAdvisorSummonCard(state, { selectedId, statusFor, onSelect
     b.addEventListener('click', () => onSelect(p.id));
     row.appendChild(b);
   }
-  c.appendChild(row);
+  split.appendChild(row);
+  const detail = el('div', 'summon-detail');
   const p = state.people.find((x) => x.id === selectedId) || state.people.find((x) => x.alive);
   if (p) {
-    c.appendChild(renderPersonProfile(p, statusFor(p)));
+    detail.appendChild(renderPersonProfile(p, statusFor(p)));
     const actions = el('div', 'pd-actions advisor-actions');
     const btn = el('button', 'primary pd-engage', p.alive ? '私下接触' : '此人已离席');
     btn.disabled = !p.alive;
     if (p.alive) btn.addEventListener('click', () => onEngage(p));
     actions.appendChild(btn);
-    c.appendChild(actions);
+    detail.appendChild(actions);
   }
+  split.appendChild(detail);
+  c.appendChild(split);
   s.appendChild(c);
 }
 
 export function renderAdvisorActionCard(person, pack, { canReshuffle, onReshuffle, onChoose }) {
   const s = stage(); s.innerHTML = '';
-  const c = el('div', 'card advisor-card');
-  c.innerHTML = `<div class="kicker">密谈</div><div class="title">私下接触 · ${esc(person.name)}</div><div class="narrative">${esc(pack.intro || '他坐在灯下，等您先开口。')}</div>`;
+  const pt = portraitContent && portraitForPerson(portraitContent, person);
+  const c = el('div', `card advisor-card${pt ? ' has-portrait' : ''}`);
+  if (pt) {
+    const art = el('div', 'card-portrait');
+    art.setAttribute('aria-hidden', 'true');
+    const icon = renderRoleIcon(pt);
+    art.innerHTML = `<div class="cp-fig">${renderPortraitSvg(pt)}</div>`
+      + `<div class="cp-cap"><span class="cp-title">${esc(person.title || '')}</span>`
+      + `<span class="cp-name">${esc(person.name)}</span>`
+      + (icon ? `<span class="cp-icon">${icon}</span>` : '')
+      + `</div>`;
+    c.appendChild(art);
+  }
+  const body = el('div', 'card-copy');
+  body.innerHTML = `<div class="kicker">密谈</div><div class="title">私下接触 · ${esc(person.name)}</div><div class="narrative">${esc(pack.intro || '他坐在灯下，等您先开口。')}</div>`;
   const opts = el('div', 'options advisor-options');
   (pack.options || []).forEach((opt) => {
     const b = el('button', 'option advisor-option');
@@ -218,11 +246,12 @@ export function renderAdvisorActionCard(person, pack, { canReshuffle, onReshuffl
     b.addEventListener('click', () => onChoose(opt));
     opts.appendChild(b);
   });
-  c.appendChild(opts);
+  body.appendChild(opts);
   const re = el('button', 'ghost advisor-reshuffle', '换一批');
   re.disabled = !canReshuffle;
   if (canReshuffle) re.addEventListener('click', onReshuffle);
-  c.appendChild(re);
+  body.appendChild(re);
+  c.appendChild(body);
   s.appendChild(c);
 }
 

@@ -117,16 +117,24 @@ body {
 .card { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; animation: cardIn .3s cubic-bezier(.19,1,.22,1); position: relative; overflow: hidden; }
 .card.chaincard { border-left: 4px solid var(--gold); }
 .card-copy { position: relative; z-index: 1; }
-.card.has-portrait { min-height: 250px; padding-right: clamp(26px, 26vw, 196px); }
+.card.has-portrait { min-height: 268px; padding-right: clamp(132px, 32vw, 216px); }
 .card-portrait {
   position: absolute; z-index: 0; pointer-events: none;
-  top: 6px; right: 4px; width: clamp(132px, 27%, 188px); aspect-ratio: 1 / 1;
-  opacity: .9; filter: drop-shadow(0 5px 12px rgba(80,60,20,.12));
-  -webkit-mask-image: linear-gradient(210deg, #000 52%, transparent 90%);
-  mask-image: linear-gradient(210deg, #000 52%, transparent 90%);
+  top: 8px; right: 6px; width: clamp(124px, 30%, 186px);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
-.card.chaincard .card-portrait { opacity: .88; }
-.card-portrait .portrait-svg { display: block; width: 100%; height: 100%; }
+.card-portrait .cp-fig {
+  width: 100%; aspect-ratio: 1 / 1; opacity: .92;
+  -webkit-mask-image: radial-gradient(135% 110% at 50% 30%, #000 62%, transparent 88%);
+  mask-image: radial-gradient(135% 110% at 50% 30%, #000 62%, transparent 88%);
+}
+.card-portrait .cp-fig .portrait-svg { display: block; width: 100%; height: 100%; }
+.card-portrait .cp-cap { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 2px; }
+.card-portrait .cp-title { font-size: .82em; color: var(--ink-dim); letter-spacing: .05em; }
+.card-portrait .cp-name { font-family: var(--serif); font-weight: 700; font-size: 1.02em; color: var(--ink); }
+.card-portrait .cp-icon { color: var(--gold); margin-top: 3px; }
+.card-portrait .cp-icon .role-icon { width: 22px; height: 22px; display: block; }
+.card.chaincard .card-portrait .cp-fig { opacity: .9; }
 @keyframes cardIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; } }
 .card .kicker { font-size: 0.72em; letter-spacing: 0.16em; color: var(--gold); text-transform: uppercase; }
 .card .title { font-family: var(--serif); font-size: 1.3em; margin: 4px 0 12px; }
@@ -378,51 +386,57 @@ body { font-weight: 450; color: var(--ink); }
 /* ---------- 人物画像：状态栏职业 icon / 召见小头像 / 详情半身像 ---------- */
 /* 状态栏：纯职业 icon 圆徽（暖金线条，公文纸底） */
 .pt-avatar {
-  width: 40px; height: 40px; border-radius: 50%; flex: none;
+  width: 36px; height: 36px; border-radius: 50%; flex: none;
   display: flex; align-items: center; justify-content: center;
   background: radial-gradient(120% 120% at 50% 18%, #fffdf6, var(--paper-2));
   border: 1.5px solid var(--line); color: var(--gold);
 }
-.pt-avatar .role-icon { width: 22px; height: 22px; display: block; }
-.ptab.active .pt-avatar { border-color: var(--gold-dim); box-shadow: 0 0 0 2px rgba(138,108,34,.18); }
+.pt-avatar .role-icon { width: 19px; height: 19px; display: block; }
+.ptab.active .pt-avatar { border-color: var(--gold-dim); }
 .ptab.gone .pt-avatar { filter: grayscale(.6); opacity: .7; }
 .pt-text { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
 
-/* 召见选人：open-peeps 圆形小头像（取景到头肩） */
+/* 召见选人：open-peeps 圆形小头像（取景到头肩，略缩小并上移） */
 .sp-avatar {
   width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex: none;
-  background: radial-gradient(120% 120% at 50% 22%, #fffdf6, var(--paper-2)); border: 1.5px solid var(--line);
+  background: radial-gradient(120% 120% at 50% 24%, #fffdf6, var(--paper-2)); border: 1.5px solid var(--line);
 }
-.sp-avatar .portrait-svg { width: 150%; height: 150%; margin: -4% 0 0 -25%; display: block; }
+.sp-avatar .portrait-svg { width: 142%; height: 142%; margin: -8% 0 0 -21%; display: block; }
 .summon-person.active .sp-avatar { border-color: var(--gold-dim); }
 
-/* 详情：open-peeps 半身像（含职业 icon 徽章），方形圆角 */
+/* 详情：open-peeps 半身像（无 icon），方形圆角；人像略缩小并上移居中 */
 .pd-top { display: flex; align-items: flex-start; gap: 14px; }
 .pd-top-text { min-width: 0; flex: 1; }
 .pd-avatar {
-  width: 96px; height: 96px; flex: none; border-radius: 10px; overflow: hidden;
+  width: 92px; height: 92px; flex: none; border-radius: 10px; overflow: hidden;
   background: linear-gradient(180deg, #fffdf6, var(--paper-2)); border: 1px solid var(--line);
 }
-.pd-avatar .portrait-svg { width: 118%; height: 118%; margin: 2% 0 0 -9%; display: block; }
+.pd-avatar .portrait-svg { width: 108%; height: 108%; margin: -4% 0 0 -4%; display: block; }
+.pd-head { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+.pd-role-icon { display: inline-flex; align-items: center; color: var(--gold); flex: none; align-self: center; }
+.pd-role-icon .role-icon { width: 16px; height: 16px; display: block; }
 .pd.has-avatar .pd-tags { margin-bottom: 0; }
 
 
 
-/* 年终召见卡 */
+
+/* 年终召见卡：左列选人 + 右侧详情 */
 .advisor-card .narrative { margin-bottom: 14px; }
-.summon-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0; }
+.summon-split { display: flex; gap: 16px; align-items: flex-start; }
+.summon-tabs { flex: 0 0 clamp(150px, 30%, 200px); display: flex; flex-direction: column; gap: 8px; margin: 0; }
+.summon-detail { flex: 1; min-width: 0; }
 .summon-person {
   text-align: left; background: var(--paper); color: var(--ink); border: 1px solid var(--line);
-  border-radius: 8px; padding: 9px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 9px;
   cursor: pointer; transition: border-color .12s, background .12s;
 }
 .summon-person:hover { border-color: var(--gold); background: var(--choice-plain); }
 .summon-person.active { border-color: var(--gold-dim); background: var(--choice-selected); }
 .summon-person.gone { opacity: .45; }
-.sp-main { min-width: 0; display: flex; align-items: baseline; gap: 7px; white-space: nowrap; overflow: hidden; }
-.sp-name { flex: none; font-weight: 800; font-size: .9em; }
-.sp-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--ink-faint); font-size: .76em; }
-.advisor-card .pd { margin-top: 4px; padding: 12px 14px; border: 1px solid var(--line-soft); border-radius: 8px; background: rgba(255,255,255,.32); }
+.sp-main { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+.sp-name { font-weight: 800; font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-title { color: var(--ink-faint); font-size: .74em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.advisor-card .pd { margin-top: 0; padding: 0; border: 0; background: none; }
 .advisor-actions { align-items: center; }
 .advisor-options .ao-kind { display: block; margin-bottom: 2px; font-family: var(--sans); font-size: .7em; letter-spacing: .12em; color: var(--gold); text-transform: uppercase; }
 .advisor-reshuffle { margin-top: 10px; }
@@ -511,13 +525,14 @@ body[data-theme="verdigris"] {
   .deco-grid { grid-template-columns: 1fr 1fr; }
   #topbar { align-items: flex-start; }
   .top-summary { max-width: 42vw; white-space: normal; }
-  .card.has-portrait { padding-right: 22px; min-height: 240px; }
-  .card-portrait { width: min(42vw, 150px); top: 8px; right: -8px; opacity: .42; }
+  .card.has-portrait { padding-right: clamp(96px, 32vw, 140px); min-height: 220px; }
+  .card-portrait { width: min(34vw, 132px); top: 10px; right: 6px; }
   .people-head { align-items: flex-start; flex-direction: column; }
   .simmering-summary { justify-content: flex-start; text-align: left; }
   .simmering-summary span:last-child { white-space: normal; }
   .people-tabs { grid-template-columns: 1fr 1fr; }
-  .summon-tabs { grid-template-columns: 1fr; }
+  .summon-split { flex-direction: column; }
+  .summon-tabs { flex-basis: auto; }
   .people-row { flex-wrap: wrap; }
   .person { min-width: 45%; }
 }

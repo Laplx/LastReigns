@@ -310,30 +310,30 @@ function fallbackSvg(portrait) {
   </svg>`;
 }
 
-// 职业 icon 圆徽（lucide inner，染暖金，公文纸底），叠在 open-peeps 头部左上。
-function iconBadge(roleId) {
-  const inner = ART?.icons?.[roleId];
-  if (!inner) return '';
-  const cx = 150, cy = 150, r = 92;
-  const t = `translate(${cx - 60} ${cy - 60}) scale(5)`;
-  return `<g class="pt-badge">`
-    + `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--paper)" stroke="var(--gold)" stroke-width="6"/>`
-    + `<g transform="${t}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</g>`
-    + `</g>`;
-}
-
-// 主渲染。opts.icon=true 时叠加职业 icon 徽章（召见/详情用）；事件卡水印传 false。
+// 主渲染：open-peeps 半身像。icon 不再叠在像上，改由 renderRoleIcon 放到名字旁/说明处。
+// open-peeps 的躯干在 viewBox 底边(y=704)被硬裁出一条直边；这里把它的 viewboxMask
+// 换成"底部渐隐"的渐变遮罩，让肩部下缘自然隐入背景，消除土黄硬边线。
+let _ptUid = 0;
 export function renderPortraitSvg(portrait, opts = {}) {
   const roleId = portrait?.id;
   const peep = ART?.peeps?.[roleId];
   if (!peep) return fallbackSvg(portrait);
   const label = escAttr(portrait?.title || portrait?.label || portrait?.name || '人物');
   let svg = peep.replace('<svg ', `<svg class="portrait-svg" role="img" aria-label="${label}" `);
-  if (opts.icon) svg = svg.replace('</svg>', iconBadge(roleId) + '</svg>');
+  if (opts.fade !== false) {
+    const gid = `ptfade${_ptUid++}`;
+    const grad = `<linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">`
+      + `<stop offset="0" stop-color="#fff"/><stop offset="0.72" stop-color="#fff"/>`
+      + `<stop offset="1" stop-color="#000"/></linearGradient>`;
+    svg = svg.replace(
+      /<mask id="viewboxMask">[\s\S]*?<\/mask>/,
+      `<mask id="viewboxMask">${grad}<rect width="704" height="704" x="0" y="0" fill="url(#${gid})"/></mask>`,
+    );
+  }
   return svg;
 }
 
-// 仅渲染职业 icon（状态栏迷你标识用），无人像。
+// 职业 icon（纯线条，染 currentColor）。用于状态栏、名字旁、事件卡说明。
 export function renderRoleIcon(portrait) {
   const inner = ART?.icons?.[portrait?.id];
   if (!inner) return '';
