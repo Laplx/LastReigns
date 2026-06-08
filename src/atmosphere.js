@@ -1,6 +1,6 @@
 // 区间 → 氛围词。池 + 防重复。联网时 llm.js 可用即兴句覆盖本模块输出。
 
-import { rngInt } from './state.js';
+import { rngInt } from './state.js?v=1.3.2';
 
 const recent = {};
 function pickFromPool(state, key, pool) {

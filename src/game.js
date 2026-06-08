@@ -1,12 +1,12 @@
 // 入口 / 编排：连续卡片流、年份自然流逝、预算降频、链显式化、私信、结局。
 
-import * as ui from './ui.js';
-import { createInitialState, leaderAge, rngShuffle } from './state.js';
-import * as engine from './engine.js';
-import * as events from './events.js';
-import * as chains from './chains.js';
-import * as llm from './llm.js';
-import { resetAtmosphere } from './atmosphere.js';
+import * as ui from './ui.js?v=1.3.2';
+import { createInitialState, leaderAge, rngShuffle } from './state.js?v=1.3.2';
+import * as engine from './engine.js?v=1.3.2';
+import * as events from './events.js?v=1.3.2';
+import * as chains from './chains.js?v=1.3.2';
+import * as llm from './llm.js?v=1.3.2';
+import { resetAtmosphere } from './atmosphere.js?v=1.3.2';
 
 let content, state, selectedPersonId = null;
 let chainNarr = {}, _poolBusy = false, _poolPromise = null, _specialBusy = false, _atmoBusy = false;
@@ -35,16 +35,17 @@ async function loadContent() {
   return events.prepareContent({ events: eventsD, people, chains: chainsD, atmosphere, decorative, world, portraits, portraitArt });
 }
 
+const VERSION_TAG = '<span class="version" id="version-tag" role="button" tabindex="0" title="查看更新日志">v1.3.2</span>';
 function updateLlmStatusText() {
   const ready = llm.isAvailable();
   ui.setNetStatus(ready ? 'online' : 'offline', ready ? `叙事联网：${llm.modelName() || '已就绪'}` : '叙事联网未就绪');
   const foot = document.getElementById('boot-foot');
-  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：使用预设叙事，游戏完整可玩'}<br><span class="version">v1.2.4</span>`;
+  if (foot) foot.innerHTML = `${ready ? '叙事联网已就绪' : '叙事联网未就绪：使用预设叙事，游戏完整可玩；可在设置中配置 API'}<br>${VERSION_TAG}`;
 }
 function setLlmCheckingText() {
   ui.setNetStatus('checking', '叙事联网检测中');
   const foot = document.getElementById('boot-foot');
-  if (foot) foot.innerHTML = `叙事联网检测中……<br><span class="version">v1.2.4</span>`;
+  if (foot) foot.innerHTML = `叙事联网检测中……<br>${VERSION_TAG}`;
 }
 
 async function boot() {
@@ -59,6 +60,9 @@ async function boot() {
   document.getElementById('btn-manual').addEventListener('click', () => state && ui.openOverlay(ui.manualNode(state)));
   document.getElementById('overlay-close').addEventListener('click', ui.closeOverlay);
   document.getElementById('overlay').addEventListener('click', (e) => { if (e.target.id === 'overlay') ui.closeOverlay(); });
+  // 版本号可点击 → 更新日志（boot-foot 内容会被刷新，用事件委托绑定一次）
+  const foot = document.getElementById('boot-foot');
+  if (foot) foot.addEventListener('click', (e) => { if (e.target.id === 'version-tag') ui.showChangelog(); });
 }
 
 function onStartClick() {

@@ -1,9 +1,9 @@
 // LLM 接入层。铁律：LLM 只返回受约束结构，engine 校验+钳制后落账。
 // 离线/出错/超时一律返回 null 或 []，调用方使用预设兜底。
 
-import { INDICATOR_META, leaderAge } from './state.js';
-import { coreMood, decoLabel } from './atmosphere.js';
-import { loyaltySignal, competenceSignal, sanitizeEffects, allowedFidelities } from './engine.js';
+import { INDICATOR_META, leaderAge } from './state.js?v=1.3.2';
+import { coreMood, decoLabel } from './atmosphere.js?v=1.3.2';
+import { loyaltySignal, competenceSignal, sanitizeEffects, allowedFidelities } from './engine.js?v=1.3.2';
 
 let _available = false, _model = '';
 let _settingsAvailable = false, _settingsModel = '';

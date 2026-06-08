@@ -72,6 +72,24 @@ node scripts/pack-art.mjs      # 打包上述源文件 → data/portraits-art.js
 
 改角色的部件（发型/表情/胡子/眼镜）在 `fetch-peeps.mjs`、换职业 icon 在 `fetch-icons.mjs`，改后重新 `fetch` + `pack` 即可。素材许可：Open Peeps（CC0）、Lucide（ISC）。
 
+### 发版流程
+
+每次发布新版本，按顺序：
+
+1. 改 `package.json` 的 `version`，并同步 `src/game.js` 里 `VERSION_TAG` 显示的版本号。
+2. 在 `CHANGELOG.md` 顶部新增该版本条目（遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)）。
+3. `node scripts/stamp-version.mjs` —— 给 `index.html` 入口引用与 `src/*.js` 的相对 import 统一打上 `?v=<版本>`，破除浏览器对旧模块/样式的缓存。**漏掉这步用户会卡在旧缓存。**
+4. `node scripts/validate-data.mjs` 校验数据。
+5. 提交、推送、发布。
+
+### 部署到 GitHub Pages（无后端）
+
+纯静态托管即可（无需 `server.js`）。注意：
+
+- 发布版**不内置任何 API**。玩家需在「设置」里填自己的 LLM 密钥；有密钥时浏览器**直连服务商**，密钥只存在玩家本机的 localStorage，不上传。无密钥则进入离线模式，游戏完整可玩。
+- 部分服务商（如 OpenAI 官方端点）会因浏览器 CORS 限制无法直连；DeepSeek 等兼容接口通常可用。
+- `.env.local`（本地开发用的密钥）已被 `.gitignore` 排除，不会进仓库。
+
 ---
 
 ## 安全提示

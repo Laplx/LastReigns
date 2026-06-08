@@ -1,9 +1,9 @@
 // 渲染层。流程在 game.js，状态变动在 engine.js。
 
-import { INDICATOR_META, leaderAge } from './state.js';
-import { coreMood, decoLabel, decoColor } from './atmosphere.js';
-import { loyaltySignal, competenceSignal } from './engine.js';
-import { renderPortraitSvg, renderRoleIcon, portraitForPerson } from './portraits.js';
+import { INDICATOR_META, leaderAge } from './state.js?v=1.3.2';
+import { coreMood, decoLabel, decoColor } from './atmosphere.js?v=1.3.2';
+import { loyaltySignal, competenceSignal } from './engine.js?v=1.3.2';
+import { renderPortraitSvg, renderRoleIcon, portraitForPerson } from './portraits.js?v=1.3.2';
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
@@ -303,6 +303,38 @@ export function renderBudget(state, onConfirm) {
 
 export function openOverlay(node) { const box = $('overlay-content'); box.innerHTML = ''; if (typeof node === 'string') box.innerHTML = node; else box.appendChild(node); $('overlay').classList.remove('hidden'); }
 export function closeOverlay() { $('overlay').classList.add('hidden'); }
+
+// 更新日志：读取 CHANGELOG.md，做轻量 markdown 渲染后放入浮层。
+let _changelogCache = null;
+export async function showChangelog() {
+  const box = el('div', 'changelog');
+  box.innerHTML = '<h3>更新日志</h3><p class="muted">加载中……</p>';
+  openOverlay(box);
+  try {
+    if (_changelogCache == null) _changelogCache = await fetch('./CHANGELOG.md').then((r) => r.text());
+    box.innerHTML = `<h3>更新日志</h3>${mdLite(_changelogCache)}`;
+  } catch {
+    box.innerHTML = '<h3>更新日志</h3><p class="muted">暂时无法加载更新日志。</p>';
+  }
+}
+// 极简 markdown：## 标题、### 小标题、- 列表、[文字](链接)。
+function mdLite(src) {
+  const lines = String(src).split('\n');
+  let html = '', inList = false;
+  const inline = (t) => esc(t).replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  for (const raw of lines) {
+    const line = raw.replace(/\s+$/, '');
+    const close = () => { if (inList) { html += '</ul>'; inList = false; } };
+    if (/^#\s+/.test(line)) { close(); continue; }
+    else if (/^##\s+/.test(line)) { close(); html += `<h4>${inline(line.replace(/^##\s+/, ''))}</h4>`; }
+    else if (/^###\s+/.test(line)) { close(); html += `<h5>${inline(line.replace(/^###\s+/, ''))}</h5>`; }
+    else if (/^-\s+/.test(line)) { if (!inList) { html += '<ul>'; inList = true; } html += `<li>${inline(line.replace(/^-\s+/, ''))}</li>`; }
+    else if (line.trim()) { close(); html += `<p>${inline(line)}</p>`; }
+    else close();
+  }
+  if (inList) html += '</ul>';
+  return html;
+}
 
 export function renderArchive(state) {
   const box = el('div');

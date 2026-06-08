@@ -1,8 +1,8 @@
 // 抽卡、资格、效果落账、事与愿违、人物绑定、国名替换。
 
-import { rngChance, rngPick } from './state.js';
-import { applyEffects, adjustLoyalty } from './engine.js';
-import { resolveCardPortrait } from './portraits.js';
+import { rngChance, rngPick } from './state.js?v=1.3.2';
+import { applyEffects, adjustLoyalty } from './engine.js?v=1.3.2';
+import { resolveCardPortrait } from './portraits.js?v=1.3.2';
 
 const STAGES = new Set(['early', 'mid', 'late']);
 const THEME_COOLDOWN = { notify: 2, chain: 6, special: 4, normal: 5 };

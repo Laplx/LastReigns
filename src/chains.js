@@ -2,7 +2,7 @@
 // 连续卡片流下：激活(年度tick)与浮现(逐卡)分离。
 // "不作为的代价"：同一链连续 2 次选择拖延选项 → 强制升级到最坏节点。
 
-import { rngChance } from './state.js';
+import { rngChance } from './state.js?v=1.3.2';
 
 const MAX_ACTIVE_CHAINS = 2;
 const DEFAULT_CHAIN_CARDS_PER_YEAR = 2;

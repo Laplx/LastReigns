@@ -1,7 +1,7 @@
 // 状态机核心：6 核心指标、两端危险、多样死法、效果落账、忠诚/关系、积分。
 // applyEffects 返回 deltas/summary 供 UI。
 
-import { rngInt, rngChance, rngPick, leaderAge, syncTerritory } from './state.js';
+import { rngInt, rngChance, rngPick, leaderAge, syncTerritory } from './state.js?v=1.3.2';
 
 const clamp = (v, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, v));
 // 波动更大：让玩家多次逼近临界

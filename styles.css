@@ -175,7 +175,7 @@ button { font-family: var(--sans); }
 .ghost:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ---------- 浮层 ---------- */
-.overlay { position: fixed; inset: 0; background: rgba(60, 48, 24, 0.4); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 20px; }
+.overlay { position: fixed; inset: 0; background: rgba(60, 48, 24, 0.4); display: flex; align-items: center; justify-content: center; z-index: 35; padding: 20px; }
 .overlay-box { background: linear-gradient(180deg, var(--paper), var(--paper-2)); border: 1px solid var(--gold-dim); border-radius: var(--radius); max-width: 560px; width: 100%; max-height: 84vh; overflow: auto; padding: 22px; position: relative; box-shadow: var(--shadow); }
 .overlay-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--ink-dim); font-size: 1.5em; cursor: pointer; line-height: 1; }
 .overlay-close:hover { color: var(--ink); }
@@ -215,6 +215,16 @@ button { font-family: var(--sans); }
 .boot .subtitle { color: var(--ink-dim); margin: 0 0 26px; }
 .boot .epigraph { font-family: var(--serif); font-style: italic; color: var(--ink-faint); margin: 0 0 30px; }
 .boot .boot-foot { margin-top: 22px; font-size: 0.8em; }
+.version { display: inline-block; margin-top: 4px; color: var(--ink-faint); cursor: pointer; border-bottom: 1px dotted var(--ink-faint); }
+.version:hover { color: var(--gold); border-bottom-color: var(--gold); }
+.changelog { max-height: calc(70vh - 14px); overflow-y: auto; margin-top: 14px; }
+.changelog h3 { font-family: var(--serif); color: var(--gold); margin: 0 0 10px; }
+.changelog h4 { font-family: var(--serif); margin: 16px 0 4px; font-size: 1.02em; }
+.changelog h5 { margin: 10px 0 2px; font-size: .82em; color: var(--gold); letter-spacing: .04em; }
+.changelog ul { margin: 2px 0 8px; padding-left: 20px; }
+.changelog li { margin: 3px 0; font-size: .9em; color: var(--ink-dim); line-height: 1.5; }
+.changelog p { font-size: .86em; color: var(--ink-faint); }
+.changelog a { color: var(--gold); }
 
 .briefing .bf-people { margin: 14px 0; }
 .briefing .bf-person { border-left: 3px solid var(--gold-dim); padding: 4px 0 4px 12px; margin: 9px 0; }
