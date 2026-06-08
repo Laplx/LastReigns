@@ -217,7 +217,7 @@ button { font-family: var(--sans); }
 .boot .boot-foot { margin-top: 22px; font-size: 0.8em; }
 .version { display: inline-block; margin-top: 4px; color: var(--ink-faint); cursor: pointer; border-bottom: 1px dotted var(--ink-faint); }
 .version:hover { color: var(--gold); border-bottom-color: var(--gold); }
-.changelog { max-height: calc(70vh - 14px); overflow-y: auto; margin-top: 14px; }
+.changelog { max-height: calc(70vh - 14px); overflow-y: auto; margin-top: 14px; margin-right: -10px; padding-right: 14px; scrollbar-gutter: stable; }
 .changelog h3 { font-family: var(--serif); color: var(--gold); margin: 0 0 10px; }
 .changelog h4 { font-family: var(--serif); margin: 16px 0 4px; font-size: 1.02em; }
 .changelog h5 { margin: 10px 0 2px; font-size: .82em; color: var(--gold); letter-spacing: .04em; }
@@ -539,8 +539,18 @@ body[data-theme="verdigris"] {
 
 @media (max-width: 560px) {
   .deco-grid { grid-template-columns: 1fr 1fr; }
-  #topbar { align-items: flex-start; }
-  .top-summary { max-width: 42vw; white-space: normal; }
+  #topbar { align-items: center; gap: 6px; padding: 9px 2px 8px; }
+  #topbar .tb-left { flex: 1 1 auto; min-width: 0; padding-left: 0; }
+  #topbar .tb-center { flex: 0 0 auto; padding: 0 4px; min-width: 52px; }
+  #topbar .tb-right { flex: 0 0 auto; gap: 5px; padding-right: 0; }
+  #topbar .ghost { white-space: nowrap; padding: 5px 8px; font-size: .78em; }
+  .identity-line { flex-wrap: nowrap; overflow: hidden; }
+  #nation, #leader-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #nation { flex: 0 1 auto; }
+  #leader-name { flex: 1 1 auto; margin-left: 6px; }
+  .top-summary { max-width: 100%; white-space: nowrap; font-size: .76em; }
+  #year-label { white-space: nowrap; font-size: .95em; }
+  #phase-label { font-size: .68em; }
   /* 事件卡：窄屏改为上下堆叠，画像在文字下方居中，避免侧栏过窄 */
   .card.has-portrait { flex-direction: column; }
   .card.has-portrait .card-copy { order: 1; }

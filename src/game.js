@@ -49,6 +49,9 @@ function setLlmCheckingText() {
 }
 
 async function boot() {
+  const foot = document.getElementById('boot-foot');
+  if (foot) foot.addEventListener('click', (e) => { if (e.target.id === 'version-tag') ui.showChangelog(); });
+  setLlmCheckingText();
   try { content = await loadContent(); }
   catch { document.getElementById('boot-foot').textContent = '资源加载失败，请用 npm start 启动后访问 http://localhost:5173'; return; }
   ui.setPortraitContent(content);
@@ -60,9 +63,6 @@ async function boot() {
   document.getElementById('btn-manual').addEventListener('click', () => state && ui.openOverlay(ui.manualNode(state)));
   document.getElementById('overlay-close').addEventListener('click', ui.closeOverlay);
   document.getElementById('overlay').addEventListener('click', (e) => { if (e.target.id === 'overlay') ui.closeOverlay(); });
-  // 版本号可点击 → 更新日志（boot-foot 内容会被刷新，用事件委托绑定一次）
-  const foot = document.getElementById('boot-foot');
-  if (foot) foot.addEventListener('click', (e) => { if (e.target.id === 'version-tag') ui.showChangelog(); });
 }
 
 function onStartClick() {
