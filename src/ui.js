@@ -344,7 +344,7 @@ export function renderArchive(state) {
   return box;
 }
 
-// 《独裁者手册》腔的玩法说明，开局与"手册"按钮共用
+// 玩法说明，开局与"手册"按钮共用
 function briefingBody(state) {
   const c = el('div', 'briefing');
   c.appendChild(el('div', 'narrative', `一场深夜政变后，您成了${esc(state.nation)}的新主人。前任的体温还没凉透，您的椅子已经有人在惦记了。目标只有一个：活得久、捞得多、死在自己的床上。`));
@@ -361,7 +361,7 @@ function briefingBody(state) {
 }
 export function manualNode(state) {
   const box = el('div');
-  box.appendChild(el('h3', null, '独裁者手册 · 节选'));
+  box.appendChild(el('h3', null, '玩法说明'));
   box.appendChild(briefingBody(state));
   return box;
 }
